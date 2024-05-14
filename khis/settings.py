@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -31,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 CUSTOM_APPS = [
+
 ]
 SYSTEM_APPS = ['django.contrib.admin',
                'django.contrib.auth',
@@ -38,11 +40,13 @@ SYSTEM_APPS = ['django.contrib.admin',
                'django.contrib.sessions',
                'django.contrib.messages',
                'django.contrib.staticfiles',
+               'django_cryptography',
                'django_extensions',
                'django_seed',
                'rest_framework',
                'drf_spectacular',
                'rest_framework_simplejwt.token_blacklist',
+               'account',
                ]
 
 INSTALLED_APPS = CUSTOM_APPS + SYSTEM_APPS
@@ -87,7 +91,15 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
+#유저모델
+AUTH_USER_MODEL = 'account.User'
+#토큰 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
