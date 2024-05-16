@@ -15,3 +15,6 @@ class Annual(models.Model):
     practitioner = models.ForeignKey(Practitioner, on_delete=models.CASCADE)
     date = models.DateField()
     # 연차 사용한 날짜
+    
+    
+    
