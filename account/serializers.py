@@ -1,7 +1,10 @@
 from rest_framework import serializers
+from .models import  Patient, Practitioner, HumanName, RelatedPerson, ContactPoint, Address, MedicalRecord, Department
+from django.contrib.auth import get_user_model
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from .models import Patient, Practitioner, HumanName, RelatedPerson, ContactPoint, Address, MedicalRecord, Department
+
 
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -43,6 +46,7 @@ class RelatedPersonSerializer(serializers.ModelSerializer):
     name = HumanNameSerializer()
     telecom = ContactPointSerializer()
     address = AddressSerializer()
+
     class Meta:
         model = RelatedPerson
         fields = '__all__'
@@ -84,11 +88,13 @@ class PatientSerializer(serializers.ModelSerializer):
             address = Address.objects.create(**address_data)
             patient.address = address
         if related_person_data:
-            related_person = RelatedPerson.objects.create(**related_person_data)
+            related_person = RelatedPerson.objects.create(
+                **related_person_data)
             patient.related_person = related_person
         if medical_record_data:
-            medical_record = MedicalRecord.objects.create(**medical_record_data)
-            patient.medical_record=medical_record
+            medical_record = MedicalRecord.objects.create(
+                **medical_record_data)
+            patient.medical_record = medical_record
 
         patient.save()
         return patient
@@ -99,6 +105,7 @@ class PractitionerSerializer(serializers.ModelSerializer):
     telecom = ContactPointSerializer()
     address = AddressSerializer(required=False)
     department = DepartmentSerializer(required=False)
+
     class Meta:
         model = Practitioner
         fields = '__all__'
@@ -123,6 +130,6 @@ class PractitionerSerializer(serializers.ModelSerializer):
         if department_data:
             department = Department.objects.create(**department_data)
             prectitioner.department = department
-        
+
         prectitioner.save()
         return prectitioner

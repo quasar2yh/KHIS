@@ -383,3 +383,7 @@ template.txt
 # custom
 template.txt
 /media
+
+
+# migrtaion
+migrations/
