@@ -19,3 +19,10 @@ class PatientAPIView(APIView):
         patient = get_object_or_404(Patient, pk=patient_id)
         serializer = PatientSerializer(patient)
         return Response(data=serializer.data)
+
+    def put(self, request, patient_id):
+        patient = get_object_or_404(Patient, pk=patient_id)
+        serializer = PatientSerializer(patient, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return Response(data=serializer.data)
