@@ -1,10 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from .serializers import AccountSerializer, PatientSerializer, PractitionerSerializer
 
 
 class AccountSiginAPIView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         account_serializer = AccountSerializer(data=request.data)
 

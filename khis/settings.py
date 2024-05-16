@@ -51,6 +51,7 @@ SYSTEM_APPS = ['django.contrib.admin',
                'drf_spectacular',
                'rest_framework_simplejwt.token_blacklist',
                'rest_framework.authtoken',
+               'rest_framework.authtoken',
                ]
 
 INSTALLED_APPS = CUSTOM_APPS + SYSTEM_APPS
@@ -112,7 +113,7 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'account.Account'
 # 토큰
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=3000),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -159,3 +160,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+
+}
