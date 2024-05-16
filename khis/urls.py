@@ -5,4 +5,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('khis/account/', include("account.urls")),
     path('khis/reservations/', include("appointment.urls")),
+    path('khis/patient-registration/', include("ocs.urls")),
 ]

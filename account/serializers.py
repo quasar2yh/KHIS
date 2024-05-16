@@ -1,10 +1,7 @@
 from rest_framework import serializers
-from .models import  Patient, Practitioner, HumanName, RelatedPerson, ContactPoint, Address, MedicalRecord, Department
-from django.contrib.auth import get_user_model
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from .models import Patient, Practitioner, HumanName, RelatedPerson, ContactPoint, Address, MedicalRecord, Department
-
 
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -46,7 +43,6 @@ class RelatedPersonSerializer(serializers.ModelSerializer):
     name = HumanNameSerializer()
     telecom = ContactPointSerializer()
     address = AddressSerializer()
-
     class Meta:
         model = RelatedPerson
         fields = '__all__'
@@ -88,24 +84,53 @@ class PatientSerializer(serializers.ModelSerializer):
             address = Address.objects.create(**address_data)
             patient.address = address
         if related_person_data:
-            related_person = RelatedPerson.objects.create(
-                **related_person_data)
+            related_person = RelatedPerson.objects.create(**related_person_data)
             patient.related_person = related_person
         if medical_record_data:
-            medical_record = MedicalRecord.objects.create(
-                **medical_record_data)
-            patient.medical_record = medical_record
+            medical_record = MedicalRecord.objects.create(**medical_record_data)
+            patient.medical_record=medical_record
 
         patient.save()
         return patient
 
+    def update(self, instance, validated_data):
+        name_data = validated_data.pop('name', None)
+        telecom_data = validated_data.pop('telecom', None)
+        address_data = validated_data.pop('address', None)
+        related_person_data = validated_data.pop('related_person', None)
+        medical_record_data = validated_data.pop('medical_record', None)
 
+        instance = super().update(instance, validated_data)
+
+        if name_data:
+            name_serializer = HumanNameSerializer(instance.name, data=name_data)
+            if name_serializer.is_valid():
+                name_serializer.save()
+        if telecom_data:
+            telecom_serializer = ContactPointSerializer(instance.telecom, data=telecom_data)
+            if telecom_serializer.is_valid():
+                telecom_serializer.save()
+        if address_data:
+            address_serializer = AddressSerializer(instance.address, data=address_data)
+            if address_serializer.is_valid():
+                address_serializer.save()
+        if related_person_data:
+            related_person_serializer = RelatedPersonSerializer(instance.related_person, data=related_person_data)
+            if related_person_serializer.is_valid():
+                related_person_serializer.save()
+        if medical_record_data:
+            medical_record_serializer = MedicalRecordSerializer(instance.medical_record, data=medical_record_data)
+            if medical_record_serializer.is_valid():
+                medical_record_serializer.save()
+
+        instance.save()
+        return instance
+    
 class PractitionerSerializer(serializers.ModelSerializer):
     name = HumanNameSerializer()
     telecom = ContactPointSerializer()
     address = AddressSerializer(required=False)
     department = DepartmentSerializer(required=False)
-
     class Meta:
         model = Practitioner
         fields = '__all__'
@@ -130,6 +155,34 @@ class PractitionerSerializer(serializers.ModelSerializer):
         if department_data:
             department = Department.objects.create(**department_data)
             prectitioner.department = department
-
+        
         prectitioner.save()
         return prectitioner
+    
+    def update(self, instance, validated_data):
+        name_data = validated_data.pop('name', None)
+        telecom_data = validated_data.pop('telecom', None)
+        address_data = validated_data.pop('address', None)
+        department_data = validated_data.pop('department', None)
+
+        instance = super().update(instance, validated_data)
+
+        if name_data:
+            name_serializer = HumanNameSerializer(instance.name, data=name_data)
+            if name_serializer.is_valid():
+                name_serializer.save()
+        if telecom_data:
+            telecom_serializer = ContactPointSerializer(instance.telecom, data=telecom_data)
+            if telecom_serializer.is_valid():
+                telecom_serializer.save()
+        if address_data:
+            address_serializer = AddressSerializer(instance.address, data=address_data)
+            if address_serializer.is_valid():
+                address_serializer.save()
+        if department_data:
+            department_serializer = DepartmentSerializer(instance.department, data=department_data)
+            if department_serializer.is_valid():
+                department_serializer.save()
+
+        instance.save()
+        return instance
