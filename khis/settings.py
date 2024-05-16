@@ -32,7 +32,11 @@ ALLOWED_HOSTS = []
 # Application definition
 
 CUSTOM_APPS = [
-
+    'account',
+    'schedule',
+    'appointment',
+    'ocs',
+    'acceptance',
 ]
 SYSTEM_APPS = ['django.contrib.admin',
                'django.contrib.auth',
@@ -46,7 +50,6 @@ SYSTEM_APPS = ['django.contrib.admin',
                'rest_framework',
                'drf_spectacular',
                'rest_framework_simplejwt.token_blacklist',
-               'account',
                ]
 
 INSTALLED_APPS = CUSTOM_APPS + SYSTEM_APPS

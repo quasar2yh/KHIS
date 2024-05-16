@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-# Create your models here.
+from ocs.models import MedicalRecord
 
 
 GENDER_CHOICES = [
@@ -46,7 +46,7 @@ class Patient(models.Model):
     # 환자의 결혼 여부 True | False
     allergies = models.CharField(max_length=255, blank=True)
     # 환자의 여부 ex) 땅콩, 복숭아 ...
-    medical_record = models.ForeignKey('MedicalRecord', on_delete=models.CASCADE, blank=True, null=True)
+    medical_record = models.ForeignKey(MedicalRecord, on_delete=models.CASCADE, blank=True, null=True)
     # 환자의 진료 기록
     
 
@@ -136,48 +136,11 @@ class Department(models.Model):
     department = models.CharField(max_length=100)
 
 
-class MedicalRecord(models.Model):
-    diagnosis = models.TextField()
-    # 진단 내용
-    diagnostic_results = models.TextField(blank=True)
-    # 진단 결과
-    surgical_request_record = models.TextField(blank=True)
-    # 수술 요청 기록
-    surgical_result = models.TextField(blank=True)
-    # 수술 결과
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
-
-
-class Annual(models.Model):
-    # 연차 관련 테이블
-    practitioner = models.ForeignKey('Practitioner')
-    date = models.DateField()
-    # 연차 사용한 날짜
-
-
 class GeneralPractitioner():
     # 환자와 담당의사 중계 테이블
-    patient = models.ForeignKey('Patient')
-    practitioner = models.ForeignKey('Practitioner')
+    patient = models.ForeignKey('Patient', on_delete=models.CASCADE)
+    practitioner = models.ForeignKey('Practitioner', on_delete=models.CASCADE)
 
 
-class Schedule():
-    # 병원 쪽 스케줄
-    # ex) 병원 휴일, 해당 의사 연차, ...
-    department = models.ForeignKey('Department', blank=True, null=True)
-    practitioner = models.ForeignKey('Practitioner', blank=True, null=True)
-    datetime = models.DateTimeField()
 
 
-class Appointment():
-    # 환자의 예약 데이터
-    department = models.ForeignKey('Department')
-    patient = models.ForeignKey('Patient')
-    practitioner = models.ForeignKey('Practitioner', blank=True, null=True)
-    datetime = models.DateTimeField()
-    syptom = models.TextField()
-    # 증상
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
-    active = models.BooleanField()
