@@ -1,12 +1,21 @@
 from rest_framework import serializers
-from .models import Account, Patient, Practitioner, HumanName, RelatedPerson, ContactPoint, Address, MedicalRecord, Department
+from .models import  Patient, Practitioner, HumanName, RelatedPerson, ContactPoint, Address, MedicalRecord, Department
 from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
+from .models import Patient, Practitioner, HumanName, RelatedPerson, ContactPoint, Address, MedicalRecord, Department
+
 
 
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = '__all__'
+        
+    def save(self, **kwargs):
+        password = make_password(self.validated_data['password'])
+        self.validated_data['password'] = password
+        return super().save(**kwargs)
 
 
 class ContactPointSerializer(serializers.ModelSerializer):
