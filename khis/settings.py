@@ -92,7 +92,7 @@ DATABASES = {
     }
 }
 #유저모델
-AUTH_USER_MODEL = 'account.User'
+AUTH_USER_MODEL = 'account.Account'
 #토큰 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),

@@ -1,61 +1,121 @@
 from rest_framework import serializers
-from .models import User
-from django.contrib.auth import get_user_model
-from django.contrib.auth.password_validation import validate_password
+from .models import Account, Patient, Practitioner, HumanName, RelatedPerson, ContactPoint, Address, MedicalRecord, Department
 
 
-class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = '__all__'
+
+
+class ContactPointSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactPoint
+        fields = '__all__'
+
+
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = '__all__'
+
+
+class HumanNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HumanName
+        fields = '__all__'
+
+
+class MedicalRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MedicalRecord
+        fields = '__all__'
+
+
+class RelatedPersonSerializer(serializers.ModelSerializer):
+    name = HumanNameSerializer()
+    telecom = ContactPointSerializer()
+    address = AddressSerializer()
+    class Meta:
+        model = RelatedPerson
+        fields = '__all__'
+
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = '__all__'
+
+
+class PatientSerializer(serializers.ModelSerializer):
+    name = HumanNameSerializer()
+    telecom = ContactPointSerializer()
+    address = AddressSerializer(required=False)
+    related_person = RelatedPersonSerializer(required=False)
+    medical_record = MedicalRecordSerializer(required=False)
 
     class Meta:
-        model = User
-        fields = ('username', 'name', 'encrypted_rrn', 'password', 'gender',
-                  'birth_date', 'telecom', 'address', 'email')
+        model = Patient
+        fields = '__all__'
 
     def create(self, validated_data):
-        user = User.objects.create(
-            username=validated_data['username'],
-            name=validated_data['name'],
-            encrypted_rrn=validated_data['encrypted_rrn'],
-            gender=validated_data['gender'],
-            birth_date=validated_data['birth_date'],
-            telecom=validated_data['telecom'],
-            address=validated_data['address'],
-            email=validated_data['email'],
-        )
-        user.set_password(validated_data['password'])  # 비밀번호 해싱하긔
-        user.save()
-        return user
+        name_data = validated_data.pop('name', None)
+        telecom_data = validated_data.pop('telecom', None)
+        address_data = validated_data.pop('address', None)
+        related_person_data = validated_data.pop('related_person', None)
+        medical_record_data = validated_data.pop('medical_record', None)
+
+        patient = Patient.objects.create(**validated_data)
+
+        if name_data:
+            name = HumanName.objects.create(**name_data)
+            patient.name = name
+        if telecom_data:
+            telecom = ContactPoint.objects.create(**telecom_data)
+            patient.telecom = telecom
+        if address_data:
+            address = Address.objects.create(**address_data)
+            patient.address = address
+        if related_person_data:
+            related_person = RelatedPerson.objects.create(**related_person_data)
+            patient.related_person = related_person
+        if medical_record_data:
+            medical_record = MedicalRecord.objects.create(**medical_record_data)
+            patient.medical_record=medical_record
+
+        patient.save()
+        return patient
 
 
-class MedicalUserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-
+class PractitionerSerializer(serializers.ModelSerializer):
+    name = HumanNameSerializer()
+    telecom = ContactPointSerializer()
+    address = AddressSerializer(required=False)
+    department = DepartmentSerializer(required=False)
     class Meta:
-        model = User
-        fields = "__all__"
-
-    # def validate_license_number(self, value):
-    #     # 면허 번호에 대한 유효성 검증 로직 구현
-    #
-    #     return value
+        model = Practitioner
+        fields = '__all__'
 
     def create(self, validated_data):
-        user = super().create(validated_data)
-        user.license_type = validated_data['license_type']
-        user.license_number = validated_data['license_number']
-        user.save()
-        return user
+        name_data = validated_data.pop('name', None)
+        telecom_data = validated_data.pop('telecom', None)
+        address_data = validated_data.pop('address', None)
+        department_data = validated_data.pop('department', None)
 
+        prectitioner = Practitioner.objects.create(**validated_data)
 
-class UserupdateSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ('username', 'name', 'encrypted_rrn', 'password', 'gender',
-                  'birth_date', 'telecom', 'address', 'email')
-
-
-class MedicalUserupdateSerializer(serializers.ModelSerializer):
-    model = User
-    fields = "__all__"
+        if name_data:
+            name = HumanName.objects.create(**name_data)
+            prectitioner.name = name
+        if telecom_data:
+            telecom = ContactPoint.objects.create(**telecom_data)
+            prectitioner.telecom = telecom
+        if address_data:
+            address = Address.objects.create(**address_data)
+            prectitioner.address = address
+        if department_data:
+            department = Department.objects.create(**department_data)
+            prectitioner.department = department
+        
+        prectitioner.save()
+        return prectitioner
