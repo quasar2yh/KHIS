@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from account.models import Patient
 from account.serializers import PatientSerializer
-
+from .models import MedicalRecord
+from .serializer import MedicalRecordSerializer
 
 class PatientAPIView(APIView):
     # 환자 데이터 추가
@@ -26,3 +27,7 @@ class PatientAPIView(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return Response(data=serializer.data)
+    
+
+class MedicalRecordAPIView(APIView):
+    def post(self, request, medical_record_id, patient_id):

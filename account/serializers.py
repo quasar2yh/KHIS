@@ -33,12 +33,6 @@ class HumanNameSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class MedicalRecordSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MedicalRecord
-        fields = '__all__'
-
-
 class RelatedPersonSerializer(serializers.ModelSerializer):
     name = HumanNameSerializer()
     telecom = ContactPointSerializer()
