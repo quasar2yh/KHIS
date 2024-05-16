@@ -4,8 +4,9 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import AppointmentSreailizer
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from account.models import Patient
+from account.models import Patient, Account
 from .models import Appointment
+from django.contrib.auth.hashers import check_password
 
 
 class AppointMentAPIView(APIView):
@@ -31,3 +32,16 @@ class AppointMentAPIView(APIView):
         appointments = Appointment.objects.filter(patient=patient)
         serializer = AppointmentSreailizer(appointments, many=True)
         return Response(serializer.data)
+
+    def delete(self, request, patient_id):
+        patient = get_object_or_404(Patient, pk=patient_id)
+        account = patient.account
+        password = request.data.get('password')
+        appointments = Appointment.objects.filter(patient=patient)
+        if check_password(password, account.password):
+            appointments.delete()
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response("응~비번 틀림~", status=status.HTTP_400_BAD_REQUEST)
+    
+    
