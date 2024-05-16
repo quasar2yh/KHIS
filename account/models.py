@@ -107,7 +107,7 @@ class ContactPoint(models.Model):
     ]
 
     system = models.CharField(max_length=10, choices=SYSTEM_CHOICES)
-    value = models.TextField()
+    value = models.TextField(unique=True)
     use = models.CharField(max_length=10, choices=USE_CHOICES)
 
 

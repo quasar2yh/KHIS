@@ -11,3 +11,4 @@ def patient_create(request):
     if serializer.is_valid(raise_exception=True):
         serializer.save()
     return Response(data=serializer.data)
+
