@@ -39,10 +39,10 @@ class MedicalScheduleAPIView(APIView):
         # 연차 상세 조회, 수정 및 삭제
 
 
-class MedicalScheduleDetailAPIView(APIView):
-    def get(self, request, medical_id):
+# class MedicalScheduleDetailAPIView(APIView):
+#     def get(self, request, medical_id):
 
-    def put(self, request, medical_id):
+#     def put(self, request, medical_id):
 
-    def delete(self, request, medical_id):
+#     def delete(self, request, medical_id):
         
