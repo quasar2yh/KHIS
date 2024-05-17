@@ -48,16 +48,10 @@ class Patient(models.Model):
         'Address', on_delete=models.CASCADE, blank=True, null=True)
     blood_type = models.CharField(
         max_length=10, choices=BLOOD_TYPE_CHOICES, blank=True, null=True)
-    related_person = models.ForeignKey(
-        'RelatedPerson', on_delete=models.CASCADE, blank=True, null=True)
-    # 환자 관계자, 보호자
     marital_status = models.BooleanField(blank=True)
     # 환자의 결혼 여부 True | False
     allergies = models.CharField(max_length=255, blank=True)
     # 환자의 여부 ex) 땅콩, 복숭아 ...
-    medical_record = models.ForeignKey(
-        MedicalRecord, on_delete=models.CASCADE, blank=True, null=True)
-    # 환자의 진료 기록
 
 
 class Practitioner(models.Model):
@@ -89,6 +83,7 @@ class Practitioner(models.Model):
 
 
 class RelatedPerson(models.Model):
+    patient = models.ForeignKey('Patient', on_delete=models.CASCADE)
     name = models.ForeignKey('HumanName', on_delete=models.CASCADE)
     telecom = models.ForeignKey('ContactPoint', on_delete=models.CASCADE)
     gender = models.CharField(

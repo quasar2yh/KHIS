@@ -14,7 +14,7 @@ class MedicalRecordAPIView(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return Response(data=serializer.data)
-    
+
     # 환자 진료 기록 조회
     def get(self, request, patient_id):
         patient = get_object_or_404(Patient, pk=patient_id)
@@ -23,12 +23,12 @@ class MedicalRecordAPIView(APIView):
             return Response(message="진료 기록이 없습니다.")
         serializer = MedicalRecordSerializer(medical_records, many=True)
         return Response(data=serializer.data)
-    
-    # 환자 진료 기록 조회
-    def get(self, request, patient_id):
-        patient = get_object_or_404(Patient, pk=patient_id)
-        medical_records = patient.medicalrecord_set.all()
-        if not medical_records:
-            return Response(message="진료 기록이 없습니다.")
-        serializer = MedicalRecordSerializer(medical_records, many=True)
+
+    # 환자 진료 기록 수정
+    def put(self, request, patient_id, medical_record_id):
+        medical_record = get_object_or_404(MedicalRecord, pk=medical_record_id)
+        serializer = MedicalRecordSerializer(
+            data=request.data, instance=medical_record, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
         return Response(data=serializer.data)

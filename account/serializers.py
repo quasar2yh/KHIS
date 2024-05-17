@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
-from ocs.serializers import MedicalRecordSerializer
 from .models import Patient, Practitioner, HumanName, RelatedPerson, ContactPoint, Address, Department
 
 
