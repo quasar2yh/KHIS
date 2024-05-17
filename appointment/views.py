@@ -7,8 +7,6 @@ from django.shortcuts import get_object_or_404
 from account.models import Patient, Account, ContactPoint
 from .models import Appointment
 from django.contrib.auth.hashers import check_password
-import boto3
-from django.conf import settings
 
 
 class AppointMentAPIView(APIView):
@@ -27,31 +25,10 @@ class AppointMentAPIView(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
         serializer = AppointmentSreailizer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            appointment = serializer.save(patient=patient)
-            self.send_sms(appointment)
+            serializer.save(patient=patient)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def send_sms(self, appointment):
-        patient = appointment.patient
-        contact_point = ContactPoint.objects.get(
-            pk=patient.telecom.id, system='Phone')
-        phone_number = contact_point.value
-        print(settings.AWS_ACCESS_KEY_ID)
-        if phone_number:
-            sns_client = boto3.client(
-                'sns',
-                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-                region_name=settings.AWS_REGION_NAME
-            )
-            message = f"Dear , your appointment is confirmed for {
-                appointment.datetime}."
-            response = sns_client.publish(
-                PhoneNumber=phone_number,
-                Message=message
-            )
 
     def get(self, request, patient_id):
         patient = self.get_patient(patient_id)
