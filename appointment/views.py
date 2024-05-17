@@ -43,5 +43,3 @@ class AppointMentAPIView(APIView):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response("응~비번 틀림~", status=status.HTTP_400_BAD_REQUEST)
-    
-    

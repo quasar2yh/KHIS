@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from ocs.models import MedicalRecord
 
 
 GENDER_CHOICES = [
