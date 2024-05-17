@@ -3,6 +3,8 @@ from account.models import Patient, Department
 from ocs.models import MedicalRecord
 
 # Create your models here.
+
+
 class Claim(models.Model):
     STATUS_CHOICES = [
         ('Active', 'Active'),
