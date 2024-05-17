@@ -9,4 +9,4 @@ class AnnualSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Annual
-        fields = ['practitioner_id', 'date']
+        fields = ['practitioner_id', 'date', 'reason']
