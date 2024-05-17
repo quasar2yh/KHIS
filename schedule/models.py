@@ -2,7 +2,7 @@ from django.db import models
 from account.models import Department, Practitioner, Practitioner
 # Create your models here.
 
-class Schedule():
+class Schedule(models.Model):
     # 병원 쪽 스케줄
     # ex) 병원 휴일, 해당 의사 연차, ...
     department = models.ForeignKey(Department,on_delete=models.CASCADE, blank=True, null=True)

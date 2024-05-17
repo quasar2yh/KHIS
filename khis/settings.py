@@ -51,7 +51,7 @@ SYSTEM_APPS = ['django.contrib.admin',
                'drf_spectacular',
                'rest_framework_simplejwt.token_blacklist',
                'rest_framework.authtoken',
-               'rest_framework.authtoken',
+    
                ]
 
 INSTALLED_APPS = CUSTOM_APPS + SYSTEM_APPS
