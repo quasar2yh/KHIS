@@ -125,7 +125,7 @@ class PatientSerializer(serializers.ModelSerializer):
                 address_serializer.save()
 
         return instance
-    
+
 class PractitionerSerializer(serializers.ModelSerializer):
     name = HumanNameSerializer()
     telecom = ContactPointSerializer()
@@ -144,9 +144,9 @@ class PractitionerSerializer(serializers.ModelSerializer):
         name = HumanName.objects.create(**name_data)
         telecom = ContactPoint.objects.create(**telecom_data)
         address = Address.objects.create(**address_data) if address_data else None
-        department_data = Department.objects.create(**department_data) if department_data else None
+        department = Department.objects.create(**department_data) if department_data else None
 
-        practiioner = Patient.objects.create(name=name, telecom=telecom, address=address, **validated_data)
+        practiioner = Practitioner.objects.create(name=name, telecom=telecom, address=address, department=department, **validated_data)
         return practiioner
     
     def update(self, instance, validated_data):
