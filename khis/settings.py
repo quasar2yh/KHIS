@@ -37,6 +37,7 @@ CUSTOM_APPS = [
     'appointment',
     'ocs',
     'acceptance',
+    'registration',
 ]
 SYSTEM_APPS = ['django.contrib.admin',
                'django.contrib.auth',
@@ -160,3 +161,6 @@ REST_FRAMEWORK = {
     ],
 
 }
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_REGION_NAME = os.environ.get('AWS_REGION_NAME')
