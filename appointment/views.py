@@ -4,13 +4,14 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import AppointmentSreailizer
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from account.models import Patient, Account
+from account.models import Patient, Account, ContactPoint
 from .models import Appointment
 from django.contrib.auth.hashers import check_password
 
 
 class AppointMentAPIView(APIView):
     permission_classes = [IsAuthenticated]
+
     def get_patient(self, patient_id):
         return get_object_or_404(Patient, pk=patient_id)
 
