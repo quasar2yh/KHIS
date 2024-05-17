@@ -17,8 +17,9 @@ class MedicalScheduleAPIView(APIView):
             if serializer.is_valid():
                 practitioner = request.user.practitioner
                 date = serializer.validated_data['date']
+                reason = serializer.validated_data.get('reason', '')
                 annual = Annual.objects.create(
-                    practitioner=practitioner, date=date)
+                    practitioner=practitioner, date=date, reason=reason)
                 return Response({"message": "연차 신청이 완료되었습니다."}, status=status.HTTP_201_CREATED)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -36,13 +37,13 @@ class MedicalScheduleAPIView(APIView):
             # 사용자가 로그인하지 않았거나 의사가 아닌 경우
             return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
-        # 연차 상세 조회, 수정 및 삭제
 
+# # 본인 연차 상세 조회 수정 및 삭제
 
 # class MedicalScheduleDetailAPIView(APIView):
-#     def get(self, request, medical_id):
+#     def get(self, request, medical_id): #본인 연차 상세 조회
 
-#     def put(self, request, medical_id):
 
-#     def delete(self, request, medical_id):
-        
+#     # def put(self, request, medical_id): #본인 연차 상세 수정
+
+#     # def delete(self, request, medical_id): #본인 연차 취소
