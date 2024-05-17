@@ -59,5 +59,13 @@ class RelatedPersonAPIView(APIView):
             serializer.save()
         return Response(data=serializer.data)
 
-
+    # 환자 관계자 삭제
+    def delete(self, request, patient_id, related_person_id):
+        patient = get_object_or_404(Patient, pk=patient_id)
+        try:
+            related_person = patient.relatedperson_set.get(pk=related_person_id)
+        except RelatedPerson.DoesNotExist:
+            return Response({"detail":"환자 관계자가 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+        related_person.delete()
+        return Response({"detail":"환자 관계자 정보 삭제 성공"})
         
