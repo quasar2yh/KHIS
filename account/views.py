@@ -28,3 +28,5 @@ class AccountSiginAPIView(APIView):
                     practitioner = practitioner_serializer.save()
                     account_serializer.save(practitioner = practitioner)
                     return Response(practitioner_serializer.data, status=status.HTTP_201_CREATED)
+                
+                
