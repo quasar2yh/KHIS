@@ -37,6 +37,7 @@ CUSTOM_APPS = [
     'appointment',
     'ocs',
     'acceptance',
+    'registration',
 ]
 SYSTEM_APPS = ['django.contrib.admin',
                'django.contrib.auth',

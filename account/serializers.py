@@ -1,14 +1,14 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
-from .models import Patient, Practitioner, HumanName, RelatedPerson, ContactPoint, Address, MedicalRecord, Department
+from .models import Patient, Practitioner, HumanName, RelatedPerson, ContactPoint, Address, Department, CommonInfo
 
 
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = '__all__'
-        
+
     def save(self, **kwargs):
         password = make_password(self.validated_data['password'])
         self.validated_data['password'] = password
@@ -33,19 +33,59 @@ class HumanNameSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class MedicalRecordSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MedicalRecord
-        fields = '__all__'
-
-
-class RelatedPersonSerializer(serializers.ModelSerializer):
+class CommonInfoSerializer(serializers.ModelSerializer):
     name = HumanNameSerializer()
     telecom = ContactPointSerializer()
-    address = AddressSerializer()
+    address = AccountSerializer(required=False)
+
+    class Meta:
+        model = CommonInfo
+        fields = '__all__'
+
+    def create(self, validated_data):
+        name_data = validated_data.pop('name', None)
+        telecom_data = validated_data.pop('telecom', None)
+        address_data = validated_data.pop('address', None)
+
+        name = HumanName.objects.create(**name_data) if name_data else None
+        telecom = ContactPoint.objects.create(
+            **telecom_data) if telecom_data else None
+        address = Address.objects.create(
+            **address_data) if address_data else None
+
+        return {
+            'name': name,
+            'telecom': telecom,
+            'address': address,
+        }
+
+    def update(self, instance, validated_data):
+        name_data = validated_data.pop('name', None)
+        telecom_data = validated_data.pop('telecom', None)
+        address_data = validated_data.pop('address', None)
+
+        if name_data:
+            instance.name = HumanName.objects.create(**name_data)
+        if telecom_data:
+            instance.telecom = ContactPoint.objects.create(**telecom_data)
+        if address_data:
+            instance.address = Address.objects.create(**address_data)
+
+        instance.save()
+        return instance
+
+
+class RelatedPersonSerializer(CommonInfoSerializer):
     class Meta:
         model = RelatedPerson
         fields = '__all__'
+
+    def create(self, validated_data):
+        common_info = super().create(validated_data)
+        related_person = RelatedPerson.objects.create(
+            name=common_info['name'], telecom=common_info['telecom'], address=common_info['address'], **validated_data)
+
+        return related_person
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -54,135 +94,47 @@ class DepartmentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class PatientSerializer(serializers.ModelSerializer):
-    name = HumanNameSerializer()
-    telecom = ContactPointSerializer()
-    address = AddressSerializer(required=False)
-    related_person = RelatedPersonSerializer(required=False)
-    medical_record = MedicalRecordSerializer(required=False)
-
+class PatientSerializer(CommonInfoSerializer):
     class Meta:
         model = Patient
         fields = '__all__'
 
     def create(self, validated_data):
-        name_data = validated_data.pop('name', None)
-        telecom_data = validated_data.pop('telecom', None)
-        address_data = validated_data.pop('address', None)
-        related_person_data = validated_data.pop('related_person', None)
-        medical_record_data = validated_data.pop('medical_record', None)
+        common_info = super().create(validated_data)
+        patient = Patient.objects.create(
+            name=common_info['name'], telecom=common_info['telecom'], address=common_info['address'], **validated_data)
 
-        patient = Patient.objects.create(**validated_data)
-
-        if name_data:
-            name = HumanName.objects.create(**name_data)
-            patient.name = name
-        if telecom_data:
-            telecom = ContactPoint.objects.create(**telecom_data)
-            patient.telecom = telecom
-        if address_data:
-            address = Address.objects.create(**address_data)
-            patient.address = address
-        if related_person_data:
-            related_person = RelatedPerson.objects.create(**related_person_data)
-            patient.related_person = related_person
-        if medical_record_data:
-            medical_record = MedicalRecord.objects.create(**medical_record_data)
-            patient.medical_record=medical_record
-
-        patient.save()
         return patient
 
-    def update(self, instance, validated_data):
-        name_data = validated_data.pop('name', None)
-        telecom_data = validated_data.pop('telecom', None)
-        address_data = validated_data.pop('address', None)
-        related_person_data = validated_data.pop('related_person', None)
-        medical_record_data = validated_data.pop('medical_record', None)
 
-        instance = super().update(instance, validated_data)
-
-        if name_data:
-            name_serializer = HumanNameSerializer(instance.name, data=name_data)
-            if name_serializer.is_valid():
-                name_serializer.save()
-        if telecom_data:
-            telecom_serializer = ContactPointSerializer(instance.telecom, data=telecom_data)
-            if telecom_serializer.is_valid():
-                telecom_serializer.save()
-        if address_data:
-            address_serializer = AddressSerializer(instance.address, data=address_data)
-            if address_serializer.is_valid():
-                address_serializer.save()
-        if related_person_data:
-            related_person_serializer = RelatedPersonSerializer(instance.related_person, data=related_person_data)
-            if related_person_serializer.is_valid():
-                related_person_serializer.save()
-        if medical_record_data:
-            medical_record_serializer = MedicalRecordSerializer(instance.medical_record, data=medical_record_data)
-            if medical_record_serializer.is_valid():
-                medical_record_serializer.save()
-
-        instance.save()
-        return instance
-    
-class PractitionerSerializer(serializers.ModelSerializer):
-    name = HumanNameSerializer()
-    telecom = ContactPointSerializer()
-    address = AddressSerializer(required=False)
+class PractitionerSerializer(CommonInfoSerializer):
     department = DepartmentSerializer(required=False)
+
     class Meta:
         model = Practitioner
         fields = '__all__'
 
     def create(self, validated_data):
-        name_data = validated_data.pop('name', None)
-        telecom_data = validated_data.pop('telecom', None)
-        address_data = validated_data.pop('address', None)
+        common_info = super().create(validated_data)
         department_data = validated_data.pop('department', None)
 
-        prectitioner = Practitioner.objects.create(**validated_data)
+        practitioner = Practitioner.objects.create(
+            name=common_info['name'], telecom=common_info['telecom'], address=common_info['address'], **validated_data)
 
-        if name_data:
-            name = HumanName.objects.create(**name_data)
-            prectitioner.name = name
-        if telecom_data:
-            telecom = ContactPoint.objects.create(**telecom_data)
-            prectitioner.telecom = telecom
-        if address_data:
-            address = Address.objects.create(**address_data)
-            prectitioner.address = address
         if department_data:
             department = Department.objects.create(**department_data)
-            prectitioner.department = department
-        
-        prectitioner.save()
-        return prectitioner
-    
-    def update(self, instance, validated_data):
-        name_data = validated_data.pop('name', None)
-        telecom_data = validated_data.pop('telecom', None)
-        address_data = validated_data.pop('address', None)
-        department_data = validated_data.pop('department', None)
+            practitioner.department = department
 
+        return practitioner
+
+    def update(self, instance, validated_data):
+        department_data = validated_data.pop('department', None)
         instance = super().update(instance, validated_data)
 
-        if name_data:
-            name_serializer = HumanNameSerializer(instance.name, data=name_data)
-            if name_serializer.is_valid():
-                name_serializer.save()
-        if telecom_data:
-            telecom_serializer = ContactPointSerializer(instance.telecom, data=telecom_data)
-            if telecom_serializer.is_valid():
-                telecom_serializer.save()
-        if address_data:
-            address_serializer = AddressSerializer(instance.address, data=address_data)
-            if address_serializer.is_valid():
-                address_serializer.save()
         if department_data:
-            department_serializer = DepartmentSerializer(instance.department, data=department_data)
+            department_serializer = DepartmentSerializer(
+                instance.department, data=department_data)
             if department_serializer.is_valid():
                 department_serializer.save()
 
-        instance.save()
         return instance
