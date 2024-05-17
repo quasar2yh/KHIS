@@ -87,10 +87,10 @@ class RelatedPerson(models.Model):
     name = models.ForeignKey('HumanName', on_delete=models.CASCADE)
     telecom = models.ForeignKey('ContactPoint', on_delete=models.CASCADE)
     gender = models.CharField(
-        max_length=10, choices=GENDER_CHOICES, blank=True)
-    birth_date = models.DateField(blank=True)
+        max_length=10, choices=GENDER_CHOICES)
+    birth_date = models.DateField(blank=True, null=True)
     address = models.ForeignKey(
-        'Address', on_delete=models.CASCADE, blank=True)
+        'Address', on_delete=models.CASCADE, blank=True, null=True)
 
 
 class HumanName(models.Model):
