@@ -21,6 +21,9 @@ class Account(AbstractUser):
     practitioner = models.OneToOneField(
         'Practitioner', on_delete=models.CASCADE, blank=True, null=True)
 
+    def is_practitioner(self):
+        return self.subject == 'Practitioner'
+
 
 class Patient(models.Model):
 
@@ -35,20 +38,26 @@ class Patient(models.Model):
         ('RB-AB', 'RB-AB')
     ]
 
-    name = models.OneToOneField(
+    name = models.ForeignKey(
         'HumanName', on_delete=models.CASCADE, blank=True, null=True)
-    telecom = models.OneToOneField(
+    telecom = models.ForeignKey(
         'ContactPoint', on_delete=models.CASCADE, blank=True, null=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     birth_date = models.DateTimeField()
-    address = models.OneToOneField(
+    address = models.ForeignKey(
         'Address', on_delete=models.CASCADE, blank=True, null=True)
     blood_type = models.CharField(
         max_length=10, choices=BLOOD_TYPE_CHOICES, blank=True, null=True)
+    related_person = models.ForeignKey(
+        'RelatedPerson', on_delete=models.CASCADE, blank=True, null=True)
+    # 환자 관계자, 보호자
     marital_status = models.BooleanField(blank=True)
     # 환자의 결혼 여부 True | False
     allergies = models.CharField(max_length=255, blank=True)
     # 환자의 여부 ex) 땅콩, 복숭아 ...
+    medical_record = models.ForeignKey(
+        MedicalRecord, on_delete=models.CASCADE, blank=True, null=True)
+    # 환자의 진료 기록
 
 
 class Practitioner(models.Model):
@@ -58,15 +67,15 @@ class Practitioner(models.Model):
         ('Assistant', 'Assistant'),
     ]
 
-    name = models.OneToOneField(
+    name = models.ForeignKey(
         'HumanName', on_delete=models.CASCADE, blank=True, null=True)
-    telecom = models.OneToOneField(
+    telecom = models.ForeignKey(
         'ContactPoint', on_delete=models.CASCADE, blank=True, null=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     birth_date = models.DateField()
-    address = models.OneToOneField(
+    address = models.ForeignKey(
         'Address', on_delete=models.CASCADE, blank=True, null=True)
-    department = models.OneToOneField(
+    department = models.ForeignKey(
         'Department', on_delete=models.CASCADE, blank=True, null=True)
     # 해당 의료관계자의 부서
     license_type = models.CharField(max_length=10)
@@ -80,14 +89,13 @@ class Practitioner(models.Model):
 
 
 class RelatedPerson(models.Model):
-    patient = models.ForeignKey('Patient', on_delete=models.CASCADE)
-    name = models.OneToOneField('HumanName', on_delete=models.CASCADE)
-    telecom = models.OneToOneField('ContactPoint', on_delete=models.CASCADE)
+    name = models.ForeignKey('HumanName', on_delete=models.CASCADE)
+    telecom = models.ForeignKey('ContactPoint', on_delete=models.CASCADE)
     gender = models.CharField(
-        max_length=10, choices=GENDER_CHOICES, blank=True, null=True)
-    birth_date = models.DateField(blank=True, null=True)
-    address = models.OneToOneField(
-        'Address', on_delete=models.CASCADE, blank=True, null=True)
+        max_length=10, choices=GENDER_CHOICES, blank=True)
+    birth_date = models.DateField(blank=True)
+    address = models.ForeignKey(
+        'Address', on_delete=models.CASCADE, blank=True)
 
 
 class HumanName(models.Model):
