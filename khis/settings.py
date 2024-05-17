@@ -51,6 +51,7 @@ SYSTEM_APPS = ['django.contrib.admin',
                'drf_spectacular',
                'rest_framework_simplejwt.token_blacklist',
                'rest_framework.authtoken',
+
                ]
 
 INSTALLED_APPS = CUSTOM_APPS + SYSTEM_APPS
@@ -95,6 +96,8 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
 # 유저모델
 AUTH_USER_MODEL = 'account.Account'
 # 토큰
@@ -146,6 +149,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [

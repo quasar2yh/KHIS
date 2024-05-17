@@ -1,16 +1,20 @@
 from django.contrib import admin
 from django.urls import path
-from .views import ScheduleListAPIView, ScheduleDetailAPIView
+from .views import MedicalScheduleAPIView
 
+
+
+
+app_name = 'schedule'
 urlpatterns = [
     
-    path("medical/", ScheduleListAPIView.as_view(), name="medical_list"),
-    path("medical/<int:medical_id>/", ScheduleDetailAPIView.as_view(), name="medical_detail"),
+    path("medical/", MedicalScheduleAPIView.as_view(), name="medical_list"), # 연차 신청 및 조회
+    # path("medical/<int:medical_id>/", MedicalScheduleDetailAPIView.as_view(), name="medical_detail"),
+    # path("hospital/<int:medical_id>/", .as_view(), name="medical_detail"),
+    # path("hospital/{staff_id}/", .as_view(), name="medical_detail"),
     
 ]
 
-#연차신청
-#연차조회 + 연차 기간 조회
 
 
 
