@@ -14,12 +14,14 @@ class Schedule(models.Model):
 
 
 class Annual(models.Model):
-    # 연차 관련 테이블
     practitioner = models.ForeignKey(Practitioner, on_delete=models.CASCADE)
-    date = models.DateField()
-    # 연차 사용한 날짜
-    reason = models.TextField()
+
+    # 연차 사용한 날짜 (시작,끝)
+    start_date = models.DateField(db_column='start_date')
+    end_date = models.DateField(db_column='end_date')
+
     # 연차 사유
+    reason = models.TextField()
 
     def __str__(self):
-        return f"{self.practitioner} - {self.date}"
+        return f"{self.practitioner} - {self.start_date} ~ {self.end_date}"
