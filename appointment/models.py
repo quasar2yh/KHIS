@@ -1,6 +1,7 @@
 from django.db import models
 from account.models import Department, Patient, Practitioner
 from django.core.exceptions import ValidationError
+from datetime import time
 
 
 class Appointment(models.Model):
@@ -22,3 +23,7 @@ class Appointment(models.Model):
             raise ValidationError('예약 시간은 20분 단위로만 가능합니다.')
         if self.datetime.second != 0:
             raise ValidationError('예약 시간의 초는 00초만 가능합니다')
+        start_time = time(9, 0)
+        end_time = time(17, 40)
+        if not (start_time <= self.datetime.time() <= end_time):
+            raise ValidationError('예약 시간은 진료시간 내에 있어야 합니다.')

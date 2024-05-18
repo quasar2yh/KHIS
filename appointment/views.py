@@ -9,7 +9,7 @@ from .models import Appointment
 from django.contrib.auth.hashers import check_password
 
 
-class AppointMentAPIView(APIView):
+class AppointMentAPIView(APIView): # 예약기능 CRUD  
     permission_classes = [IsAuthenticated]
 
     def get_patient(self, patient_id):
@@ -59,3 +59,6 @@ class AppointMentAPIView(APIView):
                 serializer.save()
                 return Response(serializer.data)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
+    
+
+    
