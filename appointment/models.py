@@ -1,5 +1,6 @@
 from django.db import models
 from account.models import Department, Patient, Practitioner
+from django.core.exceptions import ValidationError
 
 
 class Appointment(models.Model):
@@ -15,3 +16,7 @@ class Appointment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     active = models.BooleanField()  # 예약 처리 확인  f - 끝난 예약 t 진행 예약
+
+    def clean(self):
+        if self.datetime.minute % 20 != 0:
+            raise ValidationError('예약 시간은 20분 단위로만 가능합니다.')
