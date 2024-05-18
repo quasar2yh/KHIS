@@ -11,7 +11,7 @@ class Appointment(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     practitioner = models.ForeignKey(
         Practitioner, on_delete=models.CASCADE, blank=True, null=True)
-    datetime = models.DateTimeField(unique=True)
+    datetime = models.DateTimeField()
     syptom = models.TextField()
     # 증상
     created_at = models.DateTimeField(auto_now_add=True)
@@ -27,3 +27,16 @@ class Appointment(models.Model):
         end_time = time(17, 40)
         if not (start_time <= self.datetime.time() <= end_time):
             raise ValidationError('예약 시간은 진료시간 내에 있어야 합니다.')
+
+        practitioner_appointments = Appointment.objects.filter(
+            practitioner=self.practitioner,
+            datetime=self.datetime,
+            active=True
+        ).exclude(pk=self.pk)
+
+        if practitioner_appointments.exists():
+            raise ValidationError('해당 선생님은 이미 예약이 있습니다.')
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save()
