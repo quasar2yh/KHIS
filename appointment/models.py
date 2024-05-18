@@ -10,7 +10,7 @@ class Appointment(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     practitioner = models.ForeignKey(
         Practitioner, on_delete=models.CASCADE, blank=True, null=True)
-    datetime = models.DateTimeField()
+    datetime = models.DateTimeField(unique=True)
     syptom = models.TextField()
     # 증상
     created_at = models.DateTimeField(auto_now_add=True)
@@ -20,3 +20,5 @@ class Appointment(models.Model):
     def clean(self):
         if self.datetime.minute % 20 != 0:
             raise ValidationError('예약 시간은 20분 단위로만 가능합니다.')
+        if self.datetime.second != 0:
+            raise ValidationError('예약 시간의 초는 00초만 가능합니다')

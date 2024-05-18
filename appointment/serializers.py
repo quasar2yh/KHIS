@@ -13,4 +13,8 @@ class AppointmentSreailizer(serializers.ModelSerializer):
     def validate_datetime(self, value):
         if value.minute % 20 != 0:
             raise serializers.ValidationError('예약 시간은 20분 단위로만 가능합니다.')
+        if Appointment.objects.filter(datetime=value).exists():
+            raise serializers.ValidationError("이미 예약된 시간 입니다")
+        if value.second != 0:
+            raise serializers.ValidationError('예약 시간의 초는 00초만 가능합니다')
         return value
