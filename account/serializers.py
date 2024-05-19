@@ -124,7 +124,7 @@ class PractitionerSerializer(CommonInfoSerializer):
         if department_data:
             department = Department.objects.create(**department_data)
             practitioner.department = department
-
+            practitioner.save()
         return practitioner
 
     def update(self, instance, validated_data):
