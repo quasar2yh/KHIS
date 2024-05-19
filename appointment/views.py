@@ -17,13 +17,8 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
 
     def post(self, request, patient_id):
         patient = self.get_patient(patient_id)
-        # active_appointments = Appointment.objects.filter(
-        #     patient=patient, active=True)
-
-        # if active_appointments.exists():
-        #     return Response({"detail": "이미 진행 중인 예약이 있어 새로운 예약을 할 수 없습니다."},
-        #                     status=status.HTTP_400_BAD_REQUEST)
-        serializer = AppointmentSreailizer(data=request.data)
+        serializer = AppointmentSreailizer(
+            data=request.data, context={'patient': patient})
         if serializer.is_valid(raise_exception=True):
             serializer.save(patient=patient)
             return Response(serializer.data, status=status.HTTP_201_CREATED)

@@ -33,7 +33,13 @@ class Appointment(models.Model):
             datetime=self.datetime,
             active=True
         ).exclude(pk=self.pk)
+        patient_appointments = Appointment.objects.filter(
+            patient=self.patient,
+            datetime=self.datetime
+        ).exclude(pk=self.pk)
 
+        if patient_appointments.exists():
+            raise ValidationError("환자분은 해당 시간에 다른 예약이 있습니다.")
         if practitioner_appointments.exists():
             raise ValidationError('해당 선생님은 이미 예약이 있습니다.')
 

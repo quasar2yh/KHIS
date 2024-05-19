@@ -28,12 +28,23 @@ class AppointmentSreailizer(serializers.ModelSerializer):
     def validate(self, data):
         practitioner = data.get('practitioner')
         datetime = data.get('datetime')
+        patient = self.context.get('patient')
+        print(patient, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
 
         practitioner_appointments = Appointment.objects.filter(
             practitioner=practitioner,
             datetime=datetime,
             active=True
         ).exclude(pk=self.instance.pk if self.instance else None)
+
+        patient_appointments = Appointment.objects.filter(
+            patient=patient,
+            datetime=datetime
+        ).exclude(pk=self.instance.pk if self.instance else None)
+
+        if patient_appointments.exists():
+            raise serializers.ValidationError("환자분은 해당 시간에 다른 예약이 있습니다.")
         if practitioner_appointments.exists():
             raise serializers.ValidationError('해당 선생님은 이미 예약이 있습니다.')
+
         return data
