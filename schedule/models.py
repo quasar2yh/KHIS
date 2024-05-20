@@ -1,19 +1,11 @@
 from django.db import models
 from account.models import Department, Practitioner, Practitioner
+
 # Create your models here.
 
 
-class Schedule(models.Model):
-    # 병원 쪽 스케줄
-    # ex) 병원 휴일, 해당 의사 연차, ...
-    department = models.ForeignKey(
-        Department, on_delete=models.CASCADE, blank=True, null=True)
-    practitioner = models.ForeignKey(
-        Practitioner, on_delete=models.CASCADE, blank=True, null=True)
-    datetime = models.DateTimeField()
 
-
-class Annual(models.Model):
+class Annual(models.Model): # 의료진 연차 스케줄 
     practitioner = models.ForeignKey(Practitioner, on_delete=models.CASCADE)
 
     # 연차 사용한 날짜 (시작,끝)
@@ -25,3 +17,16 @@ class Annual(models.Model):
 
     def __str__(self):
         return f"{self.practitioner} - {self.start_date} ~ {self.end_date}"
+
+
+class HospitalSchedule(models.Model):      # 병원 공휴일 관리
+
+    date = models.DateField()
+    date_name = models.CharField(max_length=255)
+    is_holiday = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.date} - {self.description}"
+    
+    
+    
