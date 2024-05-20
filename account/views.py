@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-from .serializers import AccountSerializer, PatientSerializer, PractitionerSerializer
+from .serializers import AccountSerializer, PatientSerializer, PractitionerSerializer, ChangePasswordSerializer
 from .models import Account
 
 
@@ -40,3 +40,15 @@ class AccountSiginAPIView(APIView):
             return Response({"detail": "회원탈퇴 성공"})
         else:
             return Response({"detail": "권한 없음"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangePasswordAPIView(APIView):
+    def post(self, request, account_id):
+        account = get_object_or_404(Account, pk=account_id)
+        if request.user != account:
+            return Response({"detail": "권한 없음"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = ChangePasswordSerializer(data=request.data, context={'request':request})
+        if serializer.is_valid(raise_exception=True):
+            account.set_password(request.data['new_password'])
+            account.save()
+        return Response(data={"detail":"비밀번호 변경 성공"}, status=status.HTTP_200_OK)
