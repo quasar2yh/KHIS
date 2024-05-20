@@ -35,7 +35,7 @@ class AccountSiginAPIView(APIView):
 
     def delete(self, request, account_id):
         account = get_object_or_404(Account, pk=account_id)
-        if request.user == account:
+        if request.user.is_authenticated and request.user == account:
             account.delete()
             return Response({"detail": "회원탈퇴 성공"})
         else:
@@ -45,7 +45,7 @@ class AccountSiginAPIView(APIView):
 class ChangePasswordAPIView(APIView):
     def post(self, request, account_id):
         account = get_object_or_404(Account, pk=account_id)
-        if request.user != account:
+        if not request.user.is_authenticated and request.user != account:
             return Response({"detail": "권한 없음"}, status=status.HTTP_400_BAD_REQUEST)
         serializer = ChangePasswordSerializer(data=request.data, context={'request':request})
         if serializer.is_valid(raise_exception=True):
