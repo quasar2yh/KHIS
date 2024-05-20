@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Annual
+from .models import Annual,HospitalSchedule
 from account.models import Practitioner
 
 
@@ -10,3 +10,11 @@ class AnnualSerializer(serializers.ModelSerializer):
     class Meta:
         model = Annual
         fields = ['practitioner_id', 'start_date', 'end_date', 'reason']
+        
+        
+        
+        
+class HospitalScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HospitalSchedule
+        fields = ['id', 'date', 'date_name', 'is_holiday']

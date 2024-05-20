@@ -59,3 +59,4 @@ class AppointMentAPIView(APIView):
                 serializer.save()
                 return Response(serializer.data)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
+   
