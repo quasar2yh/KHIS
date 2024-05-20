@@ -31,7 +31,8 @@ class Appointment(models.Model):
         practitioner_appointments = Appointment.objects.filter(
             practitioner=self.practitioner,
             datetime=self.datetime,
-            active=True
+            active=True,
+            department=self.department
         ).exclude(pk=self.pk)
         patient_appointments = Appointment.objects.filter(
             patient=self.patient,
@@ -41,7 +42,7 @@ class Appointment(models.Model):
         if patient_appointments.exists():
             raise ValidationError("환자분은 해당 시간에 다른 예약이 있습니다.")
         if practitioner_appointments.exists():
-            raise ValidationError('해당 선생님은 이미 예약이 있습니다.')
+            raise ValidationError('해당과의 선생님은 이미 예약이 있습니다.')
 
     def save(self, *args, **kwargs):
         self.clean()
