@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import AppointmentSreailizer
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from account.models import Patient, Account
+from account.models import Patient, Account, ContactPoint
 from .models import Appointment
 from django.contrib.auth.hashers import check_password
 
@@ -12,8 +12,11 @@ from django.contrib.auth.hashers import check_password
 class AppointMentAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
+    def get_patient(self, patient_id):
+        return get_object_or_404(Patient, pk=patient_id)
+
     def post(self, request, patient_id):
-        patient = get_object_or_404(Patient, pk=patient_id)
+        patient = self.get_patient(patient_id)
         active_appointments = Appointment.objects.filter(
             patient=patient, active=True)
 
@@ -28,13 +31,13 @@ class AppointMentAPIView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, patient_id):
-        patient = get_object_or_404(Patient, pk=patient_id)
+        patient = self.get_patient(patient_id)
         appointments = Appointment.objects.filter(patient=patient)
         serializer = AppointmentSreailizer(appointments, many=True)
         return Response(serializer.data)
 
     def delete(self, request, patient_id):
-        patient = get_object_or_404(Patient, pk=patient_id)
+        patient = self.get_patient(patient_id)
         account = patient.account
         password = request.data.get('password')
         appointments = Appointment.objects.filter(patient=patient)
@@ -43,3 +46,16 @@ class AppointMentAPIView(APIView):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response("응~비번 틀림~", status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, patient_id):
+        patient = self.get_patient(patient_id)
+        appointment = get_object_or_404(Appointment, patient=patient)
+        account = patient.account
+        login_id = request.user.id
+        if account.id == login_id:
+            serializer = AppointmentSreailizer(
+                appointment, data=request.data, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data)
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
