@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.hashers import make_password
 from .models import Patient, Practitioner, HumanName, RelatedPerson, ContactPoint, Address, Department, CommonInfo
 
@@ -8,10 +9,12 @@ class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = '__all__'
+        extra_kwargs = {'password': {'write_only': True}}
 
     def save(self, **kwargs):
-        password = make_password(self.validated_data['password'])
-        self.validated_data['password'] = password
+        password = self.validated_data.get('password', None)
+        if password:
+            self.validated_data['password'] = make_password(password)
         return super().save(**kwargs)
 
 
@@ -138,3 +141,26 @@ class PractitionerSerializer(CommonInfoSerializer):
                 department_serializer.save()
 
         return instance
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(write_only=True, required=True)
+    new_password = serializers.CharField(write_only=True, required=True)
+    confirm_password = serializers.CharField(write_only=True, required=True)
+
+    def validate(self, data):
+        user = self.context['request'].user
+        old_password = data.pop('old_password', None)
+        new_password = data.get('new_password')
+        confirm_password = data.pop('confirm_password', None)
+
+        if not user.check_password(old_password):
+            raise serializers.ValidationError("현재 비밀번호가 일치하지 않습니다.")
+        if not new_password:
+            raise serializers.ValidationError("새 비밀번호를 입력해주세요.")
+        if new_password != confirm_password:
+            raise serializers.ValidationError("비밀번호가 서로 일치하지 않습니다.")
+        if user.check_password(new_password):
+            raise serializers.ValidationError("새 비밀번호가 현재 비밀번호와 같습니다.")
+        validate_password(new_password)
+        return data
