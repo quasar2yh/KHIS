@@ -33,6 +33,17 @@ class AccountSiginAPIView(APIView):
                     account_serializer.save(practitioner=practitioner)
                     return Response(practitioner_serializer.data, status=status.HTTP_201_CREATED)
 
+    def put(self, request, account_id):
+        account = get_object_or_404(Account, pk=account_id)
+        if request.user.is_authenticated and request.user == account:
+            account_serializer = AccountSerializer(
+                instance=account, data=request.data, partial=True)
+            if account_serializer.is_valid(raise_exception=True):
+                account_serializer.save()
+                return Response(account_serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "권한 없음"}, status=status.HTTP_400_BAD_REQUEST)
+
     def delete(self, request, account_id):
         account = get_object_or_404(Account, pk=account_id)
         if request.user.is_authenticated and request.user == account:
@@ -43,12 +54,13 @@ class AccountSiginAPIView(APIView):
 
 
 class ChangePasswordAPIView(APIView):
-    def post(self, request, account_id):
+    def put(self, request, account_id):
         account = get_object_or_404(Account, pk=account_id)
         if not request.user.is_authenticated and request.user != account:
             return Response({"detail": "권한 없음"}, status=status.HTTP_400_BAD_REQUEST)
-        serializer = ChangePasswordSerializer(data=request.data, context={'request':request})
+        serializer = ChangePasswordSerializer(
+            data=request.data, context={'request': request})
         if serializer.is_valid(raise_exception=True):
             account.set_password(request.data['new_password'])
             account.save()
-        return Response(data={"detail":"비밀번호 변경 성공"}, status=status.HTTP_200_OK)
+        return Response({"detail": "비밀번호 변경 성공"}, status=status.HTTP_200_OK)

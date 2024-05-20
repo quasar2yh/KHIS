@@ -9,10 +9,12 @@ class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = '__all__'
+        extra_kwargs = {'password': {'write_only': True}}
 
     def save(self, **kwargs):
-        password = make_password(self.validated_data['password'])
-        self.validated_data['password'] = password
+        password = self.validated_data.get('password', None)
+        if password:
+            self.validated_data['password'] = make_password(password)
         return super().save(**kwargs)
 
 
