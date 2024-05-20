@@ -25,3 +25,11 @@ class Annual(models.Model):
 
     def __str__(self):
         return f"{self.practitioner} - {self.start_date} ~ {self.end_date}"
+
+
+class Holiday(models.Model):
+    date = models.DateField(unique=True)
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.name} - {self.date}"
