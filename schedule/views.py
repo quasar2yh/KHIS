@@ -8,7 +8,7 @@ from rest_framework import status
 from .models import Annual, HospitalSchedule
 from .serializers import AnnualSerializer, HospitalScheduleSerializer
 from django.utils.dateparse import parse_date
-from .utils import sync_schedules_with_holidays,save_holidays_from_api
+from .utils import sync_schedules_with_holidays, save_holidays_from_api
 
 
 # Create your views here.
@@ -35,7 +35,7 @@ class MedicalScheduleAPIView(APIView):
             return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-# 연차 조회
+# 본인 연차 조회
 
     def get(self, request):
         if request.user.is_authenticated and request.user.is_practitioner():
@@ -48,7 +48,7 @@ class MedicalScheduleAPIView(APIView):
             return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-# 특정 구간연차 조회
+# 특정 본인 구간연차 조회
 
 class SpecificScheduleAPIView(APIView):
     def get(self, request):
@@ -85,6 +85,53 @@ class SpecificScheduleAPIView(APIView):
             return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
+class MedicalIntegratedAPIView(APIView):  # 전체 직원 연차 조회
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return Response({"message": "로그인이 필요합니다."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        if not request.user.is_practitioner():
+            return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_403_FORBIDDEN)
+
+        medical_staff_schedules = Annual.objects.all()
+        medical_staff_serializer = AnnualSerializer(
+            medical_staff_schedules, many=True)
+        return Response(medical_staff_serializer.data, status=status.HTTP_200_OK)
+
+
+class MedicalSpecificIntegratedAPIView(APIView):  # 전체 직원 연차의 구간 조회
+    def get(self, request):
+        if request.user.is_authenticated and request.user.is_practitioner():
+
+            # 시작 날짜와 끝 날짜 가져오기
+            start_date_str = request.data.get('start_date')
+            end_date_str = request.data.get('end_date')
+
+            # 시작 날짜와 끝 날짜가 없으면 에러 반환
+            if not start_date_str or not end_date_str:
+                return Response({"message": "시작 날짜와 끝 날짜를 지정해야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                # 문자열을 datetime 객체로 변환
+                start_date = datetime.strptime(
+                    start_date_str, '%Y-%m-%d').date()
+                end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+            except ValueError:
+                return Response({"message": "올바른 날짜 형식이 아닙니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # 연차 조회
+            annuals = Annual.objects.filter(
+                start_date__lte=end_date,
+                end_date__gte=start_date
+            )
+
+            # 시리얼라이저를 통해 JSON 형식으로 변환하여 응답 반환
+            serializer = AnnualSerializer(annuals, many=True)
+            return Response(serializer.data)
+        else:
+            return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_401_UNAUTHORIZED)
+
+
 class HospitalScheduleAPIView(APIView):  # 병원 공휴일 관리
     def post(self, request):
         serializer = HospitalScheduleSerializer(data=request.data)
@@ -94,7 +141,7 @@ class HospitalScheduleAPIView(APIView):  # 병원 공휴일 관리
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
-        #공휴일 DB저장
+        # 공휴일 DB저장
         save_holidays_from_api()
         # 공휴일 동기화
         sync_schedules_with_holidays()
@@ -147,4 +194,3 @@ class IntegratedScheduleAPIView(APIView):
             "medical_staff_schedules": medical_staff_serializer.data
         }
         return Response(integrated_data)
- 
