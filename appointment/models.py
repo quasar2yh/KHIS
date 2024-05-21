@@ -107,3 +107,7 @@ class Appointment(models.Model):
         self.clean()
 
         super().save()
+
+
+class Waiting(models.Model):
+    appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE)

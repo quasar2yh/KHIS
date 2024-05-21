@@ -1,10 +1,11 @@
-from .models import Appointment, Practitioner, Department
+from .models import Appointment, Practitioner, Department, Waiting
 from datetime import datetime as dt, timedelta, time
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .serializers import AppointmentSreailizer, AppointmentListSerializer, PractitionerAppointmentSerializer
 from rest_framework import status
+from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from account.models import Patient, Account, ContactPoint
 from .models import Appointment
@@ -125,3 +126,34 @@ class AppointmentListAPIView(APIView):
                 return Response("detail: 예약이 가능합니다.",
                                 status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class WaitingListView(APIView):
+    def post(self, request):
+        now = timezone.now()
+        # 12시간 전
+        start_time = now - timedelta(hours=12)
+        # 1시간 후
+        end_time = now + timedelta(hours=1)
+
+        # 예약 12시간 남은 appointment 객체를 빠른 순으로 정렬해서 호출, status가 cancelled, noshow 인거 빼고
+        appointments = Appointment.objects.filter(start__gte=start_time).exclude(
+            status__in=['cancelled', 'noshow']).order_by('start')
+
+        # 이미 존재하는 대기열 들을 가져옴
+        existing_waiting_appointments = Waiting.objects.filter(appointment__in=appointments).values_list('appointment_id', flat=True)
+
+        # 대기열에 없는 예약만 필터링
+        new_appointments = appointments.exclude(id__in=existing_waiting_appointments)
+
+        # Waiting 객체로 생성
+        waitings = [Waiting(appointment=appointment) for appointment in new_appointments]
+        Waiting.objects.bulk_create(waitings)
+
+        # 1시간 지난 대기열 삭제
+        ended_waitings = Waiting.objects.filter(appointment__end__lte=end_time)
+        ended_waitings.delete()
+        
+        waitings = Waiting.objects.all()
+        serializer = AppointmentListSerializer([waiting.appointment for waiting in waitings], many=True)
+        return Response(serializer.data)
