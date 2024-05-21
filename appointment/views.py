@@ -39,10 +39,10 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
     def delete(self, request, patient_id):
         patient = self.get_patient(patient_id)
         account = patient.account
-        datetime = request.data.get('datetime')
+        start = request.data.get('start')
         password = request.data.get('password')
         appointments = Appointment.objects.filter(
-            patient=patient, datetime=datetime)
+            patient=patient, start=start)
         if check_password(password, account.password):
             appointments.delete()
             return Response(status=status.HTTP_200_OK)
