@@ -47,3 +47,19 @@ class AppointmentSreailizer(serializers.ModelSerializer):
             raise serializers.ValidationError('해당과의  선생님은 이미 예약이 있습니다.')
 
         return data
+
+
+class AppointmentListSerializer(serializers.Serializer):
+    department = serializers.PrimaryKeyRelatedField(
+        queryset=Department.objects.all(), required=False)
+    practitioner = serializers.PrimaryKeyRelatedField(
+        queryset=Practitioner.objects.all(), required=False)
+    datetime = serializers.DateTimeField(required=False)
+    date = serializers.DateField(required=False)
+    time = serializers.TimeField(required=False)
+
+
+class PractitionerAppointmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Practitioner
+        fields = ['id', 'department']
