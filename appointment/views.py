@@ -1,10 +1,12 @@
-from .models import Appointment, Practitioner, Department
+from .models import Appointment, Practitioner, Department, Waiting
 from datetime import datetime as dt, timedelta, time
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 from .serializers import AppointmentSreailizer, AppointmentListSerializer, PractitionerAppointmentSerializer
 from rest_framework import status
+from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from account.models import Patient, Account, ContactPoint
 from .models import Appointment
@@ -125,3 +127,40 @@ class AppointmentListAPIView(APIView):
                 return Response("detail: 예약이 가능합니다.",
                                 status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class WaitingListView(APIView):
+    paginator = PageNumberPagination()
+
+    def get(self, request):
+        now = timezone.now()
+        # 12시간 전
+        start_time = now - timedelta(hours=12)
+        # 1시간 후
+        end_time = now + timedelta(hours=1)
+
+        # 예약 12시간 남은 appointment 객체 호출, status가 cancelled, noshow 인거 빼고
+        appointments = Appointment.objects.filter(start__gte=start_time).exclude(
+            status__in=['cancelled', 'noshow'])
+
+        # 이미 대기열에 존재하는 예약들 가져옴
+        existing_waiting_appointments = Waiting.objects.filter(
+            appointment__in=appointments).values_list('appointment_id', flat=True)
+
+        # 대기열에 없는 예약들
+        new_appointments = appointments.exclude(id__in=existing_waiting_appointments)
+
+        # Waiting 객체로 생성
+        waitings = [Waiting(appointment=appointment) for appointment in new_appointments]
+        if waitings:
+            Waiting.objects.bulk_create(waitings)
+
+        # 1시간 지난 대기열 삭제
+        ended_waitings = Waiting.objects.filter(appointment__end__lte=end_time)
+        ended_waitings.delete()
+
+        waitings = Waiting.objects.all().order_by('appointment__start')
+
+        page = self.paginator.paginate_queryset(waitings, request, view=self)
+        serializer = AppointmentSreailizer([waiting.appointment for waiting in page], many=True)
+        return self.paginator.get_paginated_response(serializer.data)

@@ -78,7 +78,7 @@ class AppointmentListSerializer(serializers.Serializer):
         queryset=Department.objects.all(), required=False)
     practitioner = serializers.PrimaryKeyRelatedField(
         queryset=Practitioner.objects.all(), required=False)
-    datetime = serializers.DateTimeField(required=False)
+    start = serializers.DateTimeField(required=False)
     date = serializers.DateField(required=False)
     time = serializers.TimeField(required=False)
 
