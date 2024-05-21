@@ -49,7 +49,7 @@ class AppointmentSreailizer(serializers.ModelSerializer):
         else:
             minutesDuration = 50
         end = start+td(minutes=minutesDuration)
-        if start <= end:
+        if start >= end:
             raise serializers.ValidationError("예상 예약종료시간 보다 이후여야 합니다.")
         data['end'] = end
         data['minutesDuration'] = minutesDuration
@@ -78,7 +78,7 @@ class AppointmentListSerializer(serializers.Serializer):
         queryset=Department.objects.all(), required=False)
     practitioner = serializers.PrimaryKeyRelatedField(
         queryset=Practitioner.objects.all(), required=False)
-    datetime = serializers.DateTimeField(required=False)
+    start = serializers.DateTimeField(required=False)
     date = serializers.DateField(required=False)
     time = serializers.TimeField(required=False)
 

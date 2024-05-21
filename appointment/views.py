@@ -132,7 +132,7 @@ class AppointmentListAPIView(APIView):
 class WaitingListView(APIView):
     paginator = PageNumberPagination()
 
-    def post(self, request):
+    def get(self, request):
         now = timezone.now()
         # 12시간 전
         start_time = now - timedelta(hours=12)
@@ -159,14 +159,8 @@ class WaitingListView(APIView):
         ended_waitings = Waiting.objects.filter(appointment__end__lte=end_time)
         ended_waitings.delete()
 
-        waitings = Waiting.objects.all().order_by('-appointment__start')
+        waitings = Waiting.objects.all().order_by('appointment__start')
 
         page = self.paginator.paginate_queryset(waitings, request, view=self)
-        if page is not None:
-            # 페이징된 결과가 있을 경우
-            serializer = AppointmentListSerializer([waiting.appointment for waiting in page], many=True)
-            return self.paginator.get_paginated_response(serializer.data)
-        else:
-            # 페이징된 결과가 없을 경우
-            serializer = AppointmentListSerializer([waiting.appointment for waiting in waitings], many=True)
-            return Response(serializer.data)
+        serializer = AppointmentSreailizer([waiting.appointment for waiting in page], many=True)
+        return self.paginator.get_paginated_response(serializer.data)
