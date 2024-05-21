@@ -11,18 +11,26 @@ GENDER_CHOICES = [
 
 
 class CommonInfo(models.Model):
-    name = models.ForeignKey(
+    name = models.OneToOneField(
         'HumanName', on_delete=models.CASCADE, blank=True, null=True)
-    telecom = models.ForeignKey(
+    telecom = models.OneToOneField(
         'ContactPoint', on_delete=models.CASCADE, blank=True, null=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     birth_date = models.DateTimeField(blank=True, null=True)
-    address = models.ForeignKey(
+    address = models.OneToOneField(
         'Address', on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         abstract = True
 
+    def delete(self, *args, **kwargs):
+        if self.name:
+            self.name.delete()
+        if self.telecom:
+            self.telecom.delete()
+        if self.address:
+            self.address.delete()
+        return super().delete(*args, **kwargs)
 
 class Account(AbstractUser):
     SUBJECT_CHOICES = [
@@ -79,6 +87,10 @@ class Practitioner(CommonInfo):
     rank = models.IntegerField()
     # 권한 레벨 1~3
 
+    def delete(self, *args, **kwargs):
+        if self.department:
+            self.department.delete()
+        return super().delete(*args, **kwargs)
 
 class RelatedPerson(CommonInfo):
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE)

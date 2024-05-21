@@ -1,5 +1,5 @@
-from rest_framework import status
 from django.shortcuts import get_object_or_404
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from account.models import Patient
@@ -22,7 +22,7 @@ class MedicalRecordAPIView(APIView):
         medical_records = patient.medicalrecord_set.all()
         if not medical_records:
             return Response({"detail":"진료 기록이 없습니다."})
-        serializer = MedicalRecordSerializer(medical_records, many=True)
+        serializer = MedicalRecordSerializer(instance=medical_records, many=True)
         return Response(data=serializer.data)
 
     # 환자 진료 기록 수정
