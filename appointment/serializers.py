@@ -44,7 +44,7 @@ class AppointmentSreailizer(serializers.ModelSerializer):
             minutesDuration = 40
         elif appointmentType == 'followup':
             minutesDuration = 30
-        elif appointmentType == 'mergency':
+        elif appointmentType == 'emergency':
             minutesDuration = 30
         else:
             minutesDuration = 50

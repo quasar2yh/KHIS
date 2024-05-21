@@ -98,7 +98,7 @@ class Appointment(models.Model):
             self.minutesDuration = 40
         elif self.appointmentType == 'followup':
             self.minutesDuration = 30
-        elif self.appointmentType == 'mergency':
+        elif self.appointmentType == 'emergency':
             self.minutesDuration = 30
         else:
             self.minutesDuration = 50
