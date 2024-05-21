@@ -9,6 +9,7 @@ GENDER_CHOICES = [
     ('Unknown', 'Unknown'),
 ]
 
+
 class CommonInfo(models.Model):
     name = models.OneToOneField(
         'HumanName', on_delete=models.CASCADE, blank=True, null=True)
@@ -18,7 +19,7 @@ class CommonInfo(models.Model):
     birth_date = models.DateTimeField(blank=True, null=True)
     address = models.OneToOneField(
         'Address', on_delete=models.CASCADE, blank=True, null=True)
-    
+
     class Meta:
         abstract = True
 
@@ -146,7 +147,14 @@ class Address(models.Model):
 
 
 class Department(models.Model):
-    department = models.CharField(max_length=100)
+    DEPARTMENT = [
+        ('치과', '치과'),
+        ('내과', '내과'),
+        ('안과', '안과'),
+        ('외과', '외과'),
+    ]
+
+    department = models.CharField(max_length=10, choices=DEPARTMENT)
 
 
 class GeneralPractitioner():
