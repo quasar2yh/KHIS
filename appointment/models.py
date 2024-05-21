@@ -35,7 +35,7 @@ class Appointment(models.Model):
     department = models.ForeignKey(
         Department, on_delete=models.CASCADE, blank=True, null=True)
     # 예약 시작 시간
-    start = models.DateTimeField(auto_now_add=True)
+    start = models.DateTimeField()
     # 예상되는 진료 시간
     minutesDuration = models.PositiveSmallIntegerField(
         blank=True, null=True)  # 일단 null Ture 추가
@@ -50,8 +50,6 @@ class Appointment(models.Model):
     reason = models.TextField(null=True, blank=True)
     # 예약 생성 날짜
     created = models.DateTimeField(auto_now_add=True)
-    # 예약날자
-    datetime = models.DateTimeField()
     # 예약 취소 날짜
     cancellation_date = models.DateTimeField(null=True, blank=True)
     # 예약 취소 이유
@@ -62,25 +60,27 @@ class Appointment(models.Model):
     active = models.BooleanField()
 
     def clean(self):
-        if self.datetime <= timezone.now():
+        if self.start <= timezone.now():
             raise ValidationError("예약 일시는 현재 일시보다 이후여야 합니다.")
-        if self.datetime.minute % 20 != 0:
+        if self.start <= self.end:
+            raise ValidationError("예상 예약종료시간 보다 이후여야 합니다.")
+        if self.start.minute % 20 != 0:
             raise ValidationError('예약 시간은 20분 단위로만 가능합니다.')
-        if self.datetime.second != 0:
+        if self.start.second != 0:
             raise ValidationError('예약 시간의 초는 00초만 가능합니다')
         start_time = time(9, 0)
         end_time = time(17, 40)
-        if not (start_time <= self.datetime.time() <= end_time):
+        if not (start_time <= self.start.time() <= end_time):
             raise ValidationError('예약 시간은 진료시간 내에 있어야 합니다.')
         practitioner_appointments = Appointment.objects.filter(
             practitioner=self.practitioner,
-            datetime=self.datetime,
+            start=self.start,
             active=True,
             department=self.department
         ).exclude(pk=self.pk)
         patient_appointments = Appointment.objects.filter(
             patient=self.patient,
-            datetime=self.datetime
+            start=self.start
         ).exclude(pk=self.pk)
 
         if patient_appointments.exists():
@@ -98,11 +98,11 @@ class Appointment(models.Model):
             self.minutesDuration = 40
         elif self.appointmentType == 'followup':
             self.minutesDuration = 30
-        elif self.appointmentType == 'emergency':
+        elif self.appointmentType == 'mergency':
             self.minutesDuration = 30
         else:
             self.minutesDuration = 50
-        self.end = self.datetime+td(minutes=self.minutesDuration)
+        self.end = self.start+td(minutes=self.minutesDuration)
 
         self.clean()
 

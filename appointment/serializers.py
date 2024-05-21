@@ -3,13 +3,14 @@ from .models import Appointment
 from account.models import Patient, Practitioner, Department
 from datetime import time
 from django.utils import timezone
+from datetime import time, timedelta as td
 
 
 class AppointmentSreailizer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
-        fields = ['id', 'department', 'datetime',
-                  'reason', 'active', 'patient', 'practitioner', 'end', 'minutesDuration','appointmentType']
+        fields = ['id', 'department', 'start',
+                  'reason', 'active', 'patient', 'practitioner', 'end', 'minutesDuration', 'appointmentType', 'status']
         read_only_fields = ['patient']
 
     def validate_datetime(self, value):
@@ -28,18 +29,40 @@ class AppointmentSreailizer(serializers.ModelSerializer):
 
     def validate(self, data):
         practitioner = data.get('practitioner')
-        datetime = data.get('datetime')
+        start = data.get('start')
         patient = self.context.get('patient')
         department = data.get('department')
+        appointmentType = data.get('appointmentType')
+        minutesDuration = data.get('minutesDuration')
+
+        # appointmentType 따른 minutesDuration 할당
+        if appointmentType == 'routine':
+            minutesDuration = 10
+        elif appointmentType == 'walkin':
+            minutesDuration = 10
+        elif appointmentType == 'checkup':
+            minutesDuration = 40
+        elif appointmentType == 'followup':
+            minutesDuration = 30
+        elif appointmentType == 'mergency':
+            minutesDuration = 30
+        else:
+            minutesDuration = 50
+        end = start+td(minutes=minutesDuration)
+        if start <= end:
+            raise serializers.ValidationError("예상 예약종료시간 보다 이후여야 합니다.")
+        data['end'] = end
+        data['minutesDuration'] = minutesDuration
+
         practitioner_appointments = Appointment.objects.filter(
             practitioner=practitioner,
-            datetime=datetime,
+            start=start,
             active=True,
             department=department
         ).exclude(pk=self.instance.pk if self.instance else None)
         patient_appointments = Appointment.objects.filter(
             patient=patient,
-            datetime=datetime
+            start=start
         ).exclude(pk=self.instance.pk if self.instance else None)
 
         if patient_appointments.exists():
