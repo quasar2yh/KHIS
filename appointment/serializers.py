@@ -49,7 +49,7 @@ class AppointmentSreailizer(serializers.ModelSerializer):
         else:
             minutesDuration = 50
         end = start+td(minutes=minutesDuration)
-        if start <= end:
+        if start >= end:
             raise serializers.ValidationError("예상 예약종료시간 보다 이후여야 합니다.")
         data['end'] = end
         data['minutesDuration'] = minutesDuration

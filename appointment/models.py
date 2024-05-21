@@ -17,7 +17,7 @@ class Appointment(models.Model):
         ('noshow', 'No Show'),
         ('entered_in_error', 'Entered in Error'),
         ('waitlist', 'Waitlist'),
-    ])
+    ], default='booked')
     # 예약 유형
     appointmentType = models.CharField(max_length=20, choices=[
         ('routine', 'Routine'),
@@ -62,7 +62,7 @@ class Appointment(models.Model):
     def clean(self):
         if self.start <= timezone.now():
             raise ValidationError("예약 일시는 현재 일시보다 이후여야 합니다.")
-        if self.start <= self.end:
+        if self.start >= self.end:
             raise ValidationError("예상 예약종료시간 보다 이후여야 합니다.")
         if self.start.minute % 20 != 0:
             raise ValidationError('예약 시간은 20분 단위로만 가능합니다.')
