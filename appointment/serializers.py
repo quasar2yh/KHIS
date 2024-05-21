@@ -9,7 +9,7 @@ class AppointmentSreailizer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
         fields = ['id', 'department', 'datetime',
-                  'reason', 'active', 'patient', 'practitioner']
+                  'reason', 'active', 'patient', 'practitioner', 'end', 'minutesDuration','appointmentType']
         read_only_fields = ['patient']
 
     def validate_datetime(self, value):

@@ -1,7 +1,7 @@
 from django.db import models
 from account.models import Department, Patient, Practitioner
 from django.core.exceptions import ValidationError
-from datetime import time, datetime
+from datetime import time, timedelta as td
 from django.utils import timezone
 
 
@@ -90,16 +90,20 @@ class Appointment(models.Model):
 
     def save(self, *args, **kwargs):
         # appointmentType에 따라 minutesDuration 설정
-        if self.appointmentType == 'Routine':
-            self.minutesDuration = 15
-        elif self.appointmentType == 'Walkin':
-            self.minutesDuration = 20
-        elif self.appointmentType == 'Checkup':
+        if self.appointmentType == 'routine':
+            self.minutesDuration = 10
+        elif self.appointmentType == 'walkin':
+            self.minutesDuration = 10
+        elif self.appointmentType == 'checkup':
+            self.minutesDuration = 40
+        elif self.appointmentType == 'followup':
             self.minutesDuration = 30
-        elif self.appointmentType == 'Followup':
-            self.minutesDuration = 20
-        elif self.appointmentType == 'Emergency':
+        elif self.appointmentType == 'emergency':
             self.minutesDuration = 30
+        else:
+            self.minutesDuration = 50
+        self.end = self.datetime+td(minutes=self.minutesDuration)
+
         self.clean()
 
         super().save()
