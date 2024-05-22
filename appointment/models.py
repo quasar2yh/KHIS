@@ -60,17 +60,18 @@ class Appointment(models.Model):
     active = models.BooleanField()
 
     def clean(self):
-        if self.start <= timezone.now():
+        local_start = timezone.localtime(self.start)
+        local_end = timezone.localtime(self.end)
+
+        if local_start <= timezone.now():
             raise ValidationError("예약 일시는 현재 일시보다 이후여야 합니다.")
-        if self.start >= self.end:
-            raise ValidationError("예상 예약종료시간 보다 이후여야 합니다.")
-        if self.start.minute % 20 != 0:
+        if local_start.minute % 20 != 0:
             raise ValidationError('예약 시간은 20분 단위로만 가능합니다.')
-        if self.start.second != 0:
+        if local_start.second != 0:
             raise ValidationError('예약 시간의 초는 00초만 가능합니다')
         start_time = time(9, 0)
         end_time = time(17, 40)
-        if not (start_time <= self.start.time() <= end_time):
+        if not (start_time <= local_start.time() <= end_time):
             raise ValidationError('예약 시간은 진료시간 내에 있어야 합니다.')
         practitioner_appointments = Appointment.objects.filter(
             practitioner=self.practitioner,
@@ -82,6 +83,15 @@ class Appointment(models.Model):
             patient=self.patient,
             start=self.start
         ).exclude(pk=self.pk)
+        last_appointment = Appointment.objects.filter(
+            patient=self.patient).order_by('-created').first()
+        if last_appointment:
+            last_appointment_end = last_appointment.end
+            last_appointment_end_local = timezone.localtime(
+                last_appointment_end)
+            if local_start <= last_appointment_end_local:
+                raise ValidationError(
+                    "새로운 예약의 start시간은 직전 예약의 예약종료시간 보다 이후여야 합니다.")
 
         if patient_appointments.exists():
             raise ValidationError("환자분은 해당 시간에 다른 예약이 있습니다.")
@@ -89,6 +99,7 @@ class Appointment(models.Model):
             raise ValidationError('해당과의 선생님은 이미 예약이 있습니다.')
 
     def save(self, *args, **kwargs):
+
         # appointmentType에 따라 minutesDuration 설정
         if self.appointmentType == 'routine':
             self.minutesDuration = 10
@@ -105,5 +116,7 @@ class Appointment(models.Model):
         self.end = self.start+td(minutes=self.minutesDuration)
 
         self.clean()
+        self.start = timezone.localtime(self.start)
+        self.end = timezone.localtime(self.end)
 
         super().save()

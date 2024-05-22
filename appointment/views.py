@@ -1,12 +1,8 @@
-<<<<<<< HEAD
+
 from django.utils import timezone
+from .open_ai import chatgpt
 from .models import Appointment, Practitioner, Department
 from datetime import timedelta
-=======
-from .open_ai import chatgpt
-from .models import Appointment, Practitioner, Department, Waiting
-from datetime import datetime as dt, timedelta, time
->>>>>>> f2ceee0ced331a0865af3037089b471eeeb10012
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -27,9 +23,9 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
 
     def post(self, request, patient_id):
         patient = self.get_patient(patient_id)
-
+        subject = request.user.subject
         serializer = AppointmentSreailizer(
-            data=request.data, context={'patient': patient})
+            data=request.data, context={'patient': patient, 'subject': subject})
         if serializer.is_valid(raise_exception=True):
             serializer.save(patient=patient)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
