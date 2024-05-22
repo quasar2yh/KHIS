@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-from django.utils import timezone
-from .models import Appointment, Practitioner, Department
-from datetime import timedelta
-=======
 from .open_ai import chatgpt
 from .models import Appointment, Practitioner, Department, Waiting
 from datetime import datetime as dt, timedelta, time
->>>>>>> f2ceee0ced331a0865af3037089b471eeeb10012
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -17,6 +11,7 @@ from django.shortcuts import get_object_or_404
 from account.models import Patient
 from .models import Appointment
 from django.contrib.auth.hashers import check_password
+from django.utils import timezone
 
 
 class AppointMentAPIView(APIView):  # 예약기능 CRUD
