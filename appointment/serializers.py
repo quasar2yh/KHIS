@@ -103,6 +103,7 @@ class AppointmentListSerializer(serializers.Serializer):
     start = serializers.DateTimeField(required=False)
     date = serializers.DateField(required=False)
     time = serializers.TimeField(required=False)
+    practitioner_all = serializers.CharField()
 
 
 class PractitionerAppointmentSerializer(serializers.ModelSerializer):
