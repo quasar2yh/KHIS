@@ -1,3 +1,4 @@
+from .open_ai import chatgpt
 from .models import Appointment, Practitioner, Department, Waiting
 from datetime import datetime as dt, timedelta, time
 from rest_framework.views import APIView
@@ -155,7 +156,7 @@ class WaitingListView(APIView):
         # Waiting 객체로 생성
         waitings = [Waiting(appointment=appointment)
                     for appointment in new_appointments]
-        
+
         Waiting.objects.bulk_create(waitings)
 
         # 1시간 지난 대기열 삭제
@@ -164,10 +165,24 @@ class WaitingListView(APIView):
             Q(appointment__status__in=['cancelled', 'noshow', 'fulfilled'])
         )
         ended_waitings.delete()
-        
+
         waitings = Waiting.objects.all().order_by('appointment__start')
 
         page = self.paginator.paginate_queryset(waitings, request, view=self)
         serializer = AppointmentSreailizer(
             [waiting.appointment for waiting in page], many=True)
         return self.paginator.get_paginated_response(serializer.data)
+
+
+class AiConsultationView(APIView):
+    def post(self, request):
+        user_message = request.data.get('message')
+        if not user_message:
+            return Response({"error": "증상을 설명해주세요"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            ai_response = chatgpt(user_message)
+            return Response({"response": ai_response}, status=status.HTTP_200_OK)
+        except Exception as e:
+            error_message = "에러가 발생했습니다:  " + str(e)
+            return Response({"error": error_message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
