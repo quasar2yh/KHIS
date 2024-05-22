@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 from django.utils import timezone
 from .models import Appointment, Practitioner, Department
 from datetime import timedelta
+=======
+from .open_ai import chatgpt
+from .models import Appointment, Practitioner, Department, Waiting
+from datetime import datetime as dt, timedelta, time
+>>>>>>> f2ceee0ced331a0865af3037089b471eeeb10012
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -145,3 +151,17 @@ class WaitingListView(APIView):
 
         serializer = AppointmentSreailizer(page, many=True)
         return self.paginator.get_paginated_response(serializer.data)
+
+
+class AiConsultationView(APIView):
+    def post(self, request):
+        user_message = request.data.get('message')
+        if not user_message:
+            return Response({"error": "증상을 설명해주세요"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            ai_response = chatgpt(user_message)
+            return Response({"response": ai_response}, status=status.HTTP_200_OK)
+        except Exception as e:
+            error_message = "에러가 발생했습니다:  " + str(e)
+            return Response({"error": error_message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
