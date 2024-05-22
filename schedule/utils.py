@@ -19,7 +19,7 @@ def save_holidays_from_api():
     }
 
     # API 호출 및 응답 처리
-    response = requests.get(url, params=params)  # API 요청 보내기
+    response = requests.get(url, params=params)  # API 요청 보내기  
     print("save_holidays_from_api")
 
     if response.status_code == 200:  # 요청 성공 여부 확인
