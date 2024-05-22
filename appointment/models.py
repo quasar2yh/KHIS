@@ -83,6 +83,15 @@ class Appointment(models.Model):
             patient=self.patient,
             start=self.start
         ).exclude(pk=self.pk)
+        last_appointment = Appointment.objects.filter(
+            patient=self.patient).order_by('-created').first()
+        if last_appointment:
+            last_appointment_end = last_appointment.end
+            last_appointment_end_local = timezone.localtime(
+                last_appointment_end)
+            if local_start <= last_appointment_end_local:
+                raise ValidationError(
+                    "새로운 예약의 start시간은 직전 예약의 예약종료시간 보다 이후여야 합니다.")
 
         if patient_appointments.exists():
             raise ValidationError("환자분은 해당 시간에 다른 예약이 있습니다.")
