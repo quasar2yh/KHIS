@@ -21,9 +21,9 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
 
     def post(self, request, patient_id):
         patient = self.get_patient(patient_id)
-
+        subject = request.user.subject
         serializer = AppointmentSreailizer(
-            data=request.data, context={'patient': patient})
+            data=request.data, context={'patient': patient, 'subject': subject})
         if serializer.is_valid(raise_exception=True):
             serializer.save(patient=patient)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -148,10 +148,12 @@ class WaitingListView(APIView):
             appointment__in=appointments).values_list('appointment_id', flat=True)
 
         # 대기열에 없는 예약들
-        new_appointments = appointments.exclude(id__in=existing_waiting_appointments)
+        new_appointments = appointments.exclude(
+            id__in=existing_waiting_appointments)
 
         # Waiting 객체로 생성
-        waitings = [Waiting(appointment=appointment) for appointment in new_appointments]
+        waitings = [Waiting(appointment=appointment)
+                    for appointment in new_appointments]
         if waitings:
             Waiting.objects.bulk_create(waitings)
 
@@ -162,5 +164,6 @@ class WaitingListView(APIView):
         waitings = Waiting.objects.all().order_by('appointment__start')
 
         page = self.paginator.paginate_queryset(waitings, request, view=self)
-        serializer = AppointmentSreailizer([waiting.appointment for waiting in page], many=True)
+        serializer = AppointmentSreailizer(
+            [waiting.appointment for waiting in page], many=True)
         return self.paginator.get_paginated_response(serializer.data)
