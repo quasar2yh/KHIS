@@ -1,5 +1,7 @@
+
 from django.utils import timezone
-from .models import Appointment, Practitioner, Department, Waiting
+from .open_ai import chatgpt
+from .models import Appointment, Practitioner, Department
 from datetime import timedelta
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -136,10 +138,13 @@ class WaitingListView(APIView):
         now = timezone.now()
         start_time = now + timedelta(hours=12)
         end_time = now - timedelta(hours=1)
+
         appointments = Appointment.objects.filter(start__lte=start_time, end__gte=end_time).exclude(
             status__in=['cancelled', 'noshow', 'fulfilled']).order_by('start')
+
         page = self.paginator.paginate_queryset(
             appointments, request, view=self)
+
         serializer = AppointmentSreailizer(page, many=True)
         return self.paginator.get_paginated_response(serializer.data)
 
@@ -150,9 +155,9 @@ class AiConsultationView(APIView):
         if not user_message:
             return Response({"error": "증상을 설명해주세요"}, status=status.HTTP_400_BAD_REQUEST)
 
-        waitings = Waiting.objects.all().order_by('appointment__start')
-
-        page = self.paginator.paginate_queryset(waitings, request, view=self)
-        serializer = AppointmentSreailizer(
-            [waiting.appointment for waiting in page], many=True)
-        return self.paginator.get_paginated_response(serializer.data)
+        try:
+            ai_response = chatgpt(user_message)
+            return Response({"response": ai_response}, status=status.HTTP_200_OK)
+        except Exception as e:
+            error_message = "에러가 발생했습니다:  " + str(e)
+            return Response({"error": error_message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

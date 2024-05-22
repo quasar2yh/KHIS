@@ -120,7 +120,3 @@ class Appointment(models.Model):
         self.end = timezone.localtime(self.end)
 
         super().save()
-
-
-class Waiting(models.Model):
-    appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE)
