@@ -75,9 +75,11 @@ class AppointmentListAPIView(APIView):
         if serializer.is_valid():
             department = serializer.validated_data.get('department')
             practitioner = serializer.validated_data.get('practitioner')
+            start = serializer.validated_data.get('start')
+            practitioner_all = serializer.validated_data.get(
+                'practitioner_all')
             # date = serializer.validated_data.get('date')
             # time = serializer.validated_data.get('time')
-            datetime = serializer.validated_data.get('datetime')
             # if not time:
             #     return Response("시간을 선택하세요")
             # datetime = dt.combine(date, time)
@@ -86,24 +88,34 @@ class AppointmentListAPIView(APIView):
                 query = query.filter(department=department)
             if practitioner:
                 query = query.filter(practitioner=practitioner)
-            if datetime:
-                query = query.filter(datetime=datetime)
-            if not datetime and not practitioner:
-                # 의사 전체 반환
-                departments = Department.objects.get(id=department.id)
-                departments_practitioner = Department.objects.filter(
-                    department=departments.department)
-                val_department = PractitionerAppointmentSerializer(
-                    departments_practitioner, many=True)
-                return Response({
-                    "message": "해당과의 의사",
-                    "data": val_department.data
-                }, status=status.HTTP_200_OK)
+            if start:
+                query = query.filter(start=start)
+            if not start and not practitioner:
+                # 의사 전체 반환 어떻게 하징
+                if practitioner_all:
+                    departments_all = Practitioner.objects.all()
+                    all_serializer = PractitionerAppointmentSerializer(
+                        departments_all, many=True)
+                    return Response({
+                        "message": "전체 의사",
+                        "data": all_serializer.data
+                    }, status=status.HTTP_200_OK)
+                else:
+                    departments = Department.objects.get(id=department.id)
+                    departments_practitioner = Department.objects.filter(
+                        department=departments.department)
+                    val_department = PractitionerAppointmentSerializer(
+                        departments_practitioner, many=True)
+                    return Response({
+                        "message": "해당과의 의사",
+                        "data": val_department.data
+                    }, status=status.HTTP_200_OK)
 
-            if not practitioner and datetime:  # 시간만 조회
+            if not practitioner and start:  # 시간만 조회
                 # 예약된 시간대에 대한 쿼리 준비
                 booked_appointments = Appointment.objects.filter(
-                    datetime=datetime, active=True)
+                    start=start, active=True)
+                print(start)
                 # 예약된 의사 ID 가져오기
                 booked_practitioner_ids = booked_appointments.values_list(
                     'practitioner_id', flat=True)
