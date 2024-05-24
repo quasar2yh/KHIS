@@ -8,7 +8,7 @@ from rest_framework import status
 from .models import Annual, HospitalSchedule
 from .serializers import AnnualSerializer, HospitalScheduleSerializer
 from django.utils.dateparse import parse_date
-from .utils import sync_schedules_with_holidays, save_holidays_from_api
+from .utils import save_holidays_from_api
 
 
 # Create your views here.
@@ -38,9 +38,10 @@ class MedicalScheduleAPIView(APIView):
 # 본인 연차 조회
 
     def get(self, request):
-        if request.user.is_authenticated and request.user.is_practitioner():
+        if request.user.is_authenticated:
             practitioner = request.user.practitioner
-            annuals = Annual.objects.filter(practitioner=practitioner)
+            annuals = Annual.objects.filter(
+                practitioner=practitioner).order_by('-start_date')
             serializer = AnnualSerializer(annuals, many=True)
             return Response(serializer.data)
         else:
@@ -76,7 +77,7 @@ class SpecificScheduleAPIView(APIView):
                 practitioner=practitioner,
                 start_date__lte=end_date,
                 end_date__gte=start_date
-            )
+            ).order_by('-start_date')
 
             # 시리얼라이저를 통해 JSON 형식으로 변환하여 응답 반환
             serializer = AnnualSerializer(annuals, many=True)
@@ -85,7 +86,7 @@ class SpecificScheduleAPIView(APIView):
             return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class MedicalIntegratedAPIView(APIView):  # 전체 직원 연차 조회
+class MedicalIntegratedAPIView(APIView):  # 전체 직원 연차 조회 #의료진 담당자 및 환자
     def get(self, request):
         if not request.user.is_authenticated:
             return Response({"message": "로그인이 필요합니다."}, status=status.HTTP_401_UNAUTHORIZED)
@@ -93,7 +94,7 @@ class MedicalIntegratedAPIView(APIView):  # 전체 직원 연차 조회
         if not request.user.is_practitioner():
             return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_403_FORBIDDEN)
 
-        medical_staff_schedules = Annual.objects.all()
+        medical_staff_schedules = Annual.objects.all().order_by('-start_date')
         medical_staff_serializer = AnnualSerializer(
             medical_staff_schedules, many=True)
         return Response(medical_staff_serializer.data, status=status.HTTP_200_OK)
@@ -123,7 +124,7 @@ class MedicalSpecificIntegratedAPIView(APIView):  # 전체 직원 연차의 구�
             annuals = Annual.objects.filter(
                 start_date__lte=end_date,
                 end_date__gte=start_date
-            )
+            ).order_by('-start_date')
 
             # 시리얼라이저를 통해 JSON 형식으로 변환하여 응답 반환
             serializer = AnnualSerializer(annuals, many=True)
@@ -132,25 +133,18 @@ class MedicalSpecificIntegratedAPIView(APIView):  # 전체 직원 연차의 구�
             return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class HospitalScheduleAPIView(APIView):  # 병원 공휴일 관리
+class HospitalScheduleAPIView(APIView):  # 병원 자체 휴일 등록 및 조회
     def post(self, request):
         serializer = HospitalScheduleSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(is_hospital_holiday=True)  # 병원 휴일로 저장
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
-        # 공휴일 DB저장
-        save_holidays_from_api()
-        # 공휴일 동기화
-        sync_schedules_with_holidays()
-
-        # 모든 공휴일 조회
-        schedules = HospitalSchedule.objects.all()
-
-        # 직접 작성한 공휴일과 API에서 가져온 공휴일을 함께 조회
-        serializer = HospitalScheduleSerializer(schedules, many=True)
+        hospital_holidays = HospitalSchedule.objects.filter(
+            is_hospital_holiday=True)
+        serializer = HospitalScheduleSerializer(hospital_holidays, many=True)
         return Response(serializer.data)
 
 
@@ -174,6 +168,20 @@ class HospitalScheduleDetailAPIView(APIView):  # 병원 공휴일 수정 및 삭
             return Response(status=status.HTTP_204_NO_CONTENT)
         except HospitalSchedule.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class HospitalPublicScheduleAPIView(APIView): # 공휴일 조회
+    def get(self, request):
+        # 공휴일 DB 저장
+        save_holidays_from_api()
+
+        # 모든 공휴일 조회
+        public_holidays = HospitalSchedule.objects.filter(
+            is_public_holiday=True)
+
+        # 직접 작성한 공휴일과 API에서 가져온 공휴일을 함께 조회
+        serializer = HospitalScheduleSerializer(public_holidays, many=True)
+        return Response(serializer.data)
 
 
 class IntegratedScheduleAPIView(APIView):

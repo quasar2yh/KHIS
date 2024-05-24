@@ -19,7 +19,7 @@ def save_holidays_from_api():
     }
 
     # API 호출 및 응답 처리
-    response = requests.get(url, params=params)  # API 요청 보내기  
+    response = requests.get(url, params=params)  # API 요청 보내기
     print("save_holidays_from_api")
 
     if response.status_code == 200:  # 요청 성공 여부 확인
@@ -37,20 +37,11 @@ def save_holidays_from_api():
             print("date: ", date)
 
             # 중복 저장 방지를 위해 이미 저장된 공휴일인지 확인 후 저장
-            if not HospitalSchedule.objects.filter(date=date, date_name=date_name).exists():
+            if not HospitalSchedule.objects.filter(date=date, date_name=date_name, is_public_holiday=True).exists():
                 # 모델에 맞게 공휴일 정보 저장
                 HospitalSchedule.objects.create(
-                    date=date, date_name=date_name, is_holiday=True)
+                    date=date, date_name=date_name, is_public_holiday=True)
 
             else:
                 print("Error: 이미 지정된 (공)휴일 입니다", response.status_code,
                       response.text)  # 오류 메시지 출력
-
-
-def sync_schedules_with_holidays():
-    holidays = HospitalSchedule.objects.filter(is_holiday=True)  # 공휴일 필터링
-    for holiday in holidays:
-        # 이미 저장된 공휴일인지 확인 후 동기화
-        if not HospitalSchedule.objects.filter(date=holiday.date, date_name=holiday.date_name, is_holiday=True).exists():
-            HospitalSchedule.objects.create(
-                date=holiday.date, date_name=holiday.date_name, is_holiday=True)
