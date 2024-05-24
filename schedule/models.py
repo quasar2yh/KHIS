@@ -19,11 +19,12 @@ class Annual(models.Model): # 의료진 연차 스케줄
         return f"{self.practitioner} - {self.start_date} ~ {self.end_date}"
 
 
-class HospitalSchedule(models.Model):      # 병원 공휴일 관리
+class HospitalSchedule(models.Model):      # 병원 전체 휴일
 
     date = models.DateField()
     date_name = models.CharField(max_length=255)
-    is_holiday = models.BooleanField(default=True)
+    is_public_holiday = models.BooleanField(default=False)  # 공휴일 여부
+    is_hospital_holiday = models.BooleanField(default=False)  # 병원 자체 휴일 여부
 
     def __str__(self):
         return f"{self.date} - {self.description}"

@@ -17,4 +17,4 @@ class AnnualSerializer(serializers.ModelSerializer):
 class HospitalScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = HospitalSchedule
-        fields = ['id', 'date', 'date_name', 'is_holiday']
+        fields = ['id', 'date', 'date_name', 'is_hospital_holiday','is_public_holiday' ]
