@@ -1,31 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import IdPwForm from '../components/IdPwForm';
-import { useDispatch } from 'react-redux';
+import { login } from '../apis/account';
 
 function Login() {
-    const dispatch = useDispatch();
+    const [id, setId] = useState('');
+    const [pw, setPw] = useState('');
 
-    const [id, setId] = useState("");
-    const [password, setPassword] = useState("");
+    const idHandler = (event) => {
+        setId(event.target.value);
+    };
+    const pwHandler = (event) => {
+        setPw(event.target.value);
+    };
 
-    const [loading, setLoading] = useState(false);
-    const [msg, setMsg] = useState("");
+    const router = useNavigate();
+    const onSubmit = async (event) => {
+        event.preventDefault(); // 새로고침 시 폼 제출 동작 방지
+        try {
+            const result = await login(id, pw); // apis/login
 
-    useEffect(() => {
-
-    }, [msg])
-
-    const LoginFunc = (event) => {
-        event.preventDefault();
-    }
+            const { access, refresh } = result; // result를 구조 분해 할당 
+            localStorage.setItem('access', access);
+            localStorage.setItem('refresh', refresh);
+            router('/') // Home으로 리렌더링
+        } catch (error) {
+            console.error('로그인 실패:', error);
+        }
+    };
 
     return (
-        <Form className="d-flex flex-column align-items-center" onSubmit={LoginFunc}>
-            <IdPwForm onChange={handleChange} />
+        <Form className="d-flex flex-column align-items-center" onSubmit={onSubmit}>
+            <IdPwForm id={id} pw={pw} idHandler={idHandler} pwHandler={pwHandler} />
             <div className="mt-3">
                 <Button variant="primary" type="submit" className="mr-2">
                     로그인

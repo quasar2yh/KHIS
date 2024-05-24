@@ -1,8 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { logout } from '../apis/account';
 
 function Header() {
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const refresh = localStorage.getItem('refresh');
+        if (refresh) {
+            setIsLoggedIn(true); // 'refresh' 값이 존재하면 로그인 상태로 설정
+        } else {
+            setIsLoggedIn(false); // 'refresh' 값이 존재하지 않으면 로그아웃 상태로 설정
+        }
+    }, []);
 
     return (
         <Navbar expand="lg" className="bg-body-tertiary">
@@ -22,13 +32,14 @@ function Header() {
                     </Nav>
                     <Nav className="ml-auto">
                         {isLoggedIn ? (
-                            <Nav.Link href="/login">로그인</Nav.Link>
-                        ) : (
                             <NavDropdown title="Profile" id="basic-nav-dropdown">
                                 <NavDropdown.Item href="#action/3.1">내 정보</NavDropdown.Item>
                                 <NavDropdown.Item href="#action/3.2">예약 현황</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.3">로그아웃</NavDropdown.Item>
+                                <NavDropdown.Item onClick={logout} href='/'>로그아웃</NavDropdown.Item>
                             </NavDropdown>
+                        )
+                        :(
+                            <Nav.Link href="/login">로그인</Nav.Link>
                         )}
                     </Nav>
                 </Navbar.Collapse>
