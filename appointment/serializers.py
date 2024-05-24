@@ -6,12 +6,36 @@ from django.utils import timezone
 from datetime import time, timedelta as td
 
 
-class AppointmentSreailizer(serializers.ModelSerializer):
+
+
+class AppointmentDelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = ['id', 'patient', 'active', 'status',
+                  'cancellation_reason', 'cancellation_date',]
+        read_only_fields = ['active', 'status', 'patient', 'id']
+
+    def update(self, instance, validated_data):
+        instance.active = False
+        instance.status = 'cancelled'
+        instance.cancellation_reason = validated_data.get(
+            'cancellation_reason', instance.cancellation_reason)
+        instance.cancellation_date = validated_data.get(
+            'cancellation_date', timezone.now())
+        instance.save()
+        return instance
+
+
+class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
         fields = ['id', 'department', 'start',
-                  'reason', 'active', 'patient', 'practitioner', 'end', 'minutesDuration', 'appointmentType', 'status']
-        read_only_fields = ['patient']
+                  'reason', 'active', 'patient', 'practitioner', 'end', 'minutesDuration', 'appointmentType', 'status', "created"]
+        read_only_fields = ['patient', 'id']
+
+    def create(self, validated_data):
+        appointment = Appointment(**validated_data)
+        return appointment
 
     def validate_start(self, value):
         local_value = timezone.localtime(value)
@@ -103,7 +127,7 @@ class AppointmentListSerializer(serializers.Serializer):
     start = serializers.DateTimeField(required=False)
     date = serializers.DateField(required=False)
     time = serializers.TimeField(required=False)
-    practitioner_all = serializers.CharField()
+    practitioner_all = serializers.CharField(required=False)  # 전체의사 조회할때 쓰는 필드
 
 
 class PractitionerAppointmentSerializer(serializers.ModelSerializer):
