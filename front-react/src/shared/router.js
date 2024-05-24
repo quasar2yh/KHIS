@@ -5,21 +5,24 @@ import Schedule from "../pages/Schedule";
 import Layout from "../Layout/Layout";
 import Login from "../pages/Login";
 import SigninPatient from "../pages/SigninPatient";
+import { AuthProvider } from "./contexts";
 
 const Router = () => {
     return (
-        < BrowserRouter >
-            <Layout>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/appointment" element={<Appointment />} />
-                    <Route path="/schedule" element={<Schedule />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/signin/patient" element={<SigninPatient />} />
-                </Routes>
-            </Layout>
-        </BrowserRouter >
+        <AuthProvider>
+            <BrowserRouter>
+                <Layout>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/appointment" element={<Appointment />} />
+                        <Route path="/schedule" element={<Schedule />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/signin/patient" element={<SigninPatient />} />
+                    </Routes>
+                </Layout>
+            </BrowserRouter>
+        </AuthProvider>
     );
 };
 
-export default Router
+export default Router;
