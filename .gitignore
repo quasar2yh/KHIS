@@ -1,7 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,venv,visualstudiocode,pycharm,macos,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,venv,visualstudiocode,pycharm,macos,windows
 #docker
-
+.settings.py
+.manage.py
+.requirements.txt
 ### macOS ###
 # General
 .DS_Store
