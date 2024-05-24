@@ -8,6 +8,7 @@ urlpatterns = [
     path('patient/<int:patient_id>/',
          views.AppointMentAPIView.as_view(), name="appoint"),
     path('checklist/', views.AppointmentListAPIView.as_view(), name="checklist"),
-     path('waiting/', views.WaitingListView.as_view()),
-     path('chatbot/', views.AiConsultationView.as_view()),
+    path('waiting/', views.WaitingListView.as_view()),
+    path('chatbot/', views.AiConsultationView.as_view()),
+    path('date/', views.AppointMentDateAPIView.as_view())
 ]
