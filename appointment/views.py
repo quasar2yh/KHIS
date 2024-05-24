@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
-from .serializers import AppointmentSreailizer, AppointmentListSerializer, PractitionerAppointmentSerializer
+from .serializers import AppointmentSerializer, AppointmentListSerializer, PractitionerAppointmentSerializer, AppointmentDelSerializer
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from account.models import Patient
@@ -19,23 +19,30 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
     permission_classes = [IsAuthenticated]
 
     def get_patient(self, patient_id):
+
         return get_object_or_404(Patient, pk=patient_id)
 
     def post(self, request, patient_id):
         patient = self.get_patient(patient_id)
         subject = request.user.subject
-        serializer = AppointmentSreailizer(
+        serializer = AppointmentSerializer(
             data=request.data, context={'patient': patient, 'subject': subject})
         if serializer.is_valid(raise_exception=True):
-            serializer.save(patient=patient)
+            validated_data = serializer.validated_data
+            appointment = Appointment(**validated_data)
+            appointment.patient = patient
+            appointment.appointment_clean_and_save = True
+            appointment.save()
+            appointment.appointment_clean_and_save = False
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, patient_id):
         patient = self.get_patient(patient_id)
-        appointments = Appointment.objects.filter(patient=patient)
-        serializer = AppointmentSreailizer(appointments, many=True)
+        appointments = Appointment.objects.filter(
+            patient=patient).order_by('-created')
+        serializer = AppointmentSerializer(appointments, many=True)
         return Response(serializer.data)
 
     def delete(self, request, patient_id):
@@ -43,11 +50,16 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
         account = patient.account
         start = request.data.get('start')
         password = request.data.get('password')
-        appointments = Appointment.objects.filter(
+        appointment = Appointment.objects.get(
             patient=patient, start=start)
+        if not appointment.active:
+            return Response("이미 취소된 예약 ")
         if check_password(password, account.password):
-            appointments.delete()
-            return Response(status=status.HTTP_200_OK)
+            serializer = AppointmentDelSerializer(
+                appointment, data=request.data, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+            return Response({"detail": "예약이 취소되었습니다.", "data": serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response("응~비번 틀림~", status=status.HTTP_400_BAD_REQUEST)
 
@@ -57,7 +69,7 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
         account = patient.account
         login_id = request.user.id
         if account.id == login_id:
-            serializer = AppointmentSreailizer(
+            serializer = AppointmentSerializer(
                 appointment, data=request.data, partial=True)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
@@ -69,7 +81,6 @@ class AppointmentListAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-
         serializer = AppointmentListSerializer(data=request.data)
 
         if serializer.is_valid():
@@ -90,8 +101,8 @@ class AppointmentListAPIView(APIView):
                 query = query.filter(practitioner=practitioner)
             if start:
                 query = query.filter(start=start)
-            if not start and not practitioner:
-                # 의사 전체 반환 어떻게 하징
+            if not start and not practitioner:  # 일시와 진료과만 들어 왔을때
+
                 if practitioner_all:
                     departments_all = Practitioner.objects.all()
                     all_serializer = PractitionerAppointmentSerializer(
@@ -115,7 +126,6 @@ class AppointmentListAPIView(APIView):
                 # 예약된 시간대에 대한 쿼리 준비
                 booked_appointments = Appointment.objects.filter(
                     start=start, active=True)
-                print(start)
                 # 예약된 의사 ID 가져오기
                 booked_practitioner_ids = booked_appointments.values_list(
                     'practitioner_id', flat=True)
@@ -157,7 +167,7 @@ class WaitingListView(APIView):
         page = self.paginator.paginate_queryset(
             appointments, request, view=self)
 
-        serializer = AppointmentSreailizer(page, many=True)
+        serializer = AppointmentSerializer(page, many=True)
         return self.paginator.get_paginated_response(serializer.data)
 
 

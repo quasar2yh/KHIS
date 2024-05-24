@@ -58,65 +58,67 @@ class Appointment(models.Model):
     patient_instruction = models.TextField(null=True, blank=True)
     # 예약 현황
     active = models.BooleanField()
+    # 플래그 필드
+    appointment_clean_and_save = False
+    
+    def appointmentclean(self):  # 환자가 예약할때 하는 검증
+        if self.appointment_clean_and_save:
+            local_start = timezone.localtime(self.start)
+
+            if local_start <= timezone.now():
+                raise ValidationError("예약 일시는 현재 일시보다 이후여야 합니다.")
+            if local_start.minute % 20 != 0:
+                raise ValidationError('예약 시간은 20분 단위로만 가능합니다.')
+            if local_start.second != 0:
+                raise ValidationError('예약 시간의 초는 00초만 가능합니다')
+            start_time = time(9, 0)
+            end_time = time(17, 40)
+            if not (start_time <= local_start.time() <= end_time):
+                raise ValidationError('예약 시간은 진료시간 내에 있어야 합니다.')
+            practitioner_appointments = Appointment.objects.filter(
+                practitioner=self.practitioner,
+                start=self.start,
+                active=True,
+                department=self.department
+            ).exclude(pk=self.pk)
+            patient_appointments = Appointment.objects.filter(
+                patient=self.patient,
+                start=self.start
+            ).exclude(pk=self.pk)
+            last_appointment = Appointment.objects.filter(
+                patient=self.patient).order_by('-created').first()
+            if patient_appointments.exists():
+                raise ValidationError("환자분은 해당 시간에 다른 예약이 있습니다.")
+            if practitioner_appointments.exists():
+                raise ValidationError('해당과의 선생님은 이미 예약이 있습니다.')
+
+            if last_appointment:
+                last_appointment_end = last_appointment.end
+                last_appointment_end_local = timezone.localtime(
+                    last_appointment_end)
+                if local_start <= last_appointment_end_local:
+                    raise ValidationError(
+                        "새로운 예약의 start시간은 직전 예약의 예약종료시간 보다 이후여야 합니다.")
 
     def clean(self):
-        local_start = timezone.localtime(self.start)
-        local_end = timezone.localtime(self.end)
-
-        if local_start <= timezone.now():
-            raise ValidationError("예약 일시는 현재 일시보다 이후여야 합니다.")
-        if local_start.minute % 20 != 0:
-            raise ValidationError('예약 시간은 20분 단위로만 가능합니다.')
-        if local_start.second != 0:
-            raise ValidationError('예약 시간의 초는 00초만 가능합니다')
-        start_time = time(9, 0)
-        end_time = time(17, 40)
-        if not (start_time <= local_start.time() <= end_time):
-            raise ValidationError('예약 시간은 진료시간 내에 있어야 합니다.')
-        practitioner_appointments = Appointment.objects.filter(
-            practitioner=self.practitioner,
-            start=self.start,
-            active=True,
-            department=self.department
-        ).exclude(pk=self.pk)
-        patient_appointments = Appointment.objects.filter(
-            patient=self.patient,
-            start=self.start
-        ).exclude(pk=self.pk)
-        last_appointment = Appointment.objects.filter(
-            patient=self.patient).order_by('-created').first()
-        if last_appointment:
-            last_appointment_end = last_appointment.end
-            last_appointment_end_local = timezone.localtime(
-                last_appointment_end)
-            if local_start <= last_appointment_end_local:
-                raise ValidationError(
-                    "새로운 예약의 start시간은 직전 예약의 예약종료시간 보다 이후여야 합니다.")
-
-        if patient_appointments.exists():
-            raise ValidationError("환자분은 해당 시간에 다른 예약이 있습니다.")
-        if practitioner_appointments.exists():
-            raise ValidationError('해당과의 선생님은 이미 예약이 있습니다.')
+        if self.appointment_clean_and_save:
+            self.appointmentclean()
 
     def save(self, *args, **kwargs):
-
-        # appointmentType에 따라 minutesDuration 설정
-        if self.appointmentType == 'routine':
-            self.minutesDuration = 10
-        elif self.appointmentType == 'walkin':
-            self.minutesDuration = 10
-        elif self.appointmentType == 'checkup':
-            self.minutesDuration = 40
-        elif self.appointmentType == 'followup':
-            self.minutesDuration = 30
-        elif self.appointmentType == 'emergency':
-            self.minutesDuration = 30
-        else:
-            self.minutesDuration = 50
-        self.end = self.start+td(minutes=self.minutesDuration)
-
-        self.clean()
-        self.start = timezone.localtime(self.start)
-        self.end = timezone.localtime(self.end)
-
-        super().save()
+        if self.appointment_clean_and_save:
+            # appointmentType에 따라 minutesDuration 설정
+            if self.appointmentType == 'routine':
+                self.minutesDuration = 10
+            elif self.appointmentType == 'walkin':
+                self.minutesDuration = 10
+            elif self.appointmentType == 'checkup':
+                self.minutesDuration = 40
+            elif self.appointmentType == 'followup':
+                self.minutesDuration = 30
+            elif self.appointmentType == 'emergency':
+                self.minutesDuration = 30
+            else:
+                self.minutesDuration = 50
+            self.end = self.start+td(minutes=self.minutesDuration)
+            self.clean()
+        super(Appointment, self).save()
