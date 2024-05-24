@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404
 from account.models import Patient
 from .models import Appointment
 from django.contrib.auth.hashers import check_password
+from django.utils.dateparse import parse_datetime
 
 
 class AppointMentAPIView(APIView):  # 예약기능 CRUD
@@ -40,9 +41,29 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
 
     def get(self, request, patient_id):
         patient = self.get_patient(patient_id)
+        practitioner = request.query_params.get('practitioner')
+        start = request.query_params.get('start')
+        end = request.query_params.get('end')
         appointments = Appointment.objects.filter(
             patient=patient).order_by('-created')
+        if not patient:
+            return Response("환자 정보가 없습니다.")
+        if start:  # 조회 시작날자로 조회
+            start_date = parse_datetime(start)
+            if start_date:
+                appointments = appointments.filter(start__gte=start_date)
+
+        if end:
+            end_date = parse_datetime(end)
+            if end_date:
+                end_date = end_date + timedelta(days=1)
+                appointments = appointments.filter(end__lte=end_date)
+
+        if practitioner:
+            appointments = appointments.filter(practitioner=practitioner)
+
         serializer = AppointmentSerializer(appointments, many=True)
+
         return Response(serializer.data)
 
     def delete(self, request, patient_id):
@@ -75,6 +96,14 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
                 serializer.save()
                 return Response(serializer.data)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+class AppointMentDateAPIView(APIView):  # 시간으로 조회
+    def get(self, request):
+        practitioner = request.query_params.get('practitioner')
+        date = request.query_params.get('date')
+
+        return Response("가리겟겟")
 
 
 class AppointmentListAPIView(APIView):
