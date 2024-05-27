@@ -18,3 +18,9 @@ class HospitalScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = HospitalSchedule
         fields = ['id', 'date', 'date_name', 'is_hospital_holiday','is_public_holiday' ]
+
+
+class MailSerializer(serializers.Serializer): #이메일
+    email = serializers.EmailField()
+    subject = serializers.CharField(max_length=255)
+    message = serializers.CharField()

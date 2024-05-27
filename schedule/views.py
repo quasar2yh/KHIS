@@ -1,3 +1,5 @@
+from django.core.mail import send_mail
+from .serializers import MailSerializer
 import requests
 import datetime
 from datetime import datetime
@@ -37,7 +39,6 @@ class MedicalScheduleAPIView(APIView):
 
 
 # 본인 연차 조회
-
 
     def get(self, request):
         if request.user.is_authenticated:
@@ -223,3 +224,29 @@ class DepartmentScheduleAPIView(APIView):  # 부서별 연차 조회
             practitioner__in=practitioners).order_by('start_date')
         serializer = AnnualSerializer(annuals, many=True)
         return Response(serializer.data)
+
+
+class MailAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = MailSerializer(data=request.data)
+
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            subject = serializer.validated_data['subject']
+            message = serializer.validated_data['message']
+
+            try:
+                send_mail(
+                    subject,
+                    message,
+                    'ritsukoice@naver.com',  # 발신자 이메일
+                    [email],  # 수신자 이메일 리스트
+                    fail_silently=False,
+                )
+                return Response({"success": "Email sent successfully."}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
