@@ -21,8 +21,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-
-
 SECRET_KEY = os.environ.get('SECRET_KEY')
 OPEN_API_KEY = os.environ.get('OPEN_API_KEY')
 
@@ -56,12 +54,13 @@ SYSTEM_APPS = ['django.contrib.admin',
                'drf_spectacular',
                'rest_framework_simplejwt.token_blacklist',
                'rest_framework.authtoken',
-
+               'corsheaders',
                ]
 
 INSTALLED_APPS = CUSTOM_APPS + SYSTEM_APPS
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -89,27 +88,24 @@ TEMPLATES = [
     },
 ]
 
+# CORS 관련 추가
+CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:3000', 'http://localhost:3000']
+CORS_ALLOW_CREDENTIALS = True
+
+
 WSGI_APPLICATION = 'khis.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'khis_pjt_db',
-        'USER': 'ritsuko',
-        'PASSWORD': '1013',
-        'HOST': 'localhost',
-        'PORT': '',
-        'OPTIONS': {
-            'client_encoding': 'UTF8',
-        },
-
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 # 유저모델
 AUTH_USER_MODEL = 'account.Account'
@@ -123,7 +119,7 @@ SIMPLE_JWT = {
 
 
 # Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators``
+# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -173,5 +169,5 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
-    
+
 }
