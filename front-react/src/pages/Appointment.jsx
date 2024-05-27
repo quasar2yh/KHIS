@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Form, Button, Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { API_ENDPOINT } from '../shared/server';
-import instance from '../apis/accountControl';
+import { appointmentAction } from '../apis/accountControl';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 function Appointment() {
     const userId = useSelector(state => state.userReducer.userId);
     const navigate = useNavigate();
+    console.log("userId : ", userId)
 
     const [appointmentData, setAppointmentData] = useState({
         date: '',
@@ -16,14 +16,9 @@ function Appointment() {
         reason: '',
         practitioner: '',
         department: '',
-        appointmentype: 'checkup',
+        appointmentType: 'checkup',
         status: 'booked',
     });
-
-    const appointmentAction = async (data) => {
-        const response = await instance.post(API_ENDPOINT + '/khis/appointment/patient/' + userId, data);
-        return response.data;
-    };
 
     const handleChange = (e) => {
         setAppointmentData({
@@ -35,33 +30,33 @@ function Appointment() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const { date, time, reason, practitioner, department, appointmentype, status } = appointmentData
+        const { date, time, reason, practitioner, department, appointmentType, status } = appointmentData;
         const body = {
-            date,
-            time,
+            start: `${date}T${time}:00`,
             reason,
             practitioner,
             department,
-            appointmentype,
+            appointmentType,
             status,
+            active:true,
         };
 
         try {
-            const response = await appointmentAction(body);
+            const response = await appointmentAction(body, userId);
+            console.log(response)
 
-            if (response.id) {
-                alert("예약 성공")
-                navigate('/')
-            }
-            else {
-                alert("예약 실패")
+            if (response.active) {
+                alert("예약 성공");
+                navigate('/');
+            } else {
+                alert("예약 실패");
             }
         } catch (error) {
-            console.error('예약 에러', error)
-            alert("예약 중 오류가 발생했습니다.")
+            console.error('예약 에러', error);
+            alert(error);
         }
-
     };
+
     const timeOption = () => {
         const options = [];
         for (let hour = 8; hour < 18; hour++) {
@@ -79,12 +74,12 @@ function Appointment() {
             <h2>병원 예약</h2>
             <Form onSubmit={handleSubmit}>
 
-                <Form.Group as={Row} className="mb-3" controlId="formDoctor">
+                <Form.Group as={Row} className="mb-3" controlId="formDepartment">
                     <Form.Label column sm="2">부서</Form.Label>
                     <Col sm="10">
                         <Form.Control
                             as="select"
-                            name="doctor"
+                            name="department"
                             value={appointmentData.department}
                             onChange={handleChange}
                             required
@@ -120,22 +115,20 @@ function Appointment() {
                             required
                         >
                             <option>시간을 선택하세요.</option>
-                            {timeOption().map((time, index) => {
-                                return (
-                                    <option key={index} value={time}>{time}</option>
-                                );
-                            })}
+                            {timeOption().map((time, index) => (
+                                <option key={index} value={time}>{time}</option>
+                            ))}
                         </Form.Control>
                     </Col>
                 </Form.Group>
 
-                <Form.Group as={Row} className="mb-3" controlId="formDoctor">
+                <Form.Group as={Row} className="mb-3" controlId="formPractitioner">
                     <Form.Label column sm="2">의사</Form.Label>
                     <Col sm="10">
                         <Form.Control
                             as="select"
-                            name="doctor"
-                            value={appointmentData.doctor}
+                            name="practitioner"
+                            value={appointmentData.practitioner}
                             onChange={handleChange}
                             required
                         >
