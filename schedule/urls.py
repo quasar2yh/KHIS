@@ -8,7 +8,9 @@ from .views import (
     IntegratedScheduleAPIView,
     MedicalIntegratedAPIView,
     MedicalSpecificIntegratedAPIView,
-    HospitalPublicScheduleAPIView
+    HospitalPublicScheduleAPIView,
+    DepartmentListAPIView,
+    DepartmentScheduleAPIView
 )
 
 
@@ -37,11 +39,18 @@ urlpatterns = [
     path("hospital/<int:hospitalschedule_id>/", HospitalScheduleDetailAPIView.as_view(),
          name="hospital_detail_holiday"),  # 병원 자체 휴일 수정 및 삭제
 
-    path('hospital/Public', HospitalPublicScheduleAPIView.as_view(),
+    path('hospital/Public/', HospitalPublicScheduleAPIView.as_view(),
          name='hospital_Public_holiday'),  # 국가 공휴일 조회
 
     path("integration/", IntegratedScheduleAPIView.as_view(),
          name="integrated_holiday"),  # 병원 + 의료진 전체 일정 조회
 
+
+
+    path("department/", DepartmentListAPIView.as_view(),
+         name="department_list"),  # 부서 조회
+
+    path("department/<int:department_id>/", DepartmentScheduleAPIView.as_view(),
+         name="department"),  # 부서별 일정 조회
 
 ]

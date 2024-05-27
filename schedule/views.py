@@ -9,8 +9,8 @@ from .models import Annual, HospitalSchedule
 from .serializers import AnnualSerializer, HospitalScheduleSerializer
 from django.utils.dateparse import parse_date
 from .utils import save_holidays_from_api
-
-
+from account.models import Department, Practitioner
+from account.serializers import DepartmentSerializer
 # Create your views here.
 
 
@@ -170,7 +170,7 @@ class HospitalScheduleDetailAPIView(APIView):  # 병원 공휴일 수정 및 삭
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-class HospitalPublicScheduleAPIView(APIView): # 공휴일 조회
+class HospitalPublicScheduleAPIView(APIView):  # 공휴일 조회
     def get(self, request):
         # 공휴일 DB 저장
         save_holidays_from_api()
@@ -202,3 +202,19 @@ class IntegratedScheduleAPIView(APIView):
             "medical_staff_schedules": medical_staff_serializer.data
         }
         return Response(integrated_data)
+
+
+class DepartmentListAPIView(APIView):  # 부서목록 조회
+    def get(self, request):
+        departments = Department.objects.all()
+        serializer = DepartmentSerializer(departments, many=True)
+        return Response(serializer.data)
+
+
+class DepartmentScheduleAPIView(APIView):  # 부서별 연차 조회
+    def get(self, request, department_id):
+        practitioners = Practitioner.objects.filter(
+            department_id=department_id)
+        annuals = Annual.objects.filter(practitioner__in=practitioners).order_by('start_date')
+        serializer = AnnualSerializer(annuals, many=True)
+        return Response(serializer.data)
