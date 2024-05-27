@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import CommonInfoForm from '../components/CommonInfoForm';
-import { registerAction } from '../redux/modules/registerActions';
+import CommonInfoForm from './CommonInfoForm';
+import { registerAction } from '../apis/accountControl';
 
 function PractitionerRegister() {
 
@@ -16,14 +15,14 @@ function PractitionerRegister() {
         familyName: '',
         name: '',
         gender: '',
-        telecom: '',
+        contact: '',
         licenseType: '',
         licenseNumber: 0,
         role: '',
         rank: 0,
     })
 
-    const dispatch = useDispatch();
+    const roleList = ['Physician', 'Assistant']
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -33,10 +32,9 @@ function PractitionerRegister() {
         });
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-
-        const { id, password, familyName, name, gender, telecom, licenseType, licenseNumber, role, rank } = practitionerRegisterData;
+        const { id, password, familyName, name, gender, contact, licenseType, licenseNumber, role, rank } = practitionerRegisterData;
 
         const body = {
             username: id,
@@ -48,7 +46,7 @@ function PractitionerRegister() {
             gender,
             telecom: {
                 system: "Phone",
-                value: telecom,
+                value: contact,
                 use: "Mobile"
             },
             subject: "Practitioner",
@@ -59,19 +57,19 @@ function PractitionerRegister() {
             rank,
         };
 
-        dispatch(registerAction(body))
-            .then((res) => {
-                console.log("콘솔 res", res);
-                if (res.id) {
-                    alert("회원가입 성공");
-                    navigate("/login");
-                } else {
-                    alert("회원가입 실패");
-                }
-            })
-            .catch((error) => {
-                alert(error);
-            });
+        try {
+            const response = await registerAction(body);
+            console.log(response);
+            if (response.id) {
+                alert("회원가입 성공")
+                navigate('/login')
+            }
+            else {
+                alert("회원가입 실패")
+            }
+        } catch (error) {
+            alert("회원가입 중 오류가 발생했습니다.")
+        }
     };
 
 
@@ -81,7 +79,18 @@ function PractitionerRegister() {
                 registerData={practitionerRegisterData}
                 handleChange={handleChange} />
 
-            <Row>
+            <Row className="mb-3">
+                <Col xs={2}>
+                    <Form.Select aria-label="Default select example" onChange={handleChange}>
+                        <option>역할을 선택하세요.</option>
+                        {roleList.map((item) => {
+                            return <option key={item} value={item}>{item}</option>;
+                        })}
+                    </Form.Select>
+                </Col>
+            </Row>
+
+            <Row className="mb-3">
                 <Form.Group as={Col} xs={2}>
                     <Form.Label>자격 종류</Form.Label>
                     <Form.Control type="text" id='id' name="licenseType" value={practitionerRegisterData.licenseType} onChange={handleChange} />
@@ -92,21 +101,20 @@ function PractitionerRegister() {
                 </Form.Group>
             </Row>
 
-            <Row>
-                <Form.Group as={Col} xs={2}>
-                    <Form.Label>역할</Form.Label>
-                    <Form.Control type="text" id='id' name="role" value={practitionerRegisterData.role} onChange={handleChange} />
-                </Form.Group>
-                <Form.Group as={Col} xs={3}>
-                    <Form.Label>권한</Form.Label>
-                    <Form.Control type="text" id='id' name="rank" value={practitionerRegisterData.rank} onChange={handleChange} />
-                </Form.Group>
+            <Row className="mb-3">
+                <Col xs={2}>
+                    <Form.Group>
+                        <Form.Label>권한</Form.Label>
+                        <Form.Control type="text" id='id' name="rank" value={practitionerRegisterData.rank} onChange={handleChange} />
+                    </Form.Group>
+                </Col>
             </Row>
 
-
-            <Form.Group as={Col} xs={5}>
-                <Button type="submit" variant="primary">회원가입</Button>
-            </Form.Group>
+            <Row className="mb-">
+                <Form.Group as={Col} xs={5}>
+                    <Button type="submit" variant="primary">회원가입</Button>
+                </Form.Group>
+            </Row>
         </Form>
     );
 }

@@ -1,17 +1,39 @@
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import React from 'react';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
+import base64 from 'base-64';
 
 function Header() {
     const [cookies, setCookie, removeCookie] = useCookies(['access', 'refresh']);
-    const refresh = cookies.refresh; // 쿠키 값을 직접 접근
+    const refresh = cookies.refresh;
     const navigate = useNavigate();
+
+    let token = cookies.access;
+
+    if (token) {
+        try {
+            let payload = token.substring(token.indexOf('.') + 1, token.lastIndexOf('.'));
+            let decodingInfo = base64.decode(payload);
+            console.log("decodingInfo", decodingInfo);
+            let decodingInfoJson = JSON.parse(decodingInfo);
+            console.log("decodingInfoJson", decodingInfoJson);
+
+            const userId = decodingInfoJson.user_id;
+            console.log("userId", userId);
+        } catch (error) {
+            console.error('Failed to decode token', error);
+        }
+    } else {
+        console.error('No access token found');
+    }
 
     const handleLogout = () => {
         removeCookie('access', { path: '/' });
         removeCookie('refresh', { path: '/' });
         navigate('/login');
     };
+
 
     return (
         <Navbar expand="lg" className="bg-body-tertiary">

@@ -77,8 +77,8 @@ function CommonInfoForm({ registerData, handleChange }) {
                     <Form.Control
                         required
                         type="text"
-                        name="telecom"
-                        value={registerData.telecom}
+                        name="contact"
+                        value={registerData.contact}
                         onChange={handleChange}
                     />
                     <Form.Control.Feedback type="invalid">
