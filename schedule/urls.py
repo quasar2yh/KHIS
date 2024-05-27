@@ -14,7 +14,8 @@ from .views import (
     MailAPIView,
     DepartmentRegisterAPIView,
     DepartmentPractitionerAPIView,
-    DepartmentEventAPIView
+    DepartmentEventAPIView,
+    DepartmentEventDetailAPIView
 )
 
 
@@ -67,6 +68,8 @@ urlpatterns = [
      path("department/<int:department_id>/event", DepartmentEventAPIView.as_view(),
          name="department_event"),  # 부서별 일정 등록
      
+       path("department/<int:department_id>/event/<int:event_id>", DepartmentEventDetailAPIView.as_view(),
+         name="department_event_detail"),  # 부서별 일정 수정 및 삭제
      
 
     path('send_email/', MailAPIView.as_view(), name='send_email'),  # 메일 보내기
