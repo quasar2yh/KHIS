@@ -1,18 +1,17 @@
-import { useEffect, useState } from 'react';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
-import { logout } from '../apis/account';
+import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
 
 function Header() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [cookies, setCookie, removeCookie] = useCookies(['access', 'refresh']);
+    const refresh = cookies.refresh; // 쿠키 값을 직접 접근
+    const navigate = useNavigate();
 
-    useEffect(() => {
-        const refresh = localStorage.getItem('refresh');
-        if (refresh) {
-            setIsLoggedIn(true); // 'refresh' 값이 존재하면 로그인 상태로 설정
-        } else {
-            setIsLoggedIn(false); // 'refresh' 값이 존재하지 않으면 로그아웃 상태로 설정
-        }
-    }, []);
+    const handleLogout = () => {
+        removeCookie('access', { path: '/' });
+        removeCookie('refresh', { path: '/' });
+        navigate('/login');
+    };
 
     return (
         <Navbar expand="lg" className="bg-body-tertiary">
@@ -25,20 +24,19 @@ function Header() {
                         <Nav.Link href="/schedule">Schedule</Nav.Link>
                         <NavDropdown title="Department" id="basic-nav-dropdown">
                             <NavDropdown.Item href="#action/3.1">외과</NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.3">내과</NavDropdown.Item>
+                            <NavDropdown.Item href="#action/3.2">내과</NavDropdown.Item>
                             <NavDropdown.Item href="#action/3.3">치과</NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.3">나중에 List로 관리</NavDropdown.Item>
+                            <NavDropdown.Item href="#action/3.4">나중에 List로 관리</NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
                     <Nav className="ml-auto">
-                        {isLoggedIn ? (
-                            <NavDropdown title="Profile" id="basic-nav-dropdown">
+                        {refresh ? (
+                            <NavDropdown title="Profile" id="profile-nav-dropdown">
                                 <NavDropdown.Item href="#action/3.1">내 정보</NavDropdown.Item>
                                 <NavDropdown.Item href="#action/3.2">예약 현황</NavDropdown.Item>
-                                <NavDropdown.Item onClick={logout} href='/'>로그아웃</NavDropdown.Item>
+                                <NavDropdown.Item onClick={handleLogout}>로그아웃</NavDropdown.Item>
                             </NavDropdown>
-                        )
-                        :(
+                        ) : (
                             <Nav.Link href="/login">로그인</Nav.Link>
                         )}
                     </Nav>

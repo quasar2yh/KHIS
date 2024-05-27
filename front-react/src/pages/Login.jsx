@@ -3,9 +3,15 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Link, useNavigate } from 'react-router-dom';
 import IdPwForm from '../components/IdPwForm';
-import { login } from '../apis/account';
+import axios from 'axios';
+import { API_ENDPOINT } from '../shared/server';
+import { useCookies } from 'react-cookie';
 
 function Login() {
+    const [cookies, setCookie, removeCookie] = useCookies(['access', 'refresh']);
+
+    const navigate = useNavigate();
+
     const [id, setId] = useState('');
     const [pw, setPw] = useState('');
 
@@ -16,20 +22,37 @@ function Login() {
         setPw(event.target.value);
     };
 
-    const router = useNavigate();
-    const onSubmit = async (event) => {
-        event.preventDefault(); // 새로고침 시 폼 제출 동작 방지
-        try {
-            const result = await login(id, pw); // apis/login
+    const loginAction = async (data) => {
+        const response = await axios.post(API_ENDPOINT + '/khis/account/login/', data);
+        return response.data;
+    };
 
-            const { access, refresh } = result; // result를 구조 분해 할당 
-            localStorage.setItem('access', access);
-            localStorage.setItem('refresh', refresh);
-            router('/') // Home으로 리렌더링
+
+    const onSubmit = async (event) => {
+        event.preventDefault();
+        const body = {
+            username: id,
+            password: pw,
+        };
+
+        try {
+            const response = await loginAction(body);
+            console.log(response);
+
+            if (response.access) {
+                setCookie('access', response.access, { path: '/', maxAge: 3600 }); // 쿠키에 액세스 토큰 저장
+                setCookie('refresh', response.refresh, { path: '/', maxAge: 86400 }); // 쿠키에 리프레시 토큰 저장
+                // console.log("쿠키 : ", cookies.get('refresh'))
+                navigate('/');
+            } else {
+                alert('로그인 실패');
+            }
         } catch (error) {
-            console.error('로그인 실패:', error);
+            console.error('로그인 에러:', error);
+            alert('로그인 중 오류가 발생했습니다.');
         }
     };
+
 
     return (
         <Form className="d-flex flex-column align-items-center" onSubmit={onSubmit}>
@@ -38,7 +61,7 @@ function Login() {
                 <Button variant="primary" type="submit" className="mr-2">
                     로그인
                 </Button>
-                <Link to="/signin/patient">
+                <Link to="/register/patient">
                     <Button variant="primary">회원가입</Button>
                 </Link>
             </div>

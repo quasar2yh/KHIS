@@ -1,10 +1,12 @@
-import { createStore } from "redux";
-import { combineReducers } from "redux";
+import { combineReducers, createStore, applyMiddleware } from 'redux';
+import user from '../modules/user';
+import { thunk } from 'redux-thunk';
+import promiseMiddleware from "redux-promise";
 
 const rootReducer = combineReducers({
+    user
+});
 
-})
+const store = createStore(rootReducer, applyMiddleware(thunk, promiseMiddleware))
 
-const store = createStore(rootReducer);
-
-export default store;
+export { rootReducer, store };
