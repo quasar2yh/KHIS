@@ -54,6 +54,7 @@ function PatientRegister() {
         .then((res) => {
             console.log("콘솔 res", res); 
             if (res.id) {
+                alert("회원가입 성공");
                 navigate("/login");
             } else {
                 alert("회원가입 실패");

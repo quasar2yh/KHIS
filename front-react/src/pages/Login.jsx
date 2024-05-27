@@ -3,12 +3,13 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Link, useNavigate } from 'react-router-dom';
 import IdPwForm from '../components/IdPwForm';
-import { loginAction } from '../redux/modules/registerActions';
-import { useDispatch, useSelector } from 'react-redux';
-import { setCookie } from '../shared/cookie';
+import axios from 'axios';
+import { API_ENDPOINT } from '../shared/server';
+import { useCookies } from 'react-cookie';
 
 function Login() {
-    const dispatch = useDispatch();
+    const [cookies, setCookie, removeCookie] = useCookies(['access', 'refresh']);
+
     const navigate = useNavigate();
 
     const [id, setId] = useState('');
@@ -21,34 +22,36 @@ function Login() {
         setPw(event.target.value);
     };
 
+    const loginAction = async (data) => {
+        const response = await axios.post(API_ENDPOINT + '/khis/account/login/', data);
+        return response.data;
+    };
+
+
     const onSubmit = async (event) => {
-        event.preventDefault(); // 새로고침 시 폼 제출 동작 방지
+        event.preventDefault();
         const body = {
             username: id,
             password: pw,
+        };
+
+        try {
+            const response = await loginAction(body);
+            console.log(response);
+
+            if (response.access) {
+                setCookie('access', response.access, { path: '/', maxAge: 3600 }); // 쿠키에 액세스 토큰 저장
+                setCookie('refresh', response.refresh, { path: '/', maxAge: 86400 }); // 쿠키에 리프레시 토큰 저장
+                // console.log("쿠키 : ", cookies.get('refresh'))
+                navigate('/');
+            } else {
+                alert('로그인 실패');
+            }
+        } catch (error) {
+            console.error('로그인 에러:', error);
+            alert('로그인 중 오류가 발생했습니다.');
         }
-
-        const response = dispatch(loginAction(body))
-            .then((res) => {
-                    console.log(res)
-
-                if (res.access) {
-
-                    const cookie = setCookie('refresh', res.refresh, {
-                        path: "/",
-                        secure: "/",
-                    });
-                    console.log("cookie", cookie)
-                    // navigate("/")
-                }
-                else {
-                    alert("로그인 실패")
-                }
-            })
-            .catch((error) => {
-                alert(error)
-            })
-    }
+    };
 
 
     return (
