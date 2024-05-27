@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { appointmentAction } from '../apis/accountControl';
+import { appointmentAction, getDepartments } from '../apis/accountControl';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -69,12 +69,21 @@ function Appointment() {
         return options;
     };
 
+    const [departmentsList, setDepartmentsList] = useState([]);
+    
+    useEffect(() => {
+        getDepartments().then(departments => {
+            setDepartmentsList(departments);
+        });
+    }, []);
+
+    console.log("departmentsList", departmentsList)
     return (
         <div className="container mt-5">
             <h2>병원 예약</h2>
             <Form onSubmit={handleSubmit}>
 
-                <Form.Group as={Row} className="mb-3" controlId="formDepartment">
+                <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm="2">부서</Form.Label>
                     <Col sm="10">
                         <Form.Control
@@ -85,13 +94,14 @@ function Appointment() {
                             required
                         >
                             <option>부서를 선택하세요.</option>
-                            <option value="1">외과</option>
-                            <option value="2">내과</option>
+                            {departmentsList.map((department) => (
+                                <option key={department.id} value={department.department}>{department.department}</option>
+                            ))}
                         </Form.Control>
                     </Col>
                 </Form.Group>
 
-                <Form.Group as={Row} className="mb-3" controlId="formDate">
+                <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm="2">날짜</Form.Label>
                     <Col sm="10">
                         <Form.Control
@@ -104,7 +114,7 @@ function Appointment() {
                     </Col>
                 </Form.Group>
 
-                <Form.Group as={Row} className="mb-3" controlId="formTime">
+                <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm="2">시간</Form.Label>
                     <Col sm="10">
                         <Form.Control
@@ -122,7 +132,7 @@ function Appointment() {
                     </Col>
                 </Form.Group>
 
-                <Form.Group as={Row} className="mb-3" controlId="formPractitioner">
+                <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm="2">의사</Form.Label>
                     <Col sm="10">
                         <Form.Control
@@ -133,15 +143,14 @@ function Appointment() {
                             required
                         >
                             <option>의사를 선택하세요.</option>
-                            <option value="1">현효민</option>
-                            <option value="2">이윤후</option>
-                            <option value="3">안채연</option>
-                            <option value="4">이훈희</option>
+                            {departmentsList.map((department) => (
+                                <option key={department.id} value={department.department}>{department.department}</option>
+                            ))}
                         </Form.Control>
                     </Col>
                 </Form.Group>
 
-                <Form.Group as={Row} className="mb-3" controlId="formReason">
+                <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm="2">증상</Form.Label>
                     <Col sm="10">
                         <Form.Control

@@ -22,6 +22,17 @@ instance.interceptors.request.use(
     }
 );
 
+// access 토큰을 디코딩해서 user.id 얻기
+export const getUserId = (token) => {
+    try {
+        const payload = token.substring(token.indexOf('.') + 1, token.lastIndexOf('.'));
+        const decodingInfo = base64.decode(payload);
+        const decodingInfoJson = JSON.parse(decodingInfo);
+        return decodingInfoJson.user_id;
+    } catch (error) {
+        return null;
+    }
+}
 
 export const registerAction = async (data) => {
     const response = await instance.post(API_ENDPOINT + '/khis/account/register/', data);
@@ -38,20 +49,9 @@ export const appointmentAction = async (data, userId) => {
     return response.data;
 };
 
-export const getUserId = (token) => {
-    try {
-        if (!token) {
-            throw new Error('Token is undefined or empty');
-        }
+export const getDepartments = async () => {
+    const response = await instance.get(`/khis/schedule/department/`);
+    return response.data;
+};
 
-        const payload = token.substring(token.indexOf('.') + 1, token.lastIndexOf('.'));
-        const decodingInfo = base64.decode(payload);
-        const decodingInfoJson = JSON.parse(decodingInfo);
-        return decodingInfoJson.user_id;
-    } catch (error) {
-        console.error('Failed to decode token:', error);
-        return null;
-    }
-}
-
-export default { instance };
+export default instance;

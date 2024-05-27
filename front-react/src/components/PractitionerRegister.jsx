@@ -69,6 +69,7 @@ function PractitionerRegister() {
             }
         } catch (error) {
             alert("회원가입 중 오류가 발생했습니다.")
+            console.error(error)
         }
     };
 
@@ -81,10 +82,10 @@ function PractitionerRegister() {
 
             <Row className="mb-3">
                 <Col xs={2}>
-                    <Form.Select aria-label="Default select example" onChange={handleChange}>
+                    <Form.Select aria-label="Default select example" name="role" onChange={handleChange}>
                         <option>역할을 선택하세요.</option>
-                        {roleList.map((item) => {
-                            return <option key={item} value={item}>{item}</option>;
+                        {roleList.map((item, index) => {
+                            return <option  key={index} value={item}>{item}</option>;
                         })}
                     </Form.Select>
                 </Col>
@@ -93,11 +94,12 @@ function PractitionerRegister() {
             <Row className="mb-3">
                 <Form.Group as={Col} xs={2}>
                     <Form.Label>자격 종류</Form.Label>
-                    <Form.Control type="text" id='id' name="licenseType" value={practitionerRegisterData.licenseType} onChange={handleChange} />
+                    <Form.Control type="text" id='licenseType' name="licenseType" value={practitionerRegisterData.licenseType} onChange={handleChange} />
                 </Form.Group>
+
                 <Form.Group as={Col} xs={3}>
                     <Form.Label>자격 번호</Form.Label>
-                    <Form.Control type="text" id='id' name="licenseNumber" value={practitionerRegisterData.licenseNumber} onChange={handleChange} />
+                    <Form.Control type="text" id='licenseNumber' name="licenseNumber" value={practitionerRegisterData.licenseNumber} onChange={handleChange} />
                 </Form.Group>
             </Row>
 
@@ -105,7 +107,7 @@ function PractitionerRegister() {
                 <Col xs={2}>
                     <Form.Group>
                         <Form.Label>권한</Form.Label>
-                        <Form.Control type="text" id='id' name="rank" value={practitionerRegisterData.rank} onChange={handleChange} />
+                        <Form.Control type="text" id='rank' name="rank" value={practitionerRegisterData.rank} onChange={handleChange} />
                     </Form.Group>
                 </Col>
             </Row>
