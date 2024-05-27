@@ -164,3 +164,4 @@ class ChangePasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError("새 비밀번호가 현재 비밀번호와 같습니다.")
         validate_password(new_password)
         return data
+    
