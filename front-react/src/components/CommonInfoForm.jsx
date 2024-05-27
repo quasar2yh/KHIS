@@ -2,14 +2,20 @@ import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import IdPwForm from './IdPwForm';
-import '../styles.css';
 
+function CommonInfoForm({ patientRegisterData, handleChange }) {
 
-function CommonInfoForm() {
     return (
         <>
-            <IdPwForm />
+            <Form.Group as={Col} xs={5} controlId="formBasicEmail">
+                <Form.Label>Id</Form.Label>
+                <Form.Control type="text" id='id' name="id" value={patientRegisterData.id} onChange={handleChange} />
+            </Form.Group>
+
+            <Form.Group as={Col} xs={5} controlId="formBasicPassword">
+                <Form.Label>Password</Form.Label>
+                <Form.Control type="password" name="password" value={patientRegisterData.password} onChange={handleChange} />
+            </Form.Group>
 
             <Form.Group as={Col} xs={5} controlId="formBasicPassword">
                 <Form.Label>Password 확인</Form.Label>
@@ -25,6 +31,8 @@ function CommonInfoForm() {
                         name="gender"
                         type="radio"
                         id="inline-radio-1"
+                        value="Male"
+                        onChange={handleChange}
                     />
                     <Form.Check
                         inline
@@ -32,6 +40,8 @@ function CommonInfoForm() {
                         name="gender"
                         type="radio"
                         id="inline-radio-2"
+                        value="Female"
+                        onChange={handleChange}
                     />
                 </div>
             </Form.Group>
@@ -42,6 +52,9 @@ function CommonInfoForm() {
                     <Form.Control
                         required
                         type="text"
+                        name="familyName"
+                        value={patientRegisterData.familyName}
+                        onChange={handleChange}
                     />
                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                 </Form.Group>
@@ -50,6 +63,9 @@ function CommonInfoForm() {
                     <Form.Control
                         required
                         type="text"
+                        name="name"
+                        value={patientRegisterData.name}
+                        onChange={handleChange}
                     />
                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                 </Form.Group>
@@ -61,6 +77,9 @@ function CommonInfoForm() {
                     <Form.Control
                         required
                         type="text"
+                        name="telecom"
+                        value={patientRegisterData.telecom}
+                        onChange={handleChange}
                     />
                     <Form.Control.Feedback type="invalid">
                         유효한 연락처를 입력하세요.
@@ -71,4 +90,4 @@ function CommonInfoForm() {
     )
 }
 
-export default CommonInfoForm
+export default CommonInfoForm;

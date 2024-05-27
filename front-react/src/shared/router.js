@@ -4,24 +4,27 @@ import Appointment from "../pages/Appointment";
 import Schedule from "../pages/Schedule";
 import Layout from "../Layout/Layout";
 import Login from "../pages/Login";
-import SigninPatient from "../pages/SigninPatient";
-import { AuthProvider } from "./contexts";
+import PatientRegister from "../pages/PatientRegister";
+import TokenRefresher from "../components/TokenRefresher";
+import { CookiesProvider } from 'react-cookie';
 
 const Router = () => {
     return (
-        <AuthProvider>
-            <BrowserRouter>
-                <Layout>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/appointment" element={<Appointment />} />
-                        <Route path="/schedule" element={<Schedule />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/signin/patient" element={<SigninPatient />} />
-                    </Routes>
-                </Layout>
-            </BrowserRouter>
-        </AuthProvider>
+        <BrowserRouter>
+            <CookiesProvider>
+                <TokenRefresher>
+                    <Layout>
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/appointment" element={<Appointment />} />
+                            <Route path="/schedule" element={<Schedule />} />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/register/patient" element={<PatientRegister />} />
+                        </Routes>
+                    </Layout>
+                </TokenRefresher>
+            </CookiesProvider>
+        </BrowserRouter>
     );
 };
 

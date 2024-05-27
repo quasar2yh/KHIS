@@ -1,12 +1,12 @@
 import React from 'react'
 
-function Progfile() {
+function Profile() {
     useEffect(() => {
-        
+
     }, [])
     return (
         <div>Progfile</div>
     )
 }
 
-export default Progfile
+export default Profile
