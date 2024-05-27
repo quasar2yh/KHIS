@@ -3,18 +3,18 @@ import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 
-function CommonInfoForm({ patientRegisterData, handleChange }) {
+function CommonInfoForm({ registerData, handleChange }) {
 
     return (
         <>
             <Form.Group as={Col} xs={5} controlId="formBasicEmail">
                 <Form.Label>Id</Form.Label>
-                <Form.Control type="text" id='id' name="id" value={patientRegisterData.id} onChange={handleChange} />
+                <Form.Control type="text" id='id' name="id" value={registerData.id} onChange={handleChange} />
             </Form.Group>
 
             <Form.Group as={Col} xs={5} controlId="formBasicPassword">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" name="password" value={patientRegisterData.password} onChange={handleChange} />
+                <Form.Control type="password" name="password" value={registerData.password} onChange={handleChange} />
             </Form.Group>
 
             <Form.Group as={Col} xs={5} controlId="formBasicPassword">
@@ -53,7 +53,7 @@ function CommonInfoForm({ patientRegisterData, handleChange }) {
                         required
                         type="text"
                         name="familyName"
-                        value={patientRegisterData.familyName}
+                        value={registerData.familyName}
                         onChange={handleChange}
                     />
                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
@@ -64,7 +64,7 @@ function CommonInfoForm({ patientRegisterData, handleChange }) {
                         required
                         type="text"
                         name="name"
-                        value={patientRegisterData.name}
+                        value={registerData.name}
                         onChange={handleChange}
                     />
                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
@@ -78,7 +78,7 @@ function CommonInfoForm({ patientRegisterData, handleChange }) {
                         required
                         type="text"
                         name="telecom"
-                        value={patientRegisterData.telecom}
+                        value={registerData.telecom}
                         onChange={handleChange}
                     />
                     <Form.Control.Feedback type="invalid">

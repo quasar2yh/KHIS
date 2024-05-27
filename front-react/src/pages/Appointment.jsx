@@ -9,7 +9,7 @@ function Appointment() {
         time: '',
         doctor: '',
         reason: '',
-        contact: '' // 연락처 필드 추가
+        contact: ''
     });
 
     const handleChange = (e) => {
@@ -43,7 +43,7 @@ function Appointment() {
                     </Col>
                 </Form.Group>
 
-                <Form.Group as={Row} className="mb-3" controlId="formContact"> {/* 연락처 입력 부분 */}
+                <Form.Group as={Row} className="mb-3" controlId="formContact">
                     <Form.Label column sm="2">연락처</Form.Label>
                     <Col sm="10">
                         <Form.Control

@@ -111,7 +111,7 @@ class PatientSerializer(CommonInfoSerializer):
 
 
 class PractitionerSerializer(CommonInfoSerializer):
-    department = DepartmentSerializer(required=False)
+    # department = DepartmentSerializer(required=False)
 
     class Meta:
         model = Practitioner
@@ -125,8 +125,8 @@ class PractitionerSerializer(CommonInfoSerializer):
             name=common_info['name'], telecom=common_info['telecom'], address=common_info['address'], **validated_data)
 
         if department_data:
-            department = Department.objects.create(**department_data)
-            practitioner.department = department
+            # department = Department.objects.get(id = department_data)
+            practitioner.department = department_data
             practitioner.save()
         return practitioner
 

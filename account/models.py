@@ -32,6 +32,7 @@ class CommonInfo(models.Model):
             self.address.delete()
         return super().delete(*args, **kwargs)
 
+
 class Account(AbstractUser):
     SUBJECT_CHOICES = [
         ("Patient", 'Patient'),
@@ -91,6 +92,7 @@ class Practitioner(CommonInfo):
         if self.department:
             self.department.delete()
         return super().delete(*args, **kwargs)
+
 
 class RelatedPerson(CommonInfo):
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE)
@@ -153,7 +155,7 @@ class Department(models.Model):
         ('안과', '안과'),
         ('외과', '외과'),
     ]
-
+    
     department = models.CharField(max_length=10, choices=DEPARTMENT)
 
 
