@@ -245,8 +245,23 @@ class MailAPIView(APIView):
                     [email],  # 수신자 이메일 리스트
                     fail_silently=False,
                 )
-                return Response({"success": "Email sent successfully."}, status=status.HTTP_200_OK)
+                return Response({"success": "메일이 성공적으로 발송되었습니다"}, status=status.HTTP_200_OK)
             except Exception as e:
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DepartmentRegisterAPIView(APIView):  # 부서등록
+    def post(self, request):
+        department_name = request.data.get('department_name')
+
+        # 부서 이름 중복 확인
+        if Department.objects.filter(department_name=department_name).exists():
+            return Response({'error': '부서 이름이 이미 존재합니다.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = DepartmentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()  # 데이터를 데이터베이스에 저장
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

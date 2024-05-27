@@ -11,7 +11,8 @@ from .views import (
     HospitalPublicScheduleAPIView,
     DepartmentListAPIView,
     DepartmentScheduleAPIView,
-    MailAPIView
+    MailAPIView,
+    DepartmentRegisterAPIView,
 )
 
 
@@ -45,8 +46,10 @@ urlpatterns = [
 
     path("integration/", IntegratedScheduleAPIView.as_view(),
          name="integrated_holiday"),  # 병원 + 의료진 전체 일정 조회
-
-
+    
+    
+    path("department_Register/", DepartmentRegisterAPIView.as_view(),
+         name="department_list"),  # 부서 등록
 
     path("department/", DepartmentListAPIView.as_view(),
          name="department_list"),  # 부서 조회
