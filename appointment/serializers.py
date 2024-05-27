@@ -1,11 +1,10 @@
 from rest_framework import serializers
 from .models import Appointment
+from schedule.models import HospitalSchedule, Annual
 from account.models import Patient, Practitioner, Department
 from datetime import time
 from django.utils import timezone
 from datetime import time, timedelta as td
-
-
 
 
 class AppointmentDelSerializer(serializers.ModelSerializer):
@@ -133,4 +132,17 @@ class AppointmentListSerializer(serializers.Serializer):
 class PractitionerAppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Practitioner
-        fields = ['id', 'department']
+        fields = ['id', 'department',]
+
+
+class HospitalScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HospitalSchedule
+        fields = ['date', 'date_name',
+                  'is_public_holiday', 'is_hospital_holiday']
+
+
+class AnnualSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Annual
+        fields = '__all__'

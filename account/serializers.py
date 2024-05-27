@@ -113,6 +113,7 @@ class PatientSerializer(CommonInfoSerializer):
 class PractitionerSerializer(CommonInfoSerializer):
     department = DepartmentSerializer(required=False)
 
+
     class Meta:
         model = Practitioner
         fields = '__all__'
