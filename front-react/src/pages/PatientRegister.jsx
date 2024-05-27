@@ -69,7 +69,7 @@ function PatientRegister() {
     return (
         <Form noValidate onSubmit={handleSubmit}>
             <CommonInfoForm
-                patientRegisterData={patientRegisterData}
+                registerData={patientRegisterData}
                 handleChange={handleChange} />
 
             <Form.Group as={Col} xs={5}>

@@ -10,12 +10,6 @@ const user = (state = initialState, action) => {
                 ...state,
                 user: action.payload,
             };
-        case 'LOGIN':
-            return {
-                ...state,
-                user: action.payload,
-                isLogged: true,
-            }
         default:
             return state;
     }
