@@ -13,6 +13,7 @@ from .views import (
     DepartmentScheduleAPIView,
     MailAPIView,
     DepartmentRegisterAPIView,
+    DepartmentPractitionerAPIView,
 )
 
 
@@ -56,6 +57,11 @@ urlpatterns = [
 
     path("department/<int:department_id>/", DepartmentScheduleAPIView.as_view(),
          name="department"),  # 부서별 일정 조회
+
+
+     path("department/<int:department_id>/Practitioner/", DepartmentPractitionerAPIView.as_view(),
+         name="department_Practitioner"),  # 부서별 의료진 조회
+
 
     path('send_email/', MailAPIView.as_view(), name='send_email'),  # 메일 보내기
 ]

@@ -113,9 +113,12 @@ class PatientSerializer(CommonInfoSerializer):
 class PractitionerSerializer(CommonInfoSerializer):
     # department = DepartmentSerializer(required=False)
 
+    name = serializers.CharField(source='name.name', read_only=True)
+    family = serializers.CharField(source='name.family', read_only=True)
+
     class Meta:
         model = Practitioner
-        fields = '__all__'
+        fields = ['name','family'] 
 
     def create(self, validated_data):
         common_info = super().create(validated_data)

@@ -12,7 +12,7 @@ from .serializers import AnnualSerializer, HospitalScheduleSerializer
 from django.utils.dateparse import parse_date
 from .utils import save_holidays_from_api
 from account.models import Department, Practitioner
-from account.serializers import DepartmentSerializer
+from account.serializers import DepartmentSerializer,PractitionerSerializer
 from rest_framework.permissions import AllowAny
 # Create your views here.
 
@@ -265,3 +265,12 @@ class DepartmentRegisterAPIView(APIView):  # 부서등록
             serializer.save()  # 데이터를 데이터베이스에 저장
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DepartmentPractitionerAPIView(APIView): # 부서별 의료진 조회
+        permission_classes = [AllowAny]
+        def get(seif,request,department_id):
+            practitioners = Practitioner.objects.filter(
+            department_id=department_id)
+            serializer = PractitionerSerializer(practitioners, many=True)
+            return Response(serializer.data)
