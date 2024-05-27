@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
-import CommonInfoForm from '../components/CommonInfoForm';
+import CommonInfoForm from './CommonInfoForm';
 import { registerAction } from '../redux/modules/registerActions';
 
 function PatientRegister() {
@@ -51,31 +51,33 @@ function PatientRegister() {
         };
 
         dispatch(registerAction(body))
-        .then((res) => {
-            console.log("콘솔 res", res); 
-            if (res.id) {
-                alert("회원가입 성공");
-                navigate("/login");
-            } else {
-                alert("회원가입 실패");
-            }
-        })
-        .catch((error) => {
-            alert(error);
-        });
-};
+            .then((res) => {
+                console.log("콘솔 res", res);
+                if (res.id) {
+                    alert("회원가입 성공");
+                    navigate("/login");
+                } else {
+                    alert("회원가입 실패");
+                }
+            })
+            .catch((error) => {
+                alert(error);
+            });
+    };
 
 
     return (
-        <Form noValidate onSubmit={handleSubmit}>
-            <CommonInfoForm
-                registerData={patientRegisterData}
-                handleChange={handleChange} />
+        <>
+            <Form noValidate onSubmit={handleSubmit}>
+                <CommonInfoForm
+                    registerData={patientRegisterData}
+                    handleChange={handleChange} />
 
-            <Form.Group as={Col} xs={5}>
-                <Button type="submit" variant="primary">회원가입</Button>
-            </Form.Group>
-        </Form>
+                <Form.Group as={Col} xs={5}>
+                    <Button type="submit" variant="primary">회원가입</Button>
+                </Form.Group>
+            </Form>
+        </>
     );
 }
 

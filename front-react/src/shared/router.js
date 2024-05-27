@@ -6,9 +6,7 @@ import Appointment from "../pages/Appointment";
 import Schedule from "../pages/Schedule";
 import Layout from "../Layout/Layout";
 import Login from "../pages/Login";
-import SelcetPatientPractitioner from "../pages/SelcetPatientPractitioner";
-import PatientRegister from "../pages/PatientRegister";
-import PractitionerRegister from "../pages/PractitionerRegister";
+import SelectRegisterForm from "../pages/Register";
 
 
 const Router = () => {
@@ -22,9 +20,7 @@ const Router = () => {
                             <Route path="/appointment" element={<Appointment />} />
                             <Route path="/schedule" element={<Schedule />} />
                             <Route path="/login" element={<Login />} />
-                            <Route path="/register/select" element={<SelcetPatientPractitioner />} />
-                            <Route path="/register/patient" element={<PatientRegister />} />
-                            <Route path="/register/practitioner" element={<PractitionerRegister />} />
+                            <Route path="/register" element={<SelectRegisterForm />} />
                         </Routes>
                     </Layout>
                 </TokenRefresher>

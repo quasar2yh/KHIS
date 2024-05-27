@@ -61,7 +61,7 @@ function Login() {
                 <Button variant="primary" type="submit" className="mr-2">
                     로그인
                 </Button>
-                <Link to="/register/patient">
+                <Link to="/register">
                     <Button variant="primary">회원가입</Button>
                 </Link>
             </div>
