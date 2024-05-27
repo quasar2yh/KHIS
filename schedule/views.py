@@ -7,8 +7,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Annual, HospitalSchedule
-from .serializers import AnnualSerializer, HospitalScheduleSerializer
+from .models import Annual, HospitalSchedule,DepartmentEvent
+from .serializers import AnnualSerializer, HospitalScheduleSerializer,DepartmentEventSerializer
 from django.utils.dateparse import parse_date
 from .utils import save_holidays_from_api
 from account.models import Department, Practitioner
@@ -216,7 +216,7 @@ class DepartmentListAPIView(APIView):  # 부서목록 조회
         return Response(serializer.data)
 
 
-class DepartmentScheduleAPIView(APIView):  # 부서별 연차 조회
+class DepartmentMedicalScheduleAPIView(APIView):  # 부서별 연차 조회
     def get(self, request, department_id):
         practitioners = Practitioner.objects.filter(
             department_id=department_id)
@@ -274,3 +274,24 @@ class DepartmentPractitionerAPIView(APIView): # 부서별 의료진 조회
             department_id=department_id)
             serializer = PractitionerSerializer(practitioners, many=True)
             return Response(serializer.data)
+        
+        
+class DepartmentEventAPIView(APIView): #부셔별 일정 등록
+    def post(self, request, department_id):
+        try:
+            department = Department.objects.get(id=department_id)
+        except Department.DoesNotExist:
+            return Response({"error": "Department does not exist"}, status=status.HTTP_404_NOT_FOUND)
+       
+        serializer = DepartmentEventSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+   
+    def get(self, request, department_id):
+        department_events = DepartmentEvent.objects.filter(department_id=department_id)
+        serializer = DepartmentEventSerializer(department_events, many=True)
+        return Response(serializer.data)
