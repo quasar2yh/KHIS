@@ -1,69 +1,83 @@
 import React, { useState } from 'react';
 import { Form, Button, Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import axios from 'axios';
 import { API_ENDPOINT } from '../shared/server';
+import instance from '../apis/accountControl';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 function Appointment() {
+    const userId = useSelector(state => state.userReducer.userId);
+    const navigate = useNavigate();
+
     const [appointmentData, setAppointmentData] = useState({
-        name: '',
         date: '',
         time: '',
-        department: '',
-        doctor: '',
         reason: '',
-        contact: ''
+        practitioner: '',
+        department: '',
+        appointmentype: 'checkup',
+        status: 'booked',
     });
 
     const appointmentAction = async (data) => {
-        const response = await axios.post(API_ENDPOINT + '/khis/appointment/patient/', data);
+        const response = await instance.post(API_ENDPOINT + '/khis/appointment/patient/' + userId, data);
         return response.data;
     };
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
         setAppointmentData({
             ...appointmentData,
-            [name]: value
+            [e.target.name]: e.target.value
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
+        const { date, time, reason, practitioner, department, appointmentype, status } = appointmentData
+        const body = {
+            date,
+            time,
+            reason,
+            practitioner,
+            department,
+            appointmentype,
+            status,
+        };
+
+        try {
+            const response = await appointmentAction(body);
+
+            if (response.id) {
+                alert("예약 성공")
+                navigate('/')
+            }
+            else {
+                alert("예약 실패")
+            }
+        } catch (error) {
+            console.error('예약 에러', error)
+            alert("예약 중 오류가 발생했습니다.")
+        }
+
+    };
+    const timeOption = () => {
+        const options = [];
+        for (let hour = 8; hour < 18; hour++) {
+            for (let minute = 0; minute < 60; minute += 20) {
+                const formattedHour = hour.toString().padStart(2, '0');
+                const formattedMinute = minute.toString().padStart(2, '0');
+                options.push(`${formattedHour}:${formattedMinute}`);
+            }
+        }
+        return options;
     };
 
     return (
         <div className="container mt-5">
             <h2>병원 예약</h2>
             <Form onSubmit={handleSubmit}>
-                <Form.Group as={Row} className="mb-3" controlId="formName">
-                    <Form.Label column sm="2">이름</Form.Label>
-                    <Col sm="10">
-                        <Form.Control
-                            type="text"
-                            name="name"
-                            value={appointmentData.name}
-                            onChange={handleChange}
-                            placeholder="이름을 입력하세요"
-                            required
-                        />
-                    </Col>
-                </Form.Group>
-
-                <Form.Group as={Row} className="mb-3" controlId="formContact">
-                    <Form.Label column sm="2">연락처</Form.Label>
-                    <Col sm="10">
-                        <Form.Control
-                            type="tel"
-                            name="contact"
-                            value={appointmentData.contact}
-                            onChange={handleChange}
-                            placeholder="연락처를 입력하세요"
-                            required
-                        />
-                    </Col>
-                </Form.Group>
 
                 <Form.Group as={Row} className="mb-3" controlId="formDoctor">
                     <Form.Label column sm="2">부서</Form.Label>
@@ -99,12 +113,19 @@ function Appointment() {
                     <Form.Label column sm="2">시간</Form.Label>
                     <Col sm="10">
                         <Form.Control
-                            type="time"
+                            as="select"
                             name="time"
                             value={appointmentData.time}
                             onChange={handleChange}
                             required
-                        />
+                        >
+                            <option>시간을 선택하세요.</option>
+                            {timeOption().map((time, index) => {
+                                return (
+                                    <option key={index} value={time}>{time}</option>
+                                );
+                            })}
+                        </Form.Control>
                     </Col>
                 </Form.Group>
 

@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { CookiesProvider } from 'react-cookie';
 import TokenRefresher from "../components/TokenRefresher";
 import Home from "../pages/Home";
 import Appointment from "../pages/Appointment";
@@ -12,7 +11,6 @@ import SelectRegisterForm from "../pages/Register";
 const Router = () => {
     return (
         <BrowserRouter>
-            <CookiesProvider>
                 <TokenRefresher>
                     <Layout>
                         <Routes>
@@ -24,7 +22,6 @@ const Router = () => {
                         </Routes>
                     </Layout>
                 </TokenRefresher>
-            </CookiesProvider>
         </BrowserRouter>
     );
 };
