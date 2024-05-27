@@ -3,8 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Link, useNavigate } from 'react-router-dom';
 import IdPwForm from '../components/IdPwForm';
-import axios from 'axios';
-import { API_ENDPOINT } from '../shared/server';
+import { loginAction } from '../apis/accountControl';
 import { useCookies } from 'react-cookie';
 
 function Login() {
@@ -21,12 +20,6 @@ function Login() {
     const pwHandler = (event) => {
         setPw(event.target.value);
     };
-
-    const loginAction = async (data) => {
-        const response = await axios.post(API_ENDPOINT + '/khis/account/login/', data);
-        return response.data;
-    };
-
 
     const onSubmit = async (event) => {
         event.preventDefault();

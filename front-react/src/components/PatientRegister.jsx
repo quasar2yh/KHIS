@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import CommonInfoForm from './CommonInfoForm';
-import { registerAction } from '../redux/modules/registerActions';
+import { registerAction } from '../apis/accountControl';
 
 function PatientRegister() {
 
@@ -15,10 +14,9 @@ function PatientRegister() {
         familyName: '',
         name: '',
         gender: '',
-        telecom: '',
+        contact: '',
     })
 
-    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -28,10 +26,10 @@ function PatientRegister() {
         });
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const { id, password, familyName, name, gender, telecom } = patientRegisterData;
+        const { id, password, familyName, name, gender, contact } = patientRegisterData;
 
         const body = {
             username: id,
@@ -43,26 +41,28 @@ function PatientRegister() {
             gender,
             telecom: {
                 system: "Phone",
-                value: telecom,
+                value: contact,
                 use: "Mobile"
             },
             subject: "Patient",
             marital_status: "0",
         };
 
-        dispatch(registerAction(body))
-            .then((res) => {
-                console.log("콘솔 res", res);
-                if (res.id) {
-                    alert("회원가입 성공");
-                    navigate("/login");
-                } else {
-                    alert("회원가입 실패");
-                }
-            })
-            .catch((error) => {
-                alert(error);
-            });
+        try {
+            const response = await registerAction(body);
+            console.log(response);
+
+            if (response.id) {
+                alert("회원가입 성공")
+                navigate('/login')
+            }
+            else {
+                alert("회원가입 실패")
+            }
+        } catch (error) {
+            console.error('회원가입 에러', error)
+            alert("회원가입 중 오류가 발생했습니다.")
+        }
     };
 
 

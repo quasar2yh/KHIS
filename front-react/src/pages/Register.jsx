@@ -16,7 +16,7 @@ function SelectRegisterForm() {
                 <option value="practitioner">의료 관계자</option>
             </Form.Select>
 
-            {selectForm === 'patient' ?  <PractitionerRegister /> : <PatientRegister />}
+            {selectForm === 'practitioner' ?  <PractitionerRegister /> : <PatientRegister />}
         </>
     );
 }
