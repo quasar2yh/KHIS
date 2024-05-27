@@ -14,7 +14,6 @@ decorator==5.1.1
 distro==1.9.0
 Django==4.2
 django-appconf==1.0.6
-django-cors-headers==4.3.1
 django-cryptography==1.1
 django-debug-toolbar==4.3.0
 django-dotenv==1.4.2
@@ -46,6 +45,7 @@ parso==0.8.4
 pexpect==4.9.0
 pillow==10.3.0
 prompt-toolkit==3.0.43
+psycopg2==2.9.9
 psycopg2-binary==2.9.9
 ptyprocess==0.7.0
 pure-eval==0.2.2
