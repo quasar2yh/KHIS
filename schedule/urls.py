@@ -10,6 +10,7 @@ from .views import (
     MedicalSpecificIntegratedAPIView,
     HospitalPublicScheduleAPIView,
     DepartmentListAPIView,
+    DepartmentScheduleAPIView
 )
 
 
@@ -47,10 +48,9 @@ urlpatterns = [
 
 
     path("department/", DepartmentListAPIView.as_view(),
-         name="department_lsit"),  # 부서 조회
+         name="department_list"),  # 부서 조회
 
-    #path("department/<int:department_id>/", DepartmentScheduleAPIView.as_view(),
-         #name="department"),  # 부서별 스케줄 + 예약현황을 조회해주는 api
-
+    path("department/<int:department_id>/", DepartmentScheduleAPIView.as_view(),
+         name="department"),  # 부서별 일정 조회
 
 ]
