@@ -27,7 +27,7 @@ class ContactPointSerializer(serializers.ModelSerializer):
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
-        fields = '__all__'
+        fields = ['use', 'text', 'city', 'postal_code', 'country']
 
 
 class HumanNameSerializer(serializers.ModelSerializer):
@@ -39,7 +39,7 @@ class HumanNameSerializer(serializers.ModelSerializer):
 class CommonInfoSerializer(serializers.ModelSerializer):
     name = HumanNameSerializer()
     telecom = ContactPointSerializer()
-    address = AccountSerializer(required=False)
+    address = AddressSerializer(required=False)
 
     class Meta:
         model = CommonInfo
