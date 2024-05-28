@@ -2,7 +2,7 @@
 from django.utils import timezone
 from .open_ai import chatgpt
 from .models import Appointment, Practitioner, Department
-from datetime import timedelta
+from datetime import datetime, timedelta, time as dt_time
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -184,8 +184,8 @@ class AppointmentListAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_hospital_holidays(self):  # 병원 휴일 조회
-        today = datetime.date.today()
-        thirty_days_later = today + datetime.timedelta(days=30)
+        today = datetime.now().date()
+        thirty_days_later = today + timedelta(days=30)
         hospital_holidays = HospitalSchedule.objects.filter(
             date__range=[today, thirty_days_later],
             is_hospital_holiday=True
@@ -203,20 +203,18 @@ class AppointmentListAPIView(APIView):
         practitioner = request.query_params.get('practitioner')
         if date:
             date = parse_date(date)
+            holidays = self.get_hospital_holidays()
+            if date in holidays:
+                return Response({f"{date}는 병원의 휴일입니다.get"}, status=status.HTTP_200_OK)
         if time:
             time = parse_time(time)
+            if not (dt_time(9, 0) <= time <= dt_time(18, 0)):
+                return Response({"예약 가능한 시간은 09:00부터 18:00까지입니다."}, status=status.HTTP_400_BAD_REQUEST)
+
         # 일만 선택->해당 날짜에 예약 가능한 의사 목록
         if date and not (time or department or practitioner):
             practitioner = Annual.objects.filter(
                 start_date__lte=date, end_date__gte=date)
-
-            # 병원의 휴일인지 아닌지
-            try:
-                hospital = HospitalSchedule.objects.get(date=date)
-                if hospital.is_hospital_holiday or hospital.is_public_holiday:
-                    return Response({"message": "병원의 휴일입니다."}, status=status.HTTP_200_OK)
-            except HospitalSchedule.DoesNotExist:
-                pass
 
             # 쉬는 의사를 제외한 나머지 의사 조회
             available_practitioners = Practitioner.objects.exclude(
@@ -371,7 +369,10 @@ class AppointmentListAPIView(APIView):
         elif date and time and not (department or practitioner):
             datetimes = datetime.combine(date, time)
             print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", datetimes)
-            holidays = self.get_hospital_holidays
+            holidays = self.get_hospital_holidays()
+            print(holidays, "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+            if date in holidays:
+                return Response({"error": f"{date}는 병원의 휴일입니다."}, status=status.HTTP_200_OK)
             # 해당날자의 예약 조회
             appointments = Appointment.objects.filter(start=datetimes)
             # 해당 날자의 연차인 의사 제외
@@ -387,6 +388,13 @@ class AppointmentListAPIView(APIView):
             return Response(f"예약 가능한 의사 선택 완료: 일,시에{datetimes}예약가능의사:{practitioners_serializer}", status=status.HTTP_200_OK)
         # 일 , 부서 선택 해당 날짜에 부서별로 예약 가능한 의사 목록과 시간대
         elif date and department and not (time or practitioner):
+            holidays = self.get_hospital_holidays()
+
+            # 해당 부서의 의사 조회
+            # 해당 부서의 의사중 해당일의 연차중인 의사 제외
+            # 해당 일의 근무중인 의사의 예약 시간
+            # 해당 일의 근무중인 의사의 예약 가능한 시간
+            # 예약 가능한 부서의 의사들의 예약 가능한 시간
             return Response(f"일과 부서 선택 완료: 일-{date}, 부서-{department}", status=status.HTTP_200_OK)
         # 일, 의사 선택 해당 의사의 특정 날짜 스케줄(예약된 시간 포함)
         elif date and practitioner and not (time or department):
