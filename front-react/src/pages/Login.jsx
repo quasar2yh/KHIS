@@ -3,12 +3,10 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Link, useNavigate } from 'react-router-dom';
 import IdPwForm from '../components/IdPwForm';
-import axios from 'axios';
-import { API_ENDPOINT } from '../shared/server';
-import { useCookies } from 'react-cookie';
+import { loginAction } from '../apis/accountControl';
+import Cookies from 'js-cookie';
 
 function Login() {
-    const [cookies, setCookie, removeCookie] = useCookies(['access', 'refresh']);
 
     const navigate = useNavigate();
 
@@ -22,12 +20,6 @@ function Login() {
         setPw(event.target.value);
     };
 
-    const loginAction = async (data) => {
-        const response = await axios.post(API_ENDPOINT + '/khis/account/login/', data);
-        return response.data;
-    };
-
-
     const onSubmit = async (event) => {
         event.preventDefault();
         const body = {
@@ -40,8 +32,8 @@ function Login() {
             console.log(response);
 
             if (response.access) {
-                setCookie('access', response.access, { path: '/', maxAge: 3600 }); // 쿠키에 액세스 토큰 저장
-                setCookie('refresh', response.refresh, { path: '/', maxAge: 86400 }); // 쿠키에 리프레시 토큰 저장
+                Cookies.set('access', response.access, { path: ''}); // 쿠키에 액세스 토큰 저장
+                Cookies.set('refresh', response.refresh, { path: ''}); // 쿠키에 리프레시 토큰 저장
                 // console.log("쿠키 : ", cookies.get('refresh'))
                 navigate('/');
             } else {
@@ -61,7 +53,7 @@ function Login() {
                 <Button variant="primary" type="submit" className="mr-2">
                     로그인
                 </Button>
-                <Link to="/register/patient">
+                <Link to="/register">
                     <Button variant="primary">회원가입</Button>
                 </Link>
             </div>
