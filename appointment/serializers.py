@@ -25,6 +25,12 @@ class AppointmentDelSerializer(serializers.ModelSerializer):
         return instance
 
 
+class AppointmentScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = ['start']
+
+
 class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
@@ -145,4 +151,4 @@ class HospitalScheduleSerializer(serializers.ModelSerializer):
 class AnnualSerializer(serializers.ModelSerializer):
     class Meta:
         model = Annual
-        fields = '__all__'
+        fields = ['start_date', 'end_date']
