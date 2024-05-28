@@ -4,7 +4,7 @@ import { sendChatMessage } from '../apis/apis';
 
 function Chatbot() {
     const [message, setMessage] = useState('');
-    const [chatMessages, setChatMessages] = useState([]);
+    const [chatMessages, setChatMessages] = useState(["증상을 말씀해주세요. 진료과를 추천해드릴게요!"]);
 
     const handleChange = (e) => {
         setMessage(e.target.value);

@@ -8,7 +8,7 @@ import Login from "./Login";
 import SelectRegisterForm from "./Register";
 import Profile from "./Profile";
 import AppoinmentStatus from "./AppoinmentStatus";
-import Chatbot from "../components/Chatbot";
+import Chatbot from "./Chatbot";
 
 
 const Router = () => {
