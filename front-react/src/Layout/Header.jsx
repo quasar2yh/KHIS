@@ -1,15 +1,15 @@
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
-import { useCookies } from 'react-cookie';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import Cookies from "js-cookie";
 
 function Header() {
-    const [cookies, setCookie, removeCookie] = useCookies(['access', 'refresh']);
-    const refresh = cookies.refresh; // 쿠키 값을 직접 접근
+    const refresh = Cookies.get("refresh")
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        removeCookie('access', { path: '/' });
-        removeCookie('refresh', { path: '/' });
+        Cookies.remove('access', { path: '/' });
+        Cookies.remove('refresh', { path: '/' });
         navigate('/login');
     };
 

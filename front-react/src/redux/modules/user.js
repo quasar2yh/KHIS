@@ -1,14 +1,13 @@
 const initialState = {
-    user: null,
-    isLogged: false,
+    userId:null
 };
 
-const user = (state = initialState, action) => {
+const userReducer = (state = initialState, action) => {
     switch (action.type) {
-        case 'SIGNUP':
+        case 'SET_USER_ID':
             return {
                 ...state,
-                user: action.payload,
+                userId: action.payload,
             };
         default:
             return state;
@@ -16,4 +15,4 @@ const user = (state = initialState, action) => {
 };
 
 
-export default user;
+export default userReducer;

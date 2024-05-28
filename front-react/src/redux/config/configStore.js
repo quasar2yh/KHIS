@@ -1,10 +1,10 @@
 import { combineReducers, createStore, applyMiddleware } from 'redux';
-import user from '../modules/user';
+import userReducer from '../modules/user';
 import { thunk } from 'redux-thunk';
 import promiseMiddleware from "redux-promise";
 
 const rootReducer = combineReducers({
-    user
+    userReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(thunk, promiseMiddleware))
