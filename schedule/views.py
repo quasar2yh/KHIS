@@ -1,3 +1,5 @@
+from django.core.mail import send_mail
+from .serializers import MailSerializer
 import requests
 import datetime
 from datetime import datetime
@@ -5,12 +7,13 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Annual, HospitalSchedule
-from .serializers import AnnualSerializer, HospitalScheduleSerializer
+from .models import Annual, HospitalSchedule, DepartmentEvent
+from .serializers import AnnualSerializer, HospitalScheduleSerializer, DepartmentEventSerializer
 from django.utils.dateparse import parse_date
 from .utils import save_holidays_from_api
-
-
+from account.models import Department, Practitioner
+from account.serializers import DepartmentSerializer, PractitionerSerializer
+from rest_framework.permissions import AllowAny
 # Create your views here.
 
 
@@ -36,6 +39,7 @@ class MedicalScheduleAPIView(APIView):
 
 
 # 본인 연차 조회
+
 
     def get(self, request):
         if request.user.is_authenticated:
@@ -170,7 +174,7 @@ class HospitalScheduleDetailAPIView(APIView):  # 병원 공휴일 수정 및 삭
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-class HospitalPublicScheduleAPIView(APIView): # 공휴일 조회
+class HospitalPublicScheduleAPIView(APIView):  # 공휴일 조회
     def get(self, request):
         # 공휴일 DB 저장
         save_holidays_from_api()
@@ -202,3 +206,126 @@ class IntegratedScheduleAPIView(APIView):
             "medical_staff_schedules": medical_staff_serializer.data
         }
         return Response(integrated_data)
+
+
+class DepartmentListAPIView(APIView):  # 부서목록 조회
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        departments = Department.objects.all()
+        serializer = DepartmentSerializer(departments, many=True)
+        return Response(serializer.data)
+
+
+class DepartmentMedicalScheduleAPIView(APIView):  # 부서별 연차 조회
+    def get(self, request, department_id):
+        practitioners = Practitioner.objects.filter(
+            department_id=department_id)
+        annuals = Annual.objects.filter(
+            practitioner__in=practitioners).order_by('start_date')
+        serializer = AnnualSerializer(annuals, many=True)
+        return Response(serializer.data)
+
+
+class MailAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = MailSerializer(data=request.data)
+
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            subject = serializer.validated_data['subject']
+            message = serializer.validated_data['message']
+
+            try:
+                send_mail(
+                    subject,
+                    message,
+                    'ritsukoice@naver.com',  # 발신자 이메일
+                    [email],  # 수신자 이메일 리스트
+                    fail_silently=False,
+                )
+                return Response({"success": "메일이 성공적으로 발송되었습니다"}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DepartmentRegisterAPIView(APIView):  # 부서등록
+    def post(self, request):
+        department_name = request.data.get('department_name')
+
+        # 부서 이름 중복 확인
+        if Department.objects.filter(department_name=department_name).exists():
+            return Response({'error': '부서 이름이 이미 존재합니다.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = DepartmentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()  # 데이터를 데이터베이스에 저장
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DepartmentPractitionerAPIView(APIView):  # 부서별 의료진 조회
+    permission_classes = [AllowAny]
+
+    def get(seif, request, department_id):
+        practitioners = Practitioner.objects.filter(
+            department_id=department_id)
+        serializer = PractitionerSerializer(practitioners, many=True)
+        return Response(serializer.data)
+
+
+class DepartmentEventAPIView(APIView):  # 부셔별 일정 등록
+    def post(self, request, department_id):
+        try:
+            department = Department.objects.get(id=department_id)
+        except Department.DoesNotExist:
+            return Response({"error": "Department does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = DepartmentEventSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, department_id):
+        department_events = DepartmentEvent.objects.filter(
+            department_id=department_id)
+        serializer = DepartmentEventSerializer(department_events, many=True)
+        return Response(serializer.data)
+
+
+
+class DepartmentEventDetailAPIView(APIView):   # 부셔별 일정 수정 및 삭제
+    def put(self, request, department_id, event_id):
+            try:
+                department_event = DepartmentEvent.objects.get(
+                    id=event_id, department_id=department_id)
+            except DepartmentEvent.DoesNotExist:
+                return Response({"error": "Department event does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+            request_data = request.data.copy()
+            request_data.pop('id', None)
+            request_data.pop('department', None)
+
+            serializer = DepartmentEventSerializer(
+                department_event, data=request.data,  partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, department_id, event_id):
+            try:
+                department_event = DepartmentEvent.objects.get(
+                    id=event_id, department_id=department_id)
+            except DepartmentEvent.DoesNotExist:
+                return Response({"error": "Department event does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+            department_event.delete()
+            return Response({"success": "일정이 성공적으로 삭제되었습니다"}, status=status.HTTP_204_NO_CONTENT)

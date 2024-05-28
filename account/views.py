@@ -32,6 +32,13 @@ class AccountSiginAPIView(APIView):
                     practitioner = practitioner_serializer.save()
                     account_serializer.save(practitioner=practitioner)
                     return Response(practitioner_serializer.data, status=status.HTTP_201_CREATED)
+                
+    def get(self, request, account_id):
+        account = get_object_or_404(Account, pk=account_id)
+        if not request.user.is_authenticated and request.user != account:
+            return Response({"detail": "권한 없음"}, status=status.HTTP_400_BAD_REQUEST)
+        serailizer = AccountSerializer(instance=account)
+        return Response(serailizer.data)
 
     def put(self, request, account_id):
         account = get_object_or_404(Account, pk=account_id)

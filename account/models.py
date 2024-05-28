@@ -32,6 +32,7 @@ class CommonInfo(models.Model):
             self.address.delete()
         return super().delete(*args, **kwargs)
 
+
 class Account(AbstractUser):
     SUBJECT_CHOICES = [
         ("Patient", 'Patient'),
@@ -92,6 +93,7 @@ class Practitioner(CommonInfo):
             self.department.delete()
         return super().delete(*args, **kwargs)
 
+
 class RelatedPerson(CommonInfo):
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE)
 
@@ -147,17 +149,11 @@ class Address(models.Model):
 
 
 class Department(models.Model):
-    DEPARTMENT = [
-        ('치과', '치과'),
-        ('내과', '내과'),
-        ('안과', '안과'),
-        ('외과', '외과'),
-    ]
-
-    department = models.CharField(max_length=10, choices=DEPARTMENT)
+    department_name = models.CharField(max_length=10)
 
 
 class GeneralPractitioner():
     # 환자와 담당의사 중계 테이블
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE)
     practitioner = models.ForeignKey('Practitioner', on_delete=models.CASCADE)
+

@@ -1,27 +1,28 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import TokenRefresher from "../components/TokenRefresher";
 import Home from "../pages/Home";
 import Appointment from "../pages/Appointment";
 import Schedule from "../pages/Schedule";
 import Layout from "../Layout/Layout";
 import Login from "../pages/Login";
-import SigninPatient from "../pages/SigninPatient";
-import { AuthProvider } from "./contexts";
+import SelectRegisterForm from "../pages/Register";
+
 
 const Router = () => {
     return (
-        <AuthProvider>
-            <BrowserRouter>
-                <Layout>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/appointment" element={<Appointment />} />
-                        <Route path="/schedule" element={<Schedule />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/signin/patient" element={<SigninPatient />} />
-                    </Routes>
-                </Layout>
-            </BrowserRouter>
-        </AuthProvider>
+        <BrowserRouter>
+                <TokenRefresher>
+                    <Layout>
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/appointment" element={<Appointment />} />
+                            <Route path="/schedule" element={<Schedule />} />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/register" element={<SelectRegisterForm />} />
+                        </Routes>
+                    </Layout>
+                </TokenRefresher>
+        </BrowserRouter>
     );
 };
 

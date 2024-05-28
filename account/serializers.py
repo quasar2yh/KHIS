@@ -111,12 +111,11 @@ class PatientSerializer(CommonInfoSerializer):
 
 
 class PractitionerSerializer(CommonInfoSerializer):
-    department = DepartmentSerializer(required=False)
 
 
     class Meta:
         model = Practitioner
-        fields = '__all__'
+        fields = ['name','family'] 
 
     def create(self, validated_data):
         common_info = super().create(validated_data)
@@ -126,8 +125,7 @@ class PractitionerSerializer(CommonInfoSerializer):
             name=common_info['name'], telecom=common_info['telecom'], address=common_info['address'], **validated_data)
 
         if department_data:
-            department = Department.objects.create(**department_data)
-            practitioner.department = department
+            practitioner.department = department_data
             practitioner.save()
         return practitioner
 
@@ -165,3 +163,4 @@ class ChangePasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError("새 비밀번호가 현재 비밀번호와 같습니다.")
         validate_password(new_password)
         return data
+    
