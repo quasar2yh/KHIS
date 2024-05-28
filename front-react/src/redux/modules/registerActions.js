@@ -1,13 +1,4 @@
-import axios from 'axios';
-import { API_ENDPOINT } from '../../shared/server';
-import { getUserId } from '../../apis/accountControl';
-
-export const registerAction = (data) => async (dispatch) => {
-    const response = await axios.post(API_ENDPOINT + '/khis/account/register/', data);
-    dispatch({ type: 'SIGNUP', payload: response.data });
-    return response.data;
-};
-
+import { getAccountInfo, getUserId, getPatientInfo } from '../../apis/apis';
 
 export const getUserIdAction = (token) => {
     const userId = getUserId(token);
@@ -16,3 +7,19 @@ export const getUserIdAction = (token) => {
         payload: userId
     };
 };
+
+export const getPatientInfoAction = (patientId) => {
+    const patientInfo = getPatientInfo(patientId);
+    return {
+        type: 'SET_PATIENT_INFO',
+        payload: patientInfo
+    };
+};
+
+export const getAccountInfoAction = (userId) => {
+    const userAccountInfo = getAccountInfo(userId);
+    return {
+        type: 'SET_ACCOUNT_INFO',
+        payload: userAccountInfo
+    }
+}

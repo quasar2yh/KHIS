@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import CommonInfoForm from './CommonInfoForm';
-import { registerAction } from '../apis/accountControl';
+import { registerAction } from '../apis/apis';
 
 function PractitionerRegister() {
 
@@ -85,7 +85,7 @@ function PractitionerRegister() {
                     <Form.Select aria-label="Default select example" name="role" onChange={handleChange}>
                         <option>역할을 선택하세요.</option>
                         {roleList.map((item, index) => {
-                            return <option  key={index} value={item}>{item}</option>;
+                            return <option key={index} value={item}>{item}</option>;
                         })}
                     </Form.Select>
                 </Col>

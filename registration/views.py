@@ -21,7 +21,6 @@ class PatientAPIView(APIView):
     def get(self, request, patient_id):
         patient = get_object_or_404(Patient, pk=patient_id)
         account = get_object_or_404(Account, pk=patient.account.id)
-        # account() 제거, 조건 수정
         if request.user.is_authenticated and (request.user.is_practitioner or request.user == account):
             serializer = PatientSerializer(instance=patient)
             return Response(data=serializer.data)

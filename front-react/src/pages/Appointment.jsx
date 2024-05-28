@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { appointmentAction, getDepartments } from '../apis/accountControl';
+import { appointmentAction, getDepartments } from '../apis/apis';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 function Appointment() {
     const userId = useSelector(state => state.userReducer.userId);
     const navigate = useNavigate();
-    console.log("userId : ", userId)
 
     const [appointmentData, setAppointmentData] = useState({
         date: '',
         time: '',
         reason: '',
-        practitioner: '',
+        practitioner: 0,
         department: '',
         appointmentType: 'checkup',
         status: 'booked',
@@ -38,7 +37,7 @@ function Appointment() {
             department,
             appointmentType,
             status,
-            active:true,
+            active: true,
         };
 
         try {
@@ -70,7 +69,7 @@ function Appointment() {
     };
 
     const [departmentsList, setDepartmentsList] = useState([]);
-    
+
     useEffect(() => {
         getDepartments().then(departments => {
             setDepartmentsList(departments);
@@ -95,7 +94,7 @@ function Appointment() {
                         >
                             <option>부서를 선택하세요.</option>
                             {departmentsList.map((department) => (
-                                <option key={department.id} value={department.department}>{department.department}</option>
+                                <option key={department.id} value={department.id}>{department.department}</option>
                             ))}
                         </Form.Control>
                     </Col>
@@ -144,7 +143,7 @@ function Appointment() {
                         >
                             <option>의사를 선택하세요.</option>
                             {departmentsList.map((department) => (
-                                <option key={department.id} value={department.department}>{department.department}</option>
+                                <option key={department.id} value={department.id}>{department.department}</option>
                             ))}
                         </Form.Control>
                     </Col>

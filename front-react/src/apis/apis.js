@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_ENDPOINT } from "../shared/server";
+import { API_ENDPOINT } from "./server";
 import Cookies from "js-cookie";
 import base64 from 'base-64';
 
@@ -51,6 +51,21 @@ export const appointmentAction = async (data, userId) => {
 
 export const getDepartments = async () => {
     const response = await instance.get(`/khis/schedule/department/`);
+    return response.data;
+};
+
+export const getPatientInfo = async (patientId) => {
+    const response = await instance.get(`/khis/patient-registration/${patientId}/`);
+    return response.data;
+};
+
+export const getAccountInfo = async (userId) => {
+    const response = await instance.get(`/khis/account/${userId}/`);
+    return response.data;
+};
+
+export const getAppointmentStatus = async (patientId) => {
+    const response = await instance.get(`/khis/appointment/patient/${patientId}/`);
     return response.data;
 };
 
