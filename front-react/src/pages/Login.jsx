@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Link, useNavigate } from 'react-router-dom';
 import IdPwForm from '../components/IdPwForm';
-import { loginAction } from '../apis/accountControl';
+import { loginAction } from '../apis/apis';
 import Cookies from 'js-cookie';
 
 function Login() {
@@ -32,8 +32,8 @@ function Login() {
             console.log(response);
 
             if (response.access) {
-                Cookies.set('access', response.access, { path: ''}); // 쿠키에 액세스 토큰 저장
-                Cookies.set('refresh', response.refresh, { path: ''}); // 쿠키에 리프레시 토큰 저장
+                Cookies.set('access', response.access, { path: '' }); // 쿠키에 액세스 토큰 저장
+                Cookies.set('refresh', response.refresh, { path: '' }); // 쿠키에 리프레시 토큰 저장
                 // console.log("쿠키 : ", cookies.get('refresh'))
                 navigate('/');
             } else {
