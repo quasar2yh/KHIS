@@ -69,4 +69,9 @@ export const getAppointmentStatus = async (patientId) => {
     return response.data;
 };
 
+export const sendChatMessage = async (data) => {
+    const response = await instance.post(`/khis/appointment/chatbot/`, data);
+    return response.data;
+}
+
 export default instance;

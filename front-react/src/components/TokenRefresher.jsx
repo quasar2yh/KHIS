@@ -7,12 +7,11 @@ import { getAccountInfoAction, getUserIdAction } from '../redux/modules/userActi
 
 export default function TokenRefresher({ children }) {
     const userId = useSelector(state => state.userReducer.userId);
-    const userInfo = useSelector(state => state.userReducer.userInfo);
     const dispatch = useDispatch();
     const token = Cookies.get("access");
 
     useEffect(() => {
-        if (token && (userId === null)) {
+        if (token) {
             dispatch(getUserIdAction(token));
         }
 
@@ -46,7 +45,7 @@ export default function TokenRefresher({ children }) {
             }
         );
 
-        if (userId && (userInfo === null)) {
+        if (userId) {
             dispatch(getAccountInfoAction(userId));
         }
     }, [dispatch, token, userId]);
