@@ -1,16 +1,19 @@
 import axios from 'axios';
 import { useEffect } from 'react';
 import Cookies from "js-cookie";
-import { API_ENDPOINT } from '../shared/server';
-import { useDispatch } from 'react-redux';
-import { getUserIdAction } from '../redux/modules/registerActions';
+import { API_ENDPOINT } from '../apis/server';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAccountInfoAction, getUserIdAction } from '../redux/modules/userActions';
 
 export default function TokenRefresher({ children }) {
+    const userId = useSelector(state => state.userReducer.userId);
     const dispatch = useDispatch();
     const token = Cookies.get("access");
 
     useEffect(() => {
-        dispatch(getUserIdAction(token));
+        if (token) {
+            dispatch(getUserIdAction(token));
+        }
 
         const refreshAPI = axios.create({
             baseURL: API_ENDPOINT,
@@ -41,7 +44,11 @@ export default function TokenRefresher({ children }) {
                 return Promise.reject(error);
             }
         );
-    }, [dispatch, token]);
+
+        if (userId) {
+            dispatch(getAccountInfoAction(userId));
+        }
+    }, [dispatch, token, userId]);
 
     return <>{children}</>;
 }

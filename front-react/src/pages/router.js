@@ -1,11 +1,15 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import TokenRefresher from "../components/TokenRefresher";
-import Home from "../pages/Home";
-import Appointment from "../pages/Appointment";
-import Schedule from "../pages/Schedule";
+import Home from "./Home";
+import Appointment from "./Appointment";
+import Schedule from "./Schedule";
 import Layout from "../Layout/Layout";
-import Login from "../pages/Login";
-import SelectRegisterForm from "../pages/Register";
+import Login from "./Login";
+import SelectRegisterForm from "./Register";
+import Profile from "./Profile";
+import AppoinmentStatus from "./AppoinmentStatus";
+import Chatbot from "./Chatbot";
+import Department from "./Department";
 
 
 const Router = () => {
@@ -19,6 +23,10 @@ const Router = () => {
                             <Route path="/schedule" element={<Schedule />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<SelectRegisterForm />} />
+                            <Route path="/profile" element={<Profile />} />
+                            <Route path="/appointmentstatus" element={<AppoinmentStatus />} />
+                            <Route path="/chatbot" element={<Chatbot />} />
+                            <Route path="/department/:id" element={<Department />} />
                         </Routes>
                     </Layout>
                 </TokenRefresher>
