@@ -112,9 +112,6 @@ class PatientSerializer(CommonInfoSerializer):
 
 class PractitionerSerializer(CommonInfoSerializer):
 
-    name = serializers.CharField(source='name.name', read_only=True)
-    family = serializers.CharField(source='name.family', read_only=True)
-
     class Meta:
         model = Practitioner
         fields = ['name','family'] 
