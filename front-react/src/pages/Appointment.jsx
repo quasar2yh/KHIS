@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { appointmentAction, getDepartments } from '../apis/accountControl';
+import { appointmentAction } from '../apis/apis';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { getDepartmentListAction } from '../redux/modules/departmentActions';
 
 function Appointment() {
     const userId = useSelector(state => state.userReducer.userId);
+    const departmentList = useSelector(state => state.departmentReducer.departmentList);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    console.log("userId : ", userId)
+
+    useEffect(() => {
+        if (departmentList === null) {
+            dispatch(getDepartmentListAction());
+        }
+    }, [departmentList, dispatch]);
 
     const [appointmentData, setAppointmentData] = useState({
         date: '',
         time: '',
         reason: '',
-        practitioner: '',
+        practitioner: 0,
         department: '',
         appointmentType: 'checkup',
         status: 'booked',
@@ -38,7 +46,7 @@ function Appointment() {
             department,
             appointmentType,
             status,
-            active:true,
+            active: true,
         };
 
         try {
@@ -69,16 +77,8 @@ function Appointment() {
         return options;
     };
 
-    const [departmentsList, setDepartmentsList] = useState([]);
-    
-    useEffect(() => {
-        getDepartments().then(departments => {
-            setDepartmentsList(departments);
-        });
-    }, []);
-
-    console.log("departmentsList", departmentsList)
     return (
+        <>
         <div className="container mt-5">
             <h2>병원 예약</h2>
             <Form onSubmit={handleSubmit}>
@@ -94,8 +94,8 @@ function Appointment() {
                             required
                         >
                             <option>부서를 선택하세요.</option>
-                            {departmentsList.map((department) => (
-                                <option key={department.id} value={department.department}>{department.department}</option>
+                            {departmentList && departmentList.map((department) => (
+                                <option key={department.id} value={department.id}>{department.department}</option>
                             ))}
                         </Form.Control>
                     </Col>
@@ -143,8 +143,8 @@ function Appointment() {
                             required
                         >
                             <option>의사를 선택하세요.</option>
-                            {departmentsList.map((department) => (
-                                <option key={department.id} value={department.department}>{department.department}</option>
+                            {departmentList && departmentList.map((department) => (
+                                <option key={department.id} value={department.id}>{department.department}</option>
                             ))}
                         </Form.Control>
                     </Col>
@@ -168,6 +168,7 @@ function Appointment() {
                 <Button variant="primary" type="submit">예약하기</Button>
             </Form>
         </div>
+    </>
     );
 }
 
