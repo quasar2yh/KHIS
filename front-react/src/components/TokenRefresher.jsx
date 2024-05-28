@@ -3,15 +3,16 @@ import { useEffect } from 'react';
 import Cookies from "js-cookie";
 import { API_ENDPOINT } from '../apis/server';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAccountInfoAction, getUserIdAction } from '../redux/modules/registerActions';
+import { getAccountInfoAction, getUserIdAction } from '../redux/modules/userActions';
 
 export default function TokenRefresher({ children }) {
     const userId = useSelector(state => state.userReducer.userId);
+    const userInfo = useSelector(state => state.userReducer.userInfo);
     const dispatch = useDispatch();
     const token = Cookies.get("access");
 
     useEffect(() => {
-        if (token) {
+        if (token && (userId === null)) {
             dispatch(getUserIdAction(token));
         }
 
@@ -45,7 +46,7 @@ export default function TokenRefresher({ children }) {
             }
         );
 
-        if (userId) {
+        if (userId && (userInfo === null)) {
             dispatch(getAccountInfoAction(userId));
         }
     }, [dispatch, token, userId]);
