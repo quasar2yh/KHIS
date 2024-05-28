@@ -408,6 +408,6 @@ thumb
 sketch
 
 
-requirements.txt
-manage.py
-khis/settings.py
+# requirements.txt
+# manage.py
+# khis/settings.py
