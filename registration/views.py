@@ -29,8 +29,9 @@ class PatientAPIView(APIView):
 
     # 환자 데이터 수정
     def put(self, request, patient_id):
-        if request.user.is_authenticated and request.user.is_practitioner():
-            patient = get_object_or_404(Patient, pk=patient_id)
+        patient = get_object_or_404(Patient, pk=patient_id)
+        account = get_object_or_404(Account, pk=patient.account.id)
+        if request.user.is_authenticated and (request.user.is_practitioner or request.user == account):
             serializer = PatientSerializer(
                 instance=patient, data=request.data, partial=True)
             if serializer.is_valid(raise_exception=True):

@@ -17,7 +17,7 @@ function AppointmentStatus() {
 
     return (
         <>
-            {appointmentStatus.map(appointment => {
+            {appointmentStatus && appointmentStatus.map(appointment => {
                 return (
                     <Container className="mt-5">
                         <Row className="justify-content-center">
@@ -67,6 +67,28 @@ function AppointmentStatus() {
                     </Container>
                 );
             })}
+            {appointmentStatus.length === 0 && (
+                <Container className="mt-5">
+                    <Row className="justify-content-center">
+                        <Col md={8}>
+                            <Card>
+                                <Card.Header as="h4" className="bg-primary text-white text-center">
+                                    Appointment Status
+                                </Card.Header>
+                                <Card.Body>
+                                    <ListGroup variant="flush">
+                                        <ListGroup.Item>
+                                            <Row>
+                                                <Col md={8} className="text-right font-weight-bold">예약 현황이 없습니다.</Col>
+                                            </Row>
+                                        </ListGroup.Item>
+                                    </ListGroup>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                </Container>
+            )}
         </>
     );
 }

@@ -68,11 +68,30 @@ class CommonInfoSerializer(serializers.ModelSerializer):
         address_data = validated_data.pop('address', None)
 
         if name_data:
-            instance.name = HumanName.objects.create(**name_data)
+            if instance.name:
+                name_serializer = HumanNameSerializer(instance.name, data=name_data, partial=True)
+                if name_serializer.is_valid():
+                    name_serializer.save()
+            else:
+                instance.name = HumanName.objects.create(**name_data)
+
         if telecom_data:
-            instance.telecom = ContactPoint.objects.create(**telecom_data)
+            if instance.telecom:
+                telecom_serializer = ContactPointSerializer(instance.telecom, data=telecom_data, partial=True)
+                if telecom_serializer.is_valid():
+                    telecom_serializer.save()
+            else:
+                instance.telecom = ContactPoint.objects.create(**telecom_data)
+
         if address_data:
-            instance.address = Address.objects.create(**address_data)
+            if instance.address:
+                address_serializer = AddressSerializer(instance.address, data=address_data, partial=True)
+                if address_serializer.is_valid():
+                    address_serializer.save()
+            else:
+                instance.address = Address.objects.create(**address_data)
+
+        instance = super().update(instance, validated_data)
 
         instance.save()
         return instance
@@ -162,4 +181,3 @@ class ChangePasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError("새 비밀번호가 현재 비밀번호와 같습니다.")
         validate_password(new_password)
         return data
-    

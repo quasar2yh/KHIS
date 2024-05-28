@@ -34,7 +34,7 @@ function Header() {
                         <Nav.Link href="/schedule">Schedule</Nav.Link>
                         <NavDropdown title="Department" id="basic-nav-dropdown">
                             {departmentList && departmentList.map((department => {
-                                return <NavDropdown.Item href="/" key={department.id}>{department.department}</NavDropdown.Item>
+                                return <NavDropdown.Item href={`/department/${department.id}`} key={department.id}>{department.department}</NavDropdown.Item>
                             }))}
                         </NavDropdown>
                         <Nav.Link href="/chatbot">Chatbot</Nav.Link>

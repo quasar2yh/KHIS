@@ -59,9 +59,24 @@ export const getPatientInfo = async (patientId) => {
     return response.data;
 };
 
+export const updatePatientInfo = async (patientId, data) => {
+    const response = await instance.put(`/khis/patient-registration/${patientId}/`, data);
+    return response.data;
+}
+
+export const getPractitionerInfo = async (practitionerId) => { 
+    const response = await instance.get(`/khis/practitioner-registration/${practitionerId}/`);
+    return response.data;
+};
+
 export const getAccountInfo = async (userId) => {
+    if (userId) {
     const response = await instance.get(`/khis/account/${userId}/`);
     return response.data;
+    }
+    else {
+        return null;
+    }
 };
 
 export const getAppointmentStatus = async (patientId) => {
