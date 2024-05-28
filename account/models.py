@@ -1,14 +1,36 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from ocs.models import MedicalRecord
 
 
 GENDER_CHOICES = [
-        ('Male', 'Male'),
-        ('Female', 'Female'),
-        ('Other', 'Other'),
-        ('Unknown', 'Unknown'),
-    ]
+    ('Male', 'Male'),
+    ('Female', 'Female'),
+    ('Other', 'Other'),
+    ('Unknown', 'Unknown'),
+]
+
+
+class CommonInfo(models.Model):
+    name = models.OneToOneField(
+        'HumanName', on_delete=models.CASCADE, blank=True, null=True)
+    telecom = models.OneToOneField(
+        'ContactPoint', on_delete=models.CASCADE, blank=True, null=True)
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
+    birth_date = models.DateTimeField(blank=True, null=True)
+    address = models.OneToOneField(
+        'Address', on_delete=models.CASCADE, blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
+    def delete(self, *args, **kwargs):
+        if self.name:
+            self.name.delete()
+        if self.telecom:
+            self.telecom.delete()
+        if self.address:
+            self.address.delete()
+        return super().delete(*args, **kwargs)
 
 
 class Account(AbstractUser):
@@ -17,11 +39,16 @@ class Account(AbstractUser):
         ("Practitioner", 'Practitioner')
     ]
     subject = models.CharField(max_length=20)
-    patient = models.OneToOneField('Patient', on_delete=models.CASCADE, blank=True, null=True)
-    practitioner = models.OneToOneField('Practitioner', on_delete=models.CASCADE, blank=True, null=True)
+    patient = models.OneToOneField(
+        'Patient', on_delete=models.CASCADE, blank=True, null=True)
+    practitioner = models.OneToOneField(
+        'Practitioner', on_delete=models.CASCADE, blank=True, null=True)
+
+    def is_practitioner(self):
+        return self.subject == 'Practitioner'
 
 
-class Patient(models.Model):
+class Patient(CommonInfo):
 
     BLOOD_TYPE_CHOICES = [
         ('RH+A', 'RH+A'),
@@ -34,35 +61,23 @@ class Patient(models.Model):
         ('RB-AB', 'RB-AB')
     ]
 
-    name = models.ForeignKey('HumanName', on_delete=models.CASCADE, blank=True, null=True)
-    telecom = models.ForeignKey('ContactPoint', on_delete=models.CASCADE, blank=True, null=True)
-    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
-    birth_date = models.DateTimeField()
-    address = models.ForeignKey('Address', on_delete=models.CASCADE, blank=True, null=True)
-    blood_type = models.CharField(max_length=10, choices=BLOOD_TYPE_CHOICES, blank=True, null=True)
-    related_person = models.ForeignKey('RelatedPerson', on_delete=models.CASCADE, blank=True, null=True)
-    # 환자 관계자, 보호자
+    blood_type = models.CharField(
+        max_length=10, choices=BLOOD_TYPE_CHOICES, blank=True, null=True)
     marital_status = models.BooleanField(blank=True)
     # 환자의 결혼 여부 True | False
     allergies = models.CharField(max_length=255, blank=True)
     # 환자의 여부 ex) 땅콩, 복숭아 ...
-    medical_record = models.ForeignKey(MedicalRecord, on_delete=models.CASCADE, blank=True, null=True)
-    # 환자의 진료 기록
-    
 
-class Practitioner(models.Model):
+
+class Practitioner(CommonInfo):
 
     ROLE_CHOICES = [
         ('Physician', 'Physician'),
         ('Assistant', 'Assistant'),
     ]
 
-    name = models.ForeignKey('HumanName', on_delete=models.CASCADE, blank=True, null=True)
-    telecom = models.ForeignKey('ContactPoint', on_delete=models.CASCADE, blank=True, null=True)
-    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
-    birth_date = models.DateField()
-    address = models.ForeignKey('Address', on_delete=models.CASCADE, blank=True, null=True)
-    department = models.ForeignKey('Department', on_delete=models.CASCADE, blank=True, null=True)
+    department = models.ForeignKey(
+        'Department', on_delete=models.CASCADE, blank=True, null=True)
     # 해당 의료관계자의 부서
     license_type = models.CharField(max_length=10)
     # 자격증 타입
@@ -73,13 +88,14 @@ class Practitioner(models.Model):
     rank = models.IntegerField()
     # 권한 레벨 1~3
 
+    def delete(self, *args, **kwargs):
+        if self.department:
+            self.department.delete()
+        return super().delete(*args, **kwargs)
 
-class RelatedPerson(models.Model):
-    name = models.ForeignKey('HumanName', on_delete=models.CASCADE)
-    telecom = models.ForeignKey('ContactPoint', on_delete=models.CASCADE)
-    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=True)
-    birth_date = models.DateField(blank=True)
-    address = models.ForeignKey('Address', on_delete=models.CASCADE, blank=True)
+
+class RelatedPerson(CommonInfo):
+    patient = models.ForeignKey('Patient', on_delete=models.CASCADE)
 
 
 class HumanName(models.Model):
@@ -107,7 +123,7 @@ class ContactPoint(models.Model):
     ]
 
     system = models.CharField(max_length=10, choices=SYSTEM_CHOICES)
-    value = models.TextField()
+    value = models.TextField(unique=True)
     use = models.CharField(max_length=10, choices=USE_CHOICES)
 
 
@@ -133,14 +149,11 @@ class Address(models.Model):
 
 
 class Department(models.Model):
-    department = models.CharField(max_length=100)
+    department_name = models.CharField(max_length=10)
 
 
 class GeneralPractitioner():
     # 환자와 담당의사 중계 테이블
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE)
     practitioner = models.ForeignKey('Practitioner', on_delete=models.CASCADE)
-
-
-
 
