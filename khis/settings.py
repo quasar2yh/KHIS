@@ -99,6 +99,7 @@ WSGI_APPLICATION = 'khis.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -109,6 +110,7 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT'),
     }
 }
+
 
 # 유저모델
 AUTH_USER_MODEL = 'account.Account'
@@ -166,4 +168,27 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
 
+}
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.naver.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv('MAIL')
+EMAIL_HOST_PASSWORD = os.getenv('MAIL_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+# Celery settings
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+
+# Celery Beat 설정
+CELERY_BEAT_SCHEDULE = {
+    'send-department-event-reminder': {
+        'task': 'schedule.tasks.send_department_event_reminder',
+        'schedule': timedelta(hours=1),  # 매 시간마다 실행
+    },
 }
