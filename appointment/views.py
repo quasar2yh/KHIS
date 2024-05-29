@@ -442,7 +442,7 @@ class AppointmentListAPIView(APIView):
         # 일, 의사 선택 해당 의사의 특정 날짜 스케줄(예약된 시간 포함) #
         elif date and practitioner and not (time or department):
             # 해당 의사 조회
-            practitioners = Practitioner.objects.filter(id=practitioner)
+            practitioners = Practitioner.objects.get(id=practitioner)
             print(practitioners, "dddddddddddddddddddddddddddddddddddd")
             # 해당 의사가 연차인지 확인
             is_on_leave = Annual.objects.filter(
@@ -505,26 +505,36 @@ class AppointmentListAPIView(APIView):
 
         # 시간 ,의사 선택 해당 시간에 의사의 예약 상태(예약 가능 여부)
         elif time and practitioner and not (date or department):
+            try:
+                practitioners = Practitioner.objects.get(
+                    id=practitioner)
+            except Exception as e:
+                return Response(f"{e}해당의사가 없슴두", status=status.HTTP_400_BAD_REQUEST)
             today = datetime.today().date()
             thirty_days_later = today + timedelta(days=30)
             holidays = self.get_hospital_holidays()
-            # 해당 의사조회
-            practitioners = Practitioner.objects.get(id=practitioner)
             # 해당 의사 오늘부터 30일까지의 연차조회
-            anuuals = Annual.objects.filter(
+            annuals = Annual.objects.filter(
                 practitioner_id=practitioner,
-                start_date__lte=today, end_date__gte=thirty_days_later)
-            annuals_data = AnnualSerializer(anuuals, many=True).data
-
+                start_date__lte=thirty_days_later, end_date__gte=today)
+            annuals_data = AnnualSerializer(annuals, many=True).data
+            print(annuals_data, today, thirty_days_later,
+                  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+            # 연차 날짜들을 집합으로 저장
+            annual_leave_days = set()
+            for annual in annuals:
+                current_date = annual.start_date
+                while current_date <= annual.end_date:
+                    annual_leave_days.add(current_date)
+                    current_date += timedelta(days=1)
             # 30일 내로 해당 시간에 예약이 가능한 목록 조회
             available_times = []
             start_time = dt_time(9, 0)
             end_time = dt_time(18, 0)
 
             for single_date in (today + timedelta(n) for n in range(31)):
-                if single_date in holidays:
+                if single_date in holidays or single_date in annual_leave_days:
                     continue
-
                 practitioner_appointments = Appointment.objects.filter(
                     practitioner=practitioner,
                     start__date=single_date,
@@ -544,7 +554,40 @@ class AppointmentListAPIView(APIView):
 
         # 부서 ,의사 선택 해당 부서에서 특정 의사의 스케줄 의사만 선택과 같네
         elif department and practitioner and not (date or time):
-            return Response(f"부서와 의사 선택 완료: 부서-{department}, 의사-{practitioner}", status=status.HTTP_200_OK)
+            today = timezone.now().date()
+            thirty_days_later = today + timedelta(days=30)
+            try:
+                practitioner = Practitioner.objects.get(
+                    id=practitioner, department=department)
+            except Exception as e:
+                return Response(f"{e}의사 또는 부서를 확인해 주세요", status=status.HTTP_400_BAD_REQUEST)
+            holidays = self.get_hospital_holidays
+            # 30일 기간 내의 모든 예약 조회
+            appointments = Appointment.objects.filter(
+                practitioner=practitioner,
+                start__date__range=[today, thirty_days_later]
+            ).order_by('start')
+            # 30일 기간 내의 모든 연차 조회
+            annual_leaves = Annual.objects.filter(
+                practitioner=practitioner,
+                start_date__lte=thirty_days_later,
+                end_date__gte=today
+            ).order_by('start_date')
+            # 직렬화
+            practitioner_data = PractitionerAppointmentSerializer(
+                practitioner).data
+            appointments_data = AppointmentScheduleSerializer(
+                appointments, many=True).data
+            practitioner_annual = AnnualSerializer(
+                annual_leaves, many=True).data
+            # 결과 구성
+            result = {
+                "practitioner": practitioner_data,
+                "예약현황": appointments_data,
+                "선생님쉬는날": practitioner_annual
+            }
+
+            return Response(result, status=status.HTTP_200_OK)
         elif date and time and department and not practitioner:  # 일,시,부서선택 특정 날짜와 시간대에 해당 부서의 예약 가능한 의사 목록과 상태
             datetimes = datetime.combine(date, time)
             # 해당부서 의사 조회
@@ -552,7 +595,6 @@ class AppointmentListAPIView(APIView):
             # 의사들의  연차 여부 확인
             annuals = Annual.objects.filter(
                 start_date__lte=date, end_date__gte=date).values_list('practitioner_id', flat=True)
-
             # 연차인 의사 제외
             practitioners = departments.exclude(id__in=annuals)
             # 의사들의 예약 조회
@@ -566,17 +608,139 @@ class AppointmentListAPIView(APIView):
             return Response(f"일, 시간, 부서 선택 완료: 일-{date}, 시간-{time}, 부서-{department} 해당부서의 예약가능한 의사:{final_practitoner.data}", status=status.HTTP_200_OK)
         # 일,시 ,의사 선택 특정 날짜와 시간대에 의사의 예약 상태(예약 가능 여부)
         elif date and time and practitioner and not department:
-            return Response(f"일, 시간, 의사 선택 완료: 일-{date}, 시간-{time}, 의사-{practitioner}", status=status.HTTP_200_OK)
+            datetimes = datetime.combine(date, time)
+            # 해당 의사 조회
+            practitioners = Practitioner.objects.get(id=practitioner)
+            # 해당의사가 해당일에 연차인지
+            annuals = Annual.objects.filter(
+                practitioner_id=practitioner, start_date__lte=date, end_date__gte=date)
+            if annuals:
+                return Response(f"해당의사는 {date}일 연차입니다 ")
+            # 해당의사의 datetime의 예약이 있는지
+            appointments = Appointment.objects.filter(
+                practitioner_id=practitioner, start=datetimes)
+            if appointments:
+                return Response(f"{practitioner}의사는 {datetimes}에 예약이 있습니다.")
+            return Response(f"일, 시간, 의사 선택 완료: 일-{date}, 시간-{time}, 의사-{practitioner} 예약이 가능합니다.", status=status.HTTP_200_OK)
         elif date and department and practitioner and not time:  # 일,부서,의사 선택 특정 날짜에 해당 부서와 의사의 예약 상태 의사와 일선택과 같음
-            return Response(f"일, 부서, 의사 선택 완료: 일-{date}, 부서-{department}, 의사-{practitioner}", status=status.HTTP_200_OK)
+            # 해당 의사 조회
+            try:
+                practitioner = Practitioner.objects.get(
+                    id=practitioner, department=department)
+            except Exception as e:
+                return Response(f"{e}의사 또는 부서를 확인해 주세요", status=status.HTTP_400_BAD_REQUEST)
+            # 해당 의사가 연차인지 확인
+            is_on_leave = Annual.objects.filter(
+                practitioner_id=practitioner,
+                start_date__lte=date,
+                end_date__gte=date
+            ).exists()
+
+            if is_on_leave:
+                return Response({"message": "해당 의사는 선택한 날짜에 연차입니다."}, status=status.HTTP_200_OK)
+
+            # 해당 의사의 특정 날짜 예약 조회
+            appointments = Appointment.objects.filter(
+                practitioner=practitioner,
+                start__date=date
+            ).order_by('start')
+
+            # 09:00부터 18:00까지 20분 단위로 시간대 생성 및 예약된 시간 확인
+            start_time = dt_time(9, 0)
+            end_time = dt_time(18, 0)
+            current_time = datetime.combine(date, start_time)
+            end_time_dt = datetime.combine(date, end_time)
+            time_slots = []
+
+            while current_time < end_time_dt:
+                slot_start = current_time.time()
+                slot_end = (current_time + timedelta(minutes=20)).time()
+
+                # 해당 시간대에 예약이 있는지 확인
+                if not appointments.filter(start__time__lt=slot_end, end__time__gt=slot_start).exists():
+                    time_slots.append(f"{slot_start.strftime('%H:%M')}")
+
+                current_time += timedelta(minutes=20)
+
+            practitioner_serializer = PractitionerAppointmentSerializer(
+                practitioner)
+            # 의사 정보와 예약 가능한 시간대 반환
+            return Response({
+                'practitioner': practitioner_serializer.data,
+                'available_times': time_slots,
+                'appointments': list(appointments.values('start', 'end'))
+            }, status=status.HTTP_200_OK)
         # 시 ,부서,의사 선택 특정 시간대에 해당 부서와 의사의 예약 상태 의사,시 선택과 같음
         elif time and department and practitioner and not date:
-            return Response(f"시간, 부서, 의사 선택 완료: 시간-{time}, 부서-{department}, 의사-{practitioner}", status=status.HTTP_200_OK)
+            try:
+                practitioners = Practitioner.objects.get(
+                    id=practitioner, department=department)
+            except Exception as e:
+                return Response(f"{e}의사 또는 부서를 확인해 주세요", status=status.HTTP_400_BAD_REQUEST)
+            today = datetime.today().date()
+            thirty_days_later = today + timedelta(days=30)
+            holidays = self.get_hospital_holidays()
+            # 해당 의사 오늘부터 30일까지의 연차조회
+            annuals = Annual.objects.filter(
+                practitioner_id=practitioner,
+                start_date__lte=thirty_days_later, end_date__gte=today)
+            annuals_data = AnnualSerializer(annuals, many=True).data
+            print(annuals_data, today, thirty_days_later,
+                  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+            # 연차 날짜들을 집합으로 저장
+            annual_leave_days = set()
+            for annual in annuals:
+                current_date = annual.start_date
+                while current_date <= annual.end_date:
+                    annual_leave_days.add(current_date)
+                    current_date += timedelta(days=1)
+            # 30일 내로 해당 시간에 예약이 가능한 목록 조회
+            available_times = []
+            start_time = dt_time(9, 0)
+            end_time = dt_time(18, 0)
+
+            for single_date in (today + timedelta(n) for n in range(31)):
+                if single_date in holidays or single_date in annual_leave_days:
+                    continue
+                practitioner_appointments = Appointment.objects.filter(
+                    practitioner=practitioner,
+                    start__date=single_date,
+                    start__time=time
+                ).exists()
+
+                # 해당 시간대에 예약이 있는지 확인
+                if not practitioner_appointments:
+                    available_times.append(single_date.strftime('%Y-%m-%d'))
+
+            return Response({
+                'practitioner': PractitionerAppointmentSerializer(practitioners).data,
+                '예약 가능한 일': available_times,
+                '의사님 쉬는날 ': annuals_data,
+                '병원 휴일': holidays
+            }, status=status.HTTP_200_OK)
+
         # 일,시,부서,의사 선택 특정 날짜와 시간대에 해당 부서와 의사의 예약 상태(예약 가능 여부) 일,시,의사와 같음
         elif date and time and department and practitioner:
-            return Response(f"일, 시간, 부서, 의사 선택 완료: 일-{date}, 시간-{time}, 부서-{department}, 의사-{practitioner}", status=status.HTTP_200_OK)
-        else:
-            return Response("잘못된 선택입니다", status=status.HTTP_400_BAD_REQUEST)
+            datetimes = datetime.combine(date, time)
+            # 해당 의사 조회
+            try:
+                practitioners = Practitioner.objects.get(
+                    id=practitioner, department=department)
+            except Exception as e:
+                return Response(f"{e}의사 또는 부서를 확인해 주세요", status=status.HTTP_400_BAD_REQUEST)
+            # 해당의사가 해당일에 연차인지
+            annuals = Annual.objects.filter(
+                practitioner_id=practitioner, start_date__lte=date, end_date__gte=date)
+            if annuals:
+                return Response(f"해당의사는 {date}일 연차입니다 ")
+            # 해당의사의 datetime의 예약이 있는지
+            appointments = Appointment.objects.filter(
+                practitioner_id=practitioner, start=datetimes)
+            if appointments:
+                return Response(f"{practitioner}의사는 {datetimes}에 예약이 있습니다.")
+            return Response(f"일, 시간, 의사 선택 완료: 일-{date}, 시간-{time}, 의사-{practitioner} 예약이 가능합니다.", status=status.HTTP_200_OK)
+
+        return Response("잘못된 선택입니다", status=status.HTTP_400_BAD_REQUEST)
 
 
 class WaitingListView(APIView):
