@@ -85,7 +85,6 @@ export const getPractitionerInfo = async (practitionerId) => {
     return response.data;
 };
 
-
 export const getAppointmentStatus = async (patientId) => {
     const response = await instance.get(`/khis/appointment/patient/${patientId}/`);
     return response.data;
@@ -108,6 +107,11 @@ export const searchPatient = async (name) => {
 
 export const consultationAction = async (patientId, data) => {
     const response = await instance.post(`/khis/consultations/${patientId}/`, data);
+    return response.data;
+}
+
+export const annualAction = async (data) => {
+    const response = await instance.post(`/khis/schedule/medical/`, data);
     return response.data;
 }
 
