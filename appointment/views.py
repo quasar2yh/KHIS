@@ -25,9 +25,47 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
 
         return get_object_or_404(Patient, pk=patient_id)
 
+    def get_hospital_holidays(self):  # 병원 휴일 조회
+        today = datetime.now().date()
+        thirty_days_later = today + timedelta(days=30)
+        hospital_holidays = HospitalSchedule.objects.filter(
+            date__range=[today, thirty_days_later],
+            is_hospital_holiday=True
+        ).values_list('date', flat=True) | HospitalSchedule.objects.filter(
+            date__range=[today, thirty_days_later],
+            is_public_holiday=True
+        ).values_list('date', flat=True)
+        holidays = set(hospital_holidays)
+        return holidays
+
     def post(self, request, patient_id):
         patient = self.get_patient(patient_id)
         subject = request.user.subject
+        data = request.data
+        practitioner = data.get('practitioner')
+        datetime = parse_datetime(data.get('start'))
+        department = data.get('department')
+        select_date = datetime.date()
+        print(practitioner, department, datetime, select_date,
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        # 부서와 의사 검증
+        try:
+            practitioners = Practitioner.objects.get(
+                id=practitioner, department=department)
+        except Exception as e:
+            return Response(f"{e}부서와 의사를 확인 해 주세요 ", status=status.HTTP_400_BAD_REQUEST)
+        # 연차검증
+        annuals = Annual.objects.filter(
+            practitioner_id=practitioner, start_date__lte=select_date, end_date__gte=select_date)
+        # 병원 공휴일
+        holidays = self.get_hospital_holidays()
+        if select_date in holidays:
+            return Response(f"{select_date}일은 병원의 휴일입니다")
+        # 해당의사 연차
+        date_in_annuals = annuals.exists()
+        if date_in_annuals:
+            return Response(f"{select_date}일은 {practitioner}의사의 연차일 입니다")
+
         serializer = AppointmentSerializer(
             data=request.data, context={'patient': patient, 'subject': subject})
         if serializer.is_valid(raise_exception=True):
@@ -198,7 +236,7 @@ class AppointmentListAPIView(APIView):
         holidays = set(hospital_holidays)
         return holidays
 
-    def get(self, request):
+    def get(self, request):  # 예약 가능 조회
         department = request.query_params.get('department')
         date = request.query_params.get('date')
         time = request.query_params.get('time')
