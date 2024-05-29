@@ -4,37 +4,55 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getPatientInfoAction, getPractitionerInfoAction } from '../redux/modules/userActions';
 import Account from '../components/Account';
 import ProfileUpdate from '../components/ProfileUpdate';
+import PractitionerProfileUpdate from '../components/PractitionerProfileUpdate';
 
 function Profile() {
     const AccountInfo = useSelector(state => state.userReducer.AccountInfo);
     const patientInfo = useSelector(state => state.userReducer.patientInfo);
     const practitionerInfo = useSelector(state => state.userReducer.practitionerInfo);
     const dispatch = useDispatch();
-    const [showProfileUpdate, setShowProfileUpdate] = useState(false);
+
+    const [showPatientProfileUpdate, setShowPatientProfileUpdate] = useState(false);
+    const [showPractitionerProfileUpdate, setShowPractitionerProfileUpdate] = useState(false);
 
     useEffect(() => {
-        if (AccountInfo && AccountInfo.subject === 'Patient' && patientInfo === null) {
+        if (AccountInfo && AccountInfo.subject === 'Patient' && !patientInfo) {
             dispatch(getPatientInfoAction(AccountInfo.patient));
-        }
-    }, [dispatch, AccountInfo, patientInfo]);
-
-    useEffect(() => {
-        if (AccountInfo && AccountInfo.subject === 'Practitioner' && practitionerInfo === null) {
+        } else if (AccountInfo && AccountInfo.subject === 'Practitioner' && !practitionerInfo) {
             dispatch(getPractitionerInfoAction(AccountInfo.practitioner));
         }
-    })
-
-
+    }, [dispatch, AccountInfo, patientInfo, practitionerInfo]);
 
     if (!patientInfo && !practitionerInfo) {
         return <div>Loading...</div>;
     }
 
     const onClose = () => {
-        setShowProfileUpdate(false);
+        setShowPatientProfileUpdate(false);
+        setShowPractitionerProfileUpdate(false);
     };
 
-    const renderPatientProfile = () => {
+    const renderProfile = (info, isPatient) => {
+        const fields = isPatient
+            ? [
+                { label: 'Name', value: info.name ? `${info.name.family} ${info.name.name}` : 'N/A' },
+                { label: 'Gender', value: info.gender || 'N/A' },
+                { label: 'Allergies', value: info.allergies || 'None' },
+                { label: 'Telecom', value: info.telecom ? info.telecom.value : 'N/A' },
+                { label: 'Address', value: info.address ? `${info.address.city} ${info.address.text}` : 'N/A' }
+            ]
+            : [
+                { label: 'Name', value: info.name ? `${info.name.family} ${info.name.name}` : 'N/A' },
+                { label: 'Gender', value: info.gender || 'N/A' },
+                { label: 'Birth Date', value: info.birth_date || 'N/A' },
+                { label: 'License Type', value: info.license_type || 'N/A' },
+                { label: 'License Number', value: info.license_number || 'N/A' },
+                { label: 'Role', value: info.role || 'N/A' },
+                { label: 'Rank', value: info.rank || 'N/A' },
+                { label: 'Telecom', value: info.telecom ? info.telecom.value : 'N/A' },
+                { label: 'Address', value: info.address ? `${info.address.city} ${info.address.text}` : 'N/A' },
+                { label: 'Department', value: info.department || 'N/A' }
+            ];
 
         return (
             <Container className="mt-5">
@@ -42,47 +60,21 @@ function Profile() {
                     <Col md={8}>
                         <Card>
                             <Card.Header as="h4" className="bg-primary text-white text-center">
-                                Patient Profile
+                                Profile
                             </Card.Header>
                             <Card.Body>
                                 <ListGroup variant="flush">
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col md={4} className="text-right font-weight-bold">Name:</Col>
-                                            <Col md={8}>{patientInfo.name ? `${patientInfo.name.family} ${patientInfo.name.name}` : 'N/A'}</Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col md={4} className="text-right font-weight-bold">Gender:</Col>
-                                            <Col md={8}>{patientInfo.gender || 'N/A'}</Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col md={4} className="text-right font-weight-bold">Allergies:</Col>
-                                            <Col md={8}>{patientInfo.allergies || "None"}</Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col md={4} className="text-right font-weight-bold">Telecom:</Col>
-                                            <Col md={8}>
-                                                {patientInfo.telecom ? patientInfo.telecom.value : 'N/A'}
-                                            </Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col md={4} className="text-right font-weight-bold">Address:</Col>
-                                            <Col md={8}>
-                                                {patientInfo.address ? `${patientInfo.address.city} ${patientInfo.address.text}` : 'N/A'}
-                                            </Col>
-                                        </Row>
-                                    </ListGroup.Item>
+                                    {fields.map((field, index) => (
+                                        <ListGroup.Item key={index}>
+                                            <Row>
+                                                <Col md={4} className="text-right font-weight-bold">{field.label}:</Col>
+                                                <Col md={8}>{field.value}</Col>
+                                            </Row>
+                                        </ListGroup.Item>
+                                    ))}
                                 </ListGroup>
                                 <Button variant="primary" className="mt-3" onClick={() => {
-                                    setShowProfileUpdate(true);
+                                    isPatient ? setShowPatientProfileUpdate(true) : setShowPractitionerProfileUpdate(true);
                                 }}>
                                     Update
                                 </Button>
@@ -94,98 +86,13 @@ function Profile() {
         );
     };
 
-    const renderPractitionerProfile = () => {
-
-        return (
-            <Container className="mt-5">
-                <Row className="justify-content-center">
-                    <Col md={8}>
-                        <Card>
-                            <Card.Header as="h4" className="bg-primary text-white text-center">
-                                Practitioner Profile
-                            </Card.Header>
-                            <Card.Body>
-                                <ListGroup variant="flush">
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col md={4} className="text-right font-weight-bold">Name:</Col>
-                                            <Col md={8}>{practitionerInfo.name ? `${practitionerInfo.name.family} ${practitionerInfo.name.name}` : 'N/A'}</Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col md={4} className="text-right font-weight-bold">Gender:</Col>
-                                            <Col md={8}>{practitionerInfo.gender || 'N/A'}</Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col md={4} className="text-right font-weight-bold">Birth Date:</Col>
-                                            <Col md={8}>{practitionerInfo.birth_date || 'N/A'}</Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col md={4} className="text-right font-weight-bold">License Type:</Col>
-                                            <Col md={8}>{practitionerInfo.license_type || 'N/A'}</Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col md={4} className="text-right font-weight-bold">License Number:</Col>
-                                            <Col md={8}>{practitionerInfo.license_number || 'N/A'}</Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col md={4} className="text-right font-weight-bold">Role:</Col>
-                                            <Col md={8}>{practitionerInfo.role || 'N/A'}</Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col md={4} className="text-right font-weight-bold">Rank:</Col>
-                                            <Col md={8}>{practitionerInfo.rank || 'N/A'}</Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col md={4} className="text-right font-weight-bold">Telecom:</Col>
-                                            <Col md={8}>
-                                                {practitionerInfo.telecom ? practitionerInfo.telecom.value : 'N/A'}
-                                            </Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col md={4} className="text-right font-weight-bold">Address:</Col>
-                                            <Col md={8}>
-                                                {practitionerInfo.address ? `${practitionerInfo.address.city} ${practitionerInfo.address.text}` : 'N/A'}
-                                            </Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col md={4} className="text-right font-weight-bold">Department:</Col>
-                                            <Col md={8}>{practitionerInfo.department || 'N/A'}</Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                </ListGroup>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
-            </Container>
-        );
-    };
-
     return (
         <>
-            {showProfileUpdate ? (
-                <ProfileUpdate onClose={onClose} />
-            ) : (
+            {showPatientProfileUpdate && <ProfileUpdate onClose={onClose} />}
+            {showPractitionerProfileUpdate && <PractitionerProfileUpdate onClose={onClose} />}
+            {!showPatientProfileUpdate && !showPractitionerProfileUpdate && (
                 <>
-                    {patientInfo ? renderPatientProfile() : renderPractitionerProfile()}
+                    {patientInfo ? renderProfile(patientInfo, true) : renderProfile(practitionerInfo, false)}
                 </>
             )}
             <Account />
