@@ -120,4 +120,9 @@ export const annualAction = async (data) => {
     return response.data;
 }
 
+export const getAnnual = async () => {
+    const response = await instance.get(`/khis/schedule/medical/`);
+    return response.data;
+}
+
 export default instance;

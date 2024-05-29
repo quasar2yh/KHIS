@@ -6,7 +6,6 @@ const Postcode = ({ formData, setFormData }) => {
   const open = useDaumPostcodePopup();
 
   const handleComplete = (data) => {
-    console.log("data", data)
     setFormData({
       ...formData,
       address: {

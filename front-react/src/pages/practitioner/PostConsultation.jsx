@@ -19,8 +19,8 @@ const PostConsultation = () => {
     const handleClose = () => setShowModal(false);
 
     const handleSearch = () => {
-        searchPatient(patientName).then(patients => {
-            setPatientList(patients);
+        searchPatient(patientName).then(res => {
+            setPatientList(res);
         });
     };
 

@@ -9,8 +9,8 @@ function AppointmentStatus() {
 
     useEffect(() => {
         if (AccountInfo && AccountInfo.patient) {
-            getAppointmentStatus(AccountInfo.patient).then(appointmentInfo => {
-                setAppointmentStatus(appointmentInfo);
+            getAppointmentStatus(AccountInfo.patient).then(res => {
+                setAppointmentStatus(res);
             });
         }
     }, [AccountInfo]);

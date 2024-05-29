@@ -44,7 +44,6 @@ function ProfileUpdate({ onClose }) {
         if (formData.gender === '성별') {
             body.gender = patientInfo.gender;
         }
-        console.log("body",body)
         updatePatientInfo(patientInfo.id, body).then(() => {
             alert("정보 수정 성공")
             navigator("/");

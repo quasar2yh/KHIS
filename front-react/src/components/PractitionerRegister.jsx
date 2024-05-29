@@ -59,7 +59,6 @@ function PractitionerRegister() {
 
         try {
             const response = await registerAction(body);
-            console.log(response);
             if (response.id) {
                 alert("회원가입 성공")
                 navigate('/login')

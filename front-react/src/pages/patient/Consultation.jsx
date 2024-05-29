@@ -11,8 +11,8 @@ function Consultation() {
 
     useEffect(() => {
         if (AccountInfo && AccountInfo.subject === 'Patient') {
-            getConsultations(AccountInfo.patient).then(consultations => {
-                setConsultations(consultations)
+            getConsultations(AccountInfo.patient).then(res=> {
+                setConsultations(res)
             });
         }
     }, [AccountInfo]);

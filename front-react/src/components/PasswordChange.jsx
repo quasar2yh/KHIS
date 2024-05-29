@@ -23,8 +23,6 @@ function PasswordChange({ onClose }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        console.log("formData", formData)
         passwordChange(accountInfo.id, formData).then(() => {
             alert("비밀번호 변경 성공")
             navigator("/");

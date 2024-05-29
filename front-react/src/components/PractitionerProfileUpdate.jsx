@@ -43,7 +43,7 @@ function PractitionerProfileUpdate({ onClose }) {
         if (formData.gender === '성별') {
             body.gender = PractitionerInfo.gender;
         }
-        console.log("body",body)
+
         updatePractitionerInfo(PractitionerInfo.id, body).then(() => {
             alert("정보 수정 성공")
             navigator("/");
