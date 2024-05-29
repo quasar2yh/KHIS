@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from account.models import Patient, RelatedPerson, Account
+from account.models import Patient, RelatedPerson, Account, HumanName
 from account.serializers import PatientSerializer, RelatedPersonSerializer
 
 
@@ -97,5 +97,20 @@ class RelatedPersonAPIView(APIView):
                 return Response({"detail": "환자 관계자가 없습니다."}, status=status.HTTP_404_NOT_FOUND)
             related_person.delete()
             return Response({"detail": "환자 관계자 정보 삭제 성공"})
+        else:
+            return Response({"detail": "사용 권한이 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PatientSearchAPIView(APIView):
+    # 이름으로 환자 데이터 조회
+    def get(self, request):
+        if request.user.is_authenticated and request.user.is_practitioner():
+            name = request.GET.get('name')
+            if name:
+                patients = Patient.objects.filter(name__name__icontains=name)
+                serializer = PatientSerializer(instance=patients, many=True)
+                return Response(serializer.data)
+            else:
+                return Response({"detail": "이름을 제공해야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"detail": "사용 권한이 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
