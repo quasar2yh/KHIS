@@ -88,6 +88,12 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
             patient=patient).order_by('-created')
         if not patient:
             return Response("환자 정보가 없습니다.")
+        if start and end:
+            start_date = parse_date(start)
+            end_date = parse_date(end)
+            max_end = start_date + timedelta(days=365)
+            if end_date > max_end:
+                return Response("조회 시작일로 최대 1년까지만 조회 가능합니다.")
         if start:  # 조회 시작날자로 조회
             start_date = parse_datetime(start)
             if start_date:
