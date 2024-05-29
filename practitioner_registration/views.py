@@ -1,11 +1,8 @@
-from django.shortcuts import render
-
-# Create your views here.
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from account.models import Practitioner, Account
+from account.models import Practitioner
 from account.serializers import PractitionerSerializer
 
 
