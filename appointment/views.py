@@ -88,7 +88,9 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
 
     def put(self, request, patient_id):
         patient = self.get_patient(patient_id)
-        appointment = get_object_or_404(Appointment, patient=patient)
+        restart = request.data.get('restart')
+        appointment = get_object_or_404(
+            Appointment, patient=patient, start=restart)
         account = patient.account
         login_id = request.user.id
         if account.id == login_id:
@@ -204,8 +206,11 @@ class AppointmentListAPIView(APIView):
         if date:
             date = parse_date(date)
             holidays = self.get_hospital_holidays()
+            today = timezone.now().date()
             if date in holidays:
                 return Response({f"{date}는 병원의 휴일입니다.get"}, status=status.HTTP_200_OK)
+            if date < today:
+                return Response("예약일은 현재보다 앞이여아 함다")
         if time:
             time = parse_time(time)
             if not (dt_time(9, 0) <= time <= dt_time(18, 0)):
@@ -224,8 +229,8 @@ class AppointmentListAPIView(APIView):
 
             return Response(f"일 선택 완료: {date} 예약가능한 의사:{practitionerserializer.data}", status=status.HTTP_200_OK)
         elif time and not (date or department or practitioner):  # 시간만 선택 해당시간에 예약 가능한 의사
-            today = datetime.date.today()
-            thirty_days_later = today + datetime.timedelta(days=30)
+            today = timezone.now().date()
+            thirty_days_later = today + timedelta(days=30)
             # 병원의 휴일 조회
 
             holidays = self.get_hospital_holidays()
@@ -280,7 +285,7 @@ class AppointmentListAPIView(APIView):
                 practitioners, many=True)
 
             today = timezone.now().date()
-            thirty_days_later = today + datetime.timedelta(days=30)
+            thirty_days_later = today + timedelta(days=30)
             available_times = {}
             holidays = self.get_hospital_holidays()
             # 각 의사의 예약 가능한 시간대 조회
@@ -310,14 +315,14 @@ class AppointmentListAPIView(APIView):
                         current_date += datetime.timedelta(days=1)
 
                 for day in range(30):
-                    date = today + datetime.timedelta(days=day)
+                    date = today + timedelta(days=day)
                     if date in annual_leave_days or date in holidays:
                         continue  # 연차 기간이나 병원의 휴일이면 예약 가능한 시간대에서 제외
 
                     for hour in range(9, 18):  # 병원 운영시간
                         for minute in [0, 20, 40]:  # 예약단위는 20분
-                            time_slot = datetime.datetime.combine(
-                                date, datetime.time(hour, minute))
+                            time_slot = datetime.combine(
+                                date, dt_time(hour, minute))
                             local_time_slot = timezone.localtime(
                                 timezone.make_aware(time_slot))
                             local_time_slot_str = local_time_slot.strftime(
@@ -336,7 +341,7 @@ class AppointmentListAPIView(APIView):
         # 의사만선택  해당 의사의 전체 스케줄(예약된 시간 포함)
         elif practitioner and not (date or time or department):
             today = timezone.now().date()
-            thirty_days_later = today + datetime.timedelta(days=30)
+            thirty_days_later = today + timedelta(days=30)
             practitioner = Practitioner.objects.get(id=practitioner)
             holidays = self.get_hospital_holidays
             # 30일 기간 내의 모든 예약 조회
@@ -388,28 +393,177 @@ class AppointmentListAPIView(APIView):
             return Response(f"예약 가능한 의사 선택 완료: 일,시에{datetimes}예약가능의사:{practitioners_serializer}", status=status.HTTP_200_OK)
         # 일 , 부서 선택 해당 날짜에 부서별로 예약 가능한 의사 목록과 시간대
         elif date and department and not (time or practitioner):
-            holidays = self.get_hospital_holidays()
-
             # 해당 부서의 의사 조회
-            # 해당 부서의 의사중 해당일의 연차중인 의사 제외
-            # 해당 일의 근무중인 의사의 예약 시간
-            # 해당 일의 근무중인 의사의 예약 가능한 시간
-            # 예약 가능한 부서의 의사들의 예약 가능한 시간
-            return Response(f"일과 부서 선택 완료: 일-{date}, 부서-{department}", status=status.HTTP_200_OK)
-        # 일, 의사 선택 해당 의사의 특정 날짜 스케줄(예약된 시간 포함)
+            department_practitioners = Practitioner.objects.filter(
+                department_id=department)
+            # 의사중 해당일의 연차중인 의사 조회
+            annual_practitioners = Annual.objects.filter(
+                start_date__lte=date, end_date__gte=date).values_list('practitioner_id', flat=True)
+
+            # 해당일의 연차중인 의사 제외
+            department_practitioners_anuual = department_practitioners.exclude(
+                id__in=annual_practitioners)
+
+            # 예약 가능한 의사가 없는 경우 메시지 반환
+            if not department_practitioners_anuual.exists():
+                return Response({"message": "예약 가능한 의사가 없습니다."}, status=status.HTTP_200_OK)
+            # 각 의사별로 예약 가능한 시간대 계산
+            available_times = []
+            start_time = dt_time(9, 0)
+            end_time = dt_time(18, 0)
+
+            for practitioner in department_practitioners_anuual:
+                practitioner_appointments = Appointment.objects.filter(
+                    practitioner=practitioner,
+                    start__date=date
+                ).order_by('start')
+
+                # 09:00부터 18:00까지 20분 단위로 시간대 생성
+                current_time = datetime.combine(date, start_time)
+                end_time_dt = datetime.combine(date, end_time)
+                time_slots = []
+
+                while current_time < end_time_dt:
+                    slot_start = current_time.time()
+                    slot_end = (current_time + timedelta(minutes=20)).time()
+
+                    # 해당 시간대에 예약이 있는지 확인
+                    if not practitioner_appointments.filter(start__time__lt=slot_end, end__time__gt=slot_start).exists():
+                        time_slots.append(f"{slot_start.strftime('%H:%M')}")
+
+                    current_time += timedelta(minutes=20)
+
+                available_times.append({
+                    'practitioner': PractitionerAppointmentSerializer(practitioner).data,
+                    'available_times': time_slots
+                })
+
+            return Response(available_times, status=status.HTTP_200_OK)
+        # 일, 의사 선택 해당 의사의 특정 날짜 스케줄(예약된 시간 포함) #
         elif date and practitioner and not (time or department):
-            return Response(f"일과 의사 선택 완료: 일-{date}, 의사-{practitioner}", status=status.HTTP_200_OK)
+            # 해당 의사 조회
+            practitioners = Practitioner.objects.filter(id=practitioner)
+            print(practitioners, "dddddddddddddddddddddddddddddddddddd")
+            # 해당 의사가 연차인지 확인
+            is_on_leave = Annual.objects.filter(
+                practitioner_id=practitioner,
+                start_date__lte=date,
+                end_date__gte=date
+            ).exists()
+
+            if is_on_leave:
+                return Response({"message": "해당 의사는 선택한 날짜에 연차입니다."}, status=status.HTTP_200_OK)
+
+            # 해당 의사의 특정 날짜 예약 조회
+            appointments = Appointment.objects.filter(
+                practitioner=practitioner,
+                start__date=date
+            ).order_by('start')
+
+            # 09:00부터 18:00까지 20분 단위로 시간대 생성 및 예약된 시간 확인
+            start_time = dt_time(9, 0)
+            end_time = dt_time(18, 0)
+            current_time = datetime.combine(date, start_time)
+            end_time_dt = datetime.combine(date, end_time)
+            time_slots = []
+
+            while current_time < end_time_dt:
+                slot_start = current_time.time()
+                slot_end = (current_time + timedelta(minutes=20)).time()
+
+                # 해당 시간대에 예약이 있는지 확인
+                if not appointments.filter(start__time__lt=slot_end, end__time__gt=slot_start).exists():
+                    time_slots.append(f"{slot_start.strftime('%H:%M')}")
+
+                current_time += timedelta(minutes=20)
+
+            practitioner_serializer = PractitionerAppointmentSerializer(
+                practitioners)
+            # 의사 정보와 예약 가능한 시간대 반환
+            return Response({
+                'practitioner': practitioner_serializer.data,
+                'available_times': time_slots,
+                'appointments': list(appointments.values('start', 'end'))
+            }, status=status.HTTP_200_OK)
+
         # 시간 ,부서 선택 해당 시간대에 해당 부서의 예약 가능한 의사 목록
         elif time and department and not (date or practitioner):
-            return Response(f"시간과 부서 선택 완료: 시간-{time}, 부서-{department}", status=status.HTTP_200_OK)
+            today = datetime.today().date()
+            thirty_days_later = today + timedelta(days=30)
+            # 해당 부서의 의사조회
+            departments = Practitioner.objects.filter(department=department)
+            # 각 의사별 오늘부터 30일까지의 연차조회
+            anuuals = Annual.objects.filter(
+                start_date__lte=today, end_date__gte=thirty_days_later)
+            practitioners = departments.exclude(
+                id__in=anuuals)
+
+            final_practitioner = PractitionerAppointmentSerializer(
+                practitioners, many=True)
+
+            return Response(f"해당 시간에 30일내로 예약가능 한 부서의 의사{final_practitioner.data}", status=status.HTTP_200_OK)
+
         # 시간 ,의사 선택 해당 시간에 의사의 예약 상태(예약 가능 여부)
         elif time and practitioner and not (date or department):
-            return Response(f"시간과 의사 선택 완료: 시간-{time}, 의사-{practitioner}", status=status.HTTP_200_OK)
+            today = datetime.today().date()
+            thirty_days_later = today + timedelta(days=30)
+            holidays = self.get_hospital_holidays()
+            # 해당 의사조회
+            practitioners = Practitioner.objects.get(id=practitioner)
+            # 해당 의사 오늘부터 30일까지의 연차조회
+            anuuals = Annual.objects.filter(
+                practitioner_id=practitioner,
+                start_date__lte=today, end_date__gte=thirty_days_later)
+            annuals_data = AnnualSerializer(anuuals, many=True).data
+
+            # 30일 내로 해당 시간에 예약이 가능한 목록 조회
+            available_times = []
+            start_time = dt_time(9, 0)
+            end_time = dt_time(18, 0)
+
+            for single_date in (today + timedelta(n) for n in range(31)):
+                if single_date in holidays:
+                    continue
+
+                practitioner_appointments = Appointment.objects.filter(
+                    practitioner=practitioner,
+                    start__date=single_date,
+                    start__time=time
+                ).exists()
+
+                # 해당 시간대에 예약이 있는지 확인
+                if not practitioner_appointments:
+                    available_times.append(single_date.strftime('%Y-%m-%d'))
+
+            return Response({
+                'practitioner': PractitionerAppointmentSerializer(practitioners).data,
+                '예약 가능한 일': available_times,
+                '의사님 쉬는날 ': annuals_data,
+                '병원 휴일': holidays
+            }, status=status.HTTP_200_OK)
+
         # 부서 ,의사 선택 해당 부서에서 특정 의사의 스케줄 의사만 선택과 같네
         elif department and practitioner and not (date or time):
             return Response(f"부서와 의사 선택 완료: 부서-{department}, 의사-{practitioner}", status=status.HTTP_200_OK)
         elif date and time and department and not practitioner:  # 일,시,부서선택 특정 날짜와 시간대에 해당 부서의 예약 가능한 의사 목록과 상태
-            return Response(f"일, 시간, 부서 선택 완료: 일-{date}, 시간-{time}, 부서-{department}", status=status.HTTP_200_OK)
+            datetimes = datetime.combine(date, time)
+            # 해당부서 의사 조회
+            departments = Practitioner.objects.filter(department=department)
+            # 의사들의  연차 여부 확인
+            annuals = Annual.objects.filter(
+                start_date__lte=date, end_date__gte=date).values_list('practitioner_id', flat=True)
+
+            # 연차인 의사 제외
+            practitioners = departments.exclude(id__in=annuals)
+            # 의사들의 예약 조회
+            appointments = Appointment.objects.filter(start=datetimes)
+            # 예약있는 의사 제외
+            practitioners_appointments = practitioners.exclude(
+                id__in=appointments)
+            final_practitoner = PractitionerAppointmentSerializer(
+                practitioners_appointments, many=True)
+
+            return Response(f"일, 시간, 부서 선택 완료: 일-{date}, 시간-{time}, 부서-{department} 해당부서의 예약가능한 의사:{final_practitoner.data}", status=status.HTTP_200_OK)
         # 일,시 ,의사 선택 특정 날짜와 시간대에 의사의 예약 상태(예약 가능 여부)
         elif date and time and practitioner and not department:
             return Response(f"일, 시간, 의사 선택 완료: 일-{date}, 시간-{time}, 의사-{practitioner}", status=status.HTTP_200_OK)

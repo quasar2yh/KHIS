@@ -7,7 +7,7 @@ from django.utils import timezone
 
 class Appointment(models.Model):
     # 예약 상태 (예: proposed, pending, booked 등)
-    status = models.CharField(null=True, max_length=20, choices=[
+    status = models.CharField(max_length=20, choices=[
         ('proposed', 'Proposed'),
         ('booked', 'Booked'),
         ('pending', 'Pending'),
@@ -60,7 +60,7 @@ class Appointment(models.Model):
     active = models.BooleanField()
     # 플래그 필드
     appointment_clean_and_save = False
-    
+
     def appointmentclean(self):  # 환자가 예약할때 하는 검증
         if self.appointment_clean_and_save:
             local_start = timezone.localtime(self.start)
