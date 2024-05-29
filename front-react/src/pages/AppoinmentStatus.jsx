@@ -8,7 +8,7 @@ function AppointmentStatus() {
     const [appointmentStatus, setAppointmentStatus] = useState([]);
 
     useEffect(() => {
-        if (AccountInfo) {
+        if (AccountInfo && AccountInfo.patient) {
             getAppointmentStatus(AccountInfo.patient).then(appointmentInfo => {
                 setAppointmentStatus(appointmentInfo);
             });
