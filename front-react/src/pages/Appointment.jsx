@@ -95,7 +95,7 @@ function Appointment() {
                         >
                             <option>부서를 선택하세요.</option>
                             {departmentList && departmentList.map((department) => (
-                                <option key={department.id} value={department.id}>{department.department}</option>
+                                <option key={department.id} value={department.id}>{department.department_name}</option>
                             ))}
                         </Form.Control>
                     </Col>

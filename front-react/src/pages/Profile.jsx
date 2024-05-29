@@ -21,7 +21,7 @@ function Profile() {
         return <div>Loading...</div>;
     }
 
-    const { name, telecom, address, gender, marital_status, allergies } = patientInfo;
+    const { name, telecom, address, gender, allergies } = patientInfo;
 
     const onClose = () => {
         setShowProfileUpdate(false);
@@ -48,24 +48,8 @@ function Profile() {
                                         </ListGroup.Item>
                                         <ListGroup.Item>
                                             <Row>
-                                                <Col md={4} className="text-right font-weight-bold">Address:</Col>
-                                                <Col md={8}>{address || 'N/A'}</Col>
-                                            </Row>
-                                        </ListGroup.Item>
-                                        <ListGroup.Item>
-                                            <Row>
                                                 <Col md={4} className="text-right font-weight-bold">Gender:</Col>
                                                 <Col md={8}>{gender || 'N/A'}</Col>
-                                            </Row>
-                                        </ListGroup.Item>
-                                        <ListGroup.Item>
-                                            <Row>
-                                                <Col md={4} className="text-right font-weight-bold">Marital Status:</Col>
-                                                <Col md={8}>
-                                                    <Badge variant={marital_status ? "success" : "secondary"}>
-                                                        {marital_status ? "Married" : "Single"}
-                                                    </Badge>
-                                                </Col>
                                             </Row>
                                         </ListGroup.Item>
                                         <ListGroup.Item>
@@ -78,7 +62,15 @@ function Profile() {
                                             <Row>
                                                 <Col md={4} className="text-right font-weight-bold">Telecom:</Col>
                                                 <Col md={8}>
-                                                    {telecom ? `${telecom.system} - ${telecom.value} (${telecom.use})` : 'N/A'}
+                                                    {telecom ? telecom.value : 'N/A'}
+                                                </Col>
+                                            </Row>
+                                        </ListGroup.Item>
+                                        <ListGroup.Item>
+                                            <Row>
+                                                <Col md={4} className="text-right font-weight-bold">Address:</Col>
+                                                <Col md={8}>
+                                                    {telecom ? `${address.city}  ${address.text}` : 'N/A'}
                                                 </Col>
                                             </Row>
                                         </ListGroup.Item>
