@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Card, ListGroup, Badge, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, ListGroup, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPatientInfoAction } from '../redux/modules/userActions';
 import Account from '../components/Account';
@@ -10,7 +10,7 @@ function Profile() {
     const patientInfo = useSelector(state => state.userReducer.patientInfo);
     const dispatch = useDispatch();
     const [showProfileUpdate, setShowProfileUpdate] = useState(false);
-
+    console.log("AccountInfo", AccountInfo)
     useEffect(() => {
         if (AccountInfo && AccountInfo.subject==='Patient' && patientInfo === null) {
             dispatch(getPatientInfoAction(AccountInfo.patient));

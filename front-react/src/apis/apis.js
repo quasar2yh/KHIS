@@ -44,6 +44,22 @@ export const loginAction = async (data) => {
     return response.data;
 };
 
+export const getAccountInfo = async (userId) => {
+    if (userId) {
+    const response = await instance.get(`/khis/account/${userId}/`);
+    return response.data;
+    }
+    else {
+        return null;
+    }
+};
+
+export const passwordChange = async (userId, data) => {
+    const response = await instance.put(`/khis/account/pwchange/${userId}/`, data);
+    return response.data;
+}
+
+
 export const appointmentAction = async (data, userId) => {
     const response = await instance.post(`/khis/appointment/patient/${userId}/`, data);
     return response.data;
@@ -69,15 +85,6 @@ export const getPractitionerInfo = async (practitionerId) => {
     return response.data;
 };
 
-export const getAccountInfo = async (userId) => {
-    if (userId) {
-    const response = await instance.get(`/khis/account/${userId}/`);
-    return response.data;
-    }
-    else {
-        return null;
-    }
-};
 
 export const getAppointmentStatus = async (patientId) => {
     const response = await instance.get(`/khis/appointment/patient/${patientId}/`);
