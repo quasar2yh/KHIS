@@ -27,6 +27,16 @@ class MedicalScheduleAPIView(APIView):
                 practitioner = request.user.practitioner
                 start_date = serializer.validated_data['start_date']
                 end_date = serializer.validated_data['end_date']
+
+                # 중복 검사
+                overlapping_annuals = Annual.objects.filter(
+                    practitioner=practitioner,
+                    start_date__lte=end_date,
+                    end_date__gte=start_date
+                )
+                if overlapping_annuals.exists():
+                    return Response({"message": "이미 신청된 날짜입니다."}, status=status.HTTP_400_BAD_REQUEST)
+
                 reason = serializer.validated_data.get('reason', '')
                 annual = Annual.objects.create(
                     practitioner=practitioner, start_date=start_date, end_date=end_date, reason=reason)
@@ -34,9 +44,7 @@ class MedicalScheduleAPIView(APIView):
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
-            
             return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_401_UNAUTHORIZED)
-
 
 
 # 본인 연차 조회 (시작 일 빠른 순)
@@ -51,7 +59,6 @@ class MedicalScheduleAPIView(APIView):
             return Response(serializer.data)
         else:
             return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_401_UNAUTHORIZED)
-
 
 
 # 본인 연차 구간조회 (시작 일 빠른 순)
@@ -85,12 +92,11 @@ class SpecificScheduleAPIView(APIView):
             return Response(serializer.data)
         else:
             return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_401_UNAUTHORIZED)
-        
 
 
 # 전체 직원 연차 조회 (시작 일 빠른 순)
 
-class MedicalIntegratedAPIView(APIView):  
+class MedicalIntegratedAPIView(APIView):
     def get(self, request):
         if not request.user.is_authenticated:
             return Response({"message": "로그인이 필요합니다."}, status=status.HTTP_401_UNAUTHORIZED)
@@ -102,11 +108,11 @@ class MedicalIntegratedAPIView(APIView):
         medical_staff_serializer = AnnualSerializer(
             medical_staff_schedules, many=True)
         return Response(medical_staff_serializer.data, status=status.HTTP_200_OK)
-    
-    
+
+
 # 전체 직원 연차의 구간 조회 (시작 일 빠른 순)
 
-class MedicalSpecificIntegratedAPIView(APIView):  
+class MedicalSpecificIntegratedAPIView(APIView):
     def get(self, request):
         if request.user.is_authenticated and request.user.is_practitioner():
 
@@ -124,12 +130,11 @@ class MedicalSpecificIntegratedAPIView(APIView):
             except ValueError:
                 return Response({"message": "올바른 날짜 형식이 아닙니다."}, status=status.HTTP_400_BAD_REQUEST)
 
-
             annuals = Annual.objects.filter(
                 start_date__lte=end_date,
                 end_date__gte=start_date
             ).order_by('-start_date')
-            
+
             serializer = AnnualSerializer(annuals, many=True)
             return Response(serializer.data)
         else:
@@ -137,14 +142,18 @@ class MedicalSpecificIntegratedAPIView(APIView):
 
  # 병원 자체 휴일 등록 및 조회
 
-class HospitalScheduleAPIView(APIView): 
+
+class HospitalScheduleAPIView(APIView):
     def post(self, request):
+        date = request.data.get('date')
+        if HospitalSchedule.objects.filter(date=date, is_hospital_holiday=True).exists():
+            return Response({"error": "이미 등록된 휴일입니다."}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = HospitalScheduleSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(is_hospital_holiday=True) 
+            serializer.save(is_hospital_holiday=True)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
     def get(self, request):
         hospital_holidays = HospitalSchedule.objects.filter(
@@ -153,11 +162,10 @@ class HospitalScheduleAPIView(APIView):
         return Response(serializer.data)
 
 
-
 # 병원 자체 휴일 수정 및 삭제
 
 
-class HospitalScheduleDetailAPIView(APIView):  
+class HospitalScheduleDetailAPIView(APIView):
     def put(self, request, hospitalschedule_id):
         try:
             schedule = HospitalSchedule.objects.get(id=hospitalschedule_id)
@@ -170,8 +178,8 @@ class HospitalScheduleDetailAPIView(APIView):
         except HospitalSchedule.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def delete(self, request, hospitalschedule_id): 
-        try: 
+    def delete(self, request, hospitalschedule_id):
+        try:
             schedule = HospitalSchedule.objects.get(id=hospitalschedule_id)
             schedule.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -181,7 +189,7 @@ class HospitalScheduleDetailAPIView(APIView):
 
 # 공공 데이터 API로 공휴일 데이터 조회
 
-class HospitalPublicScheduleAPIView(APIView):  
+class HospitalPublicScheduleAPIView(APIView):
     def get(self, request):
         # 공휴일 DB 저장
         save_holidays_from_api()
@@ -214,10 +222,10 @@ class IntegratedScheduleAPIView(APIView):
         }
         return Response(integrated_data)
 
-
  # 부서등록
- 
-class DepartmentRegisterAPIView(APIView): 
+
+
+class DepartmentRegisterAPIView(APIView):
     def post(self, request):
         department_name = request.data.get('department_name')
 
@@ -231,11 +239,10 @@ class DepartmentRegisterAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
  # 부서목록 조회
- 
- 
-class DepartmentListAPIView(APIView): 
+
+
+class DepartmentListAPIView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
@@ -243,10 +250,10 @@ class DepartmentListAPIView(APIView):
         serializer = DepartmentSerializer(departments, many=True)
         return Response(serializer.data)
 
-
  # 부서별 연차 조회
- 
-class DepartmentMedicalScheduleAPIView(APIView): 
+
+
+class DepartmentMedicalScheduleAPIView(APIView):
     def get(self, request, department_id):
         practitioners = Practitioner.objects.filter(
             department_id=department_id)
@@ -254,11 +261,11 @@ class DepartmentMedicalScheduleAPIView(APIView):
             practitioner__in=practitioners).order_by('start_date')
         serializer = AnnualSerializer(annuals, many=True)
         return Response(serializer.data)
-    
-    
+
+
 # 부서별 의료진 조회
 
-class DepartmentPractitionerAPIView(APIView): 
+class DepartmentPractitionerAPIView(APIView):
     permission_classes = [AllowAny]
 
     def get(seif, request, department_id):
@@ -269,7 +276,8 @@ class DepartmentPractitionerAPIView(APIView):
 
  # 부셔별 일정 등록
 
-class DepartmentEventAPIView(APIView): 
+
+class DepartmentEventAPIView(APIView):
     def post(self, request, department_id):
         try:
             department = Department.objects.get(id=department_id)
@@ -292,7 +300,7 @@ class DepartmentEventAPIView(APIView):
 
 # 부셔별 일정 수정 및 삭제
 
-class DepartmentEventDetailAPIView(APIView):   
+class DepartmentEventDetailAPIView(APIView):
     def put(self, request, department_id, event_id):
         try:
             department_event = DepartmentEvent.objects.get(
@@ -321,9 +329,9 @@ class DepartmentEventDetailAPIView(APIView):
 
         department_event.delete()
         return Response({"success": "일정이 성공적으로 삭제되었습니다"}, status=status.HTTP_204_NO_CONTENT)
-    
-    
-# 의료진 알람 메일 발송 
+
+
+# 의료진 알람 메일 발송
 
 class MailAPIView(APIView):
     permission_classes = [AllowAny]
@@ -342,7 +350,3 @@ class MailAPIView(APIView):
             return Response({"success": "메일이 예약되었습니다"}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-        
-
-
