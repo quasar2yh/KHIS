@@ -127,6 +127,30 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
     def put(self, request, patient_id):
         patient = self.get_patient(patient_id)
         restart = request.data.get('restart')
+        data = request.data
+        practitioner = data.get('practitioner')
+        datetime = parse_datetime(data.get('start'))
+        department = data.get('department')
+        select_date = datetime.date()
+        print(practitioner, department, datetime, select_date,
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        # 부서와 의사 검증
+        try:
+            practitioners = Practitioner.objects.get(
+                id=practitioner, department=department)
+        except Exception as e:
+            return Response(f"{e}부서와 의사를 확인 해 주세요 ", status=status.HTTP_400_BAD_REQUEST)
+        # 연차검증
+        annuals = Annual.objects.filter(
+            practitioner_id=practitioner, start_date__lte=select_date, end_date__gte=select_date)
+        # 병원 공휴일
+        holidays = self.get_hospital_holidays()
+        if select_date in holidays:
+            return Response(f"{select_date}일은 병원의 휴일입니다")
+        # 해당의사 연차
+        date_in_annuals = annuals.exists()
+        if date_in_annuals:
+            return Response(f"{select_date}일은 {practitioner}의사의 연차일 입니다")
         appointment = get_object_or_404(
             Appointment, patient=patient, start=restart)
         account = patient.account
