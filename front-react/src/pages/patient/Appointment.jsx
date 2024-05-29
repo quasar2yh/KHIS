@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { appointmentAction } from '../apis/apis';
+import { appointmentAction } from '../../apis/apis';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getDepartmentListAction } from '../redux/modules/departmentActions';
+import { getDepartmentListAction } from '../../redux/modules/departmentActions';
 
 function Appointment() {
     const userId = useSelector(state => state.userReducer.userId);

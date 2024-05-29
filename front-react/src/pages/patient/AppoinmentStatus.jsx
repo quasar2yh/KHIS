@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Card, ListGroup } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-import { getAppointmentStatus } from '../apis/apis';
+import { getAppointmentStatus } from '../../apis/apis';
 
 function AppointmentStatus() {
     const AccountInfo = useSelector(state => state.userReducer.AccountInfo);

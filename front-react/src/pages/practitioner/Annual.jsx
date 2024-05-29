@@ -1,29 +1,26 @@
 import React, { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
-import { annualAction } from '../apis/apis';
-import { useSelector } from 'react-redux';
+import { annualAction } from '../../apis/apis';
 
 const Annual = () => {
-    const practitioner = useSelector(state => state.userReducer.practitionerInfo)
-
-    const [annal, setAnnal] = useState({
+    const [annual, setAnnual] = useState({
         start_date: '',
         end_date: '',
         reason: ''
     });
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setAnnal(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+        setAnnual({
+            ...annual,
+            [e.target.name]: e.target.value
+        })
     };
 
     const handleSubmit = () => {
-        annualAction()
+        annualAction(annual)
     };
 
+    console.log("annual", annual)
     return (
         <Form onSubmit={handleSubmit}>
             <Form.Group>
@@ -31,7 +28,7 @@ const Annual = () => {
                 <Form.Control
                     type="date"
                     name="start_date"
-                    value={annal.start_date}
+                    value={annual.start_date}
                     onChange={handleChange}
                     required
                 />
@@ -41,7 +38,7 @@ const Annual = () => {
                 <Form.Control
                     type="date"
                     name="end_date"
-                    value={annal.end_date}
+                    value={annual.end_date}
                     onChange={handleChange}
                     required
                 />
@@ -51,7 +48,7 @@ const Annual = () => {
                 <Form.Control
                     as="textarea"
                     name="reason"
-                    value={annal.reason}
+                    value={annual.reason}
                     onChange={handleChange}
                     required
                 />

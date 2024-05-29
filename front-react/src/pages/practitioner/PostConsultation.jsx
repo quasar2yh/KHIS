@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, ListGroup } from 'react-bootstrap';
-import { searchPatient } from '../apis/apis';
-import { consultationAction } from '../apis/apis';
+import { searchPatient } from '../../apis/apis';
+import { consultationAction } from '../../apis/apis';
 import { useNavigate } from 'react-router-dom';
 
 const PostConsultation = () => {

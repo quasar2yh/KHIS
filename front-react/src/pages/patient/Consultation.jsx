@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal } from 'react-bootstrap';
-import { getConsultations } from '../apis/apis';
+import { getConsultations } from '../../apis/apis';
 import { useSelector } from 'react-redux';
 
 function Consultation() {
