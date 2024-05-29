@@ -101,4 +101,14 @@ export const getConsultations = async (patientId) => {
     return response.data;
 }
 
+export const searchPatient = async (name) => {
+    const response = await instance.get(`/khis/patient-registration/search/?name=${name}`);
+    return response.data;
+}
+
+export const consultationAction = async (patientId, data) => {
+    const response = await instance.post(`/khis/consultations/${patientId}/`, data);
+    return response.data;
+}
+
 export default instance;

@@ -22,7 +22,7 @@ function Profile() {
     }
 
     const { name, telecom, address, gender, allergies } = patientInfo;
-
+    console.log("address", address)
     const onClose = () => {
         setShowProfileUpdate(false);
     };
@@ -43,7 +43,7 @@ function Profile() {
                                         <ListGroup.Item>
                                             <Row>
                                                 <Col md={4} className="text-right font-weight-bold">Name:</Col>
-                                                <Col md={8}>{`${name.family} ${name.name}`}</Col>
+                                                <Col md={8}>{name ? `${name.family} ${name.name}`: 'N/A'}</Col>
                                             </Row>
                                         </ListGroup.Item>
                                         <ListGroup.Item>
@@ -70,7 +70,7 @@ function Profile() {
                                             <Row>
                                                 <Col md={4} className="text-right font-weight-bold">Address:</Col>
                                                 <Col md={8}>
-                                                    {telecom ? `${address.city}  ${address.text}` : 'N/A'}
+                                                    {address ? `${address.city}  ${address.text}` : 'N/A'}
                                                 </Col>
                                             </Row>
                                         </ListGroup.Item>

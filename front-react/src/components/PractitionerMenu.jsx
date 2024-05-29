@@ -9,7 +9,7 @@ function PractitionerMenu({ refresh, handleLogout }) {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link href="/consultations">진료</Nav.Link>
+                        <Nav.Link href="/medical-record">진료</Nav.Link>
                         <Nav.Link href="/">일정</Nav.Link>
                         <Nav.Link href="/annual">연차</Nav.Link>
                     </Nav>
