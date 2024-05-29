@@ -44,6 +44,7 @@ function Header() {
                             <NavDropdown title="Profile" id="profile-nav-dropdown">
                                 <NavDropdown.Item href="/profile">내 정보</NavDropdown.Item>
                                 <NavDropdown.Item href="/appointmentstatus">예약 현황</NavDropdown.Item>
+                                <NavDropdown.Item href="/consultation">진료 기록</NavDropdown.Item>
                                 <NavDropdown.Item onClick={handleLogout}>로그아웃</NavDropdown.Item>
                             </NavDropdown>
                         ) : (

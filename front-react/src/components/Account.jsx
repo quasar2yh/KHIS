@@ -64,9 +64,6 @@ function Account() {
                                 <Button variant="primary" className="mt-3 mr-2" onClick={onClick}>
                                     Password Change
                                 </Button>
-                                <Button variant="danger" className="mt-3 ml-2">
-                                    Delete
-                                </Button>
                                 {showPasswordChange && <PasswordChange onClose={onClose} />}
                             </Card.Body>
                         </Card>

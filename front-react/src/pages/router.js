@@ -10,6 +10,7 @@ import Profile from "./Profile";
 import AppoinmentStatus from "./AppoinmentStatus";
 import Chatbot from "./Chatbot";
 import Department from "./Department";
+import Consultation from "./Consultation";
 
 
 const Router = () => {
@@ -27,6 +28,7 @@ const Router = () => {
                             <Route path="/appointmentstatus" element={<AppoinmentStatus />} />
                             <Route path="/chatbot" element={<Chatbot />} />
                             <Route path="/department/:id" element={<Department />} />
+                            <Route path="/consultation" element={<Consultation />} />
                         </Routes>
                     </Layout>
                 </TokenRefresher>

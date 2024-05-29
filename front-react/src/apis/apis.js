@@ -96,4 +96,9 @@ export const sendChatMessage = async (data) => {
     return response.data;
 }
 
+export const getConsultations = async (patientId) => {
+    const response = await instance.get(`/khis/consultations/${patientId}/`);
+    return response.data;
+}
+
 export default instance;
