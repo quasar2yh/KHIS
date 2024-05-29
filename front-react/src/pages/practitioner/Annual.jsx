@@ -26,7 +26,7 @@ const Annual = () => {
     const handleSubmit = () => {
         annualAction(annual);
     };
-
+    
     return (
         <Container>
             <Row>
@@ -40,13 +40,19 @@ const Annual = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {annualList && annualList.map((annual, index) => (
-                                <tr key={index}>
-                                    <td>{annual.start_date}</td>
-                                    <td>{annual.end_date}</td>
-                                    <td>{annual.reason}</td>
+                            {annualList && annualList.length > 0 ? (
+                                annualList.map((annual, index) => (
+                                    <tr key={index}>
+                                        <td>{annual.start_date}</td>
+                                        <td>{annual.end_date}</td>
+                                        <td>{annual.reason}</td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="3" className="text-center">연차 내역이 없습니다</td>
                                 </tr>
-                            ))}
+                            )}
                         </tbody>
                     </Table>
                 </Col>
