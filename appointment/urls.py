@@ -10,5 +10,4 @@ urlpatterns = [
     path('checklist/', views.AppointmentListAPIView.as_view(), name="checklist"),
     path('waiting/', views.WaitingListView.as_view()),
     path('chatbot/', views.AiConsultationView.as_view()),
-    path('date/', views.AppointMentDateAPIView.as_view())
 ]
