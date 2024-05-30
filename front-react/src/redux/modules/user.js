@@ -21,12 +21,18 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 practitionerInfo: action.payload,
-            }   
+            }
         case 'SET_ACCOUNT_INFO':
             return {
                 ...state,
                 AccountInfo: action.payload,
             };
+        case 'RESET_USER':
+            return {
+                ...state,
+                userId: action.payload,
+                AccountInfo: action.payload
+            }
         default:
             return state;
     }

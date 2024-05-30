@@ -8,34 +8,34 @@ function PatientMenu({ refresh, handleLogout }) {
 
     return (
         <>
-                    <Navbar.Brand href="/">KHIS</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="me-auto">
-                            <Nav.Link href="/appointment">Appointment</Nav.Link>
-                            <Nav.Link href="/schedule">Schedule</Nav.Link>
-                            <NavDropdown title="Department" id="basic-nav-dropdown">
-                                {departmentList && departmentList.map((department => {
-                                    return <NavDropdown.Item href={`/department/${department.id}`} key={department.id}>{department.department_name}</NavDropdown.Item>
-                                }))}
-                            </NavDropdown>
-                            <Nav.Link href="/chatbot">Chatbot</Nav.Link>
-                        </Nav>
-                        <Nav className="ml-auto">
-                            {refresh ? (
-                                <NavDropdown title="Profile" id="profile-nav-dropdown">
-                                    <NavDropdown.Item href="/profile">내 정보</NavDropdown.Item>
-                                    <NavDropdown.Item href="/appointmentstatus">예약 현황</NavDropdown.Item>
-                                    {AccountInfo && AccountInfo.subject === 'Patient' && (
-                                        <NavDropdown.Item href="/consultation">진료 기록</NavDropdown.Item>
-                                    )}
-                                    <NavDropdown.Item onClick={handleLogout}>로그아웃</NavDropdown.Item>
-                                </NavDropdown>
-                            ) : (
-                                <Nav.Link href="/login">로그인</Nav.Link>
+            <Navbar.Brand href="/">KHIS</Navbar.Brand>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id="basic-navbar-nav">
+                <Nav className="me-auto">
+                    <Nav.Link href="/appointment">Appointment</Nav.Link>
+                    <Nav.Link href="/schedule">Schedule</Nav.Link>
+                    <NavDropdown title="Department" id="basic-nav-dropdown">
+                        {departmentList && departmentList.map((department => {
+                            return <NavDropdown.Item href={`/department/${department.id}`} key={department.id}>{department.department_name}</NavDropdown.Item>
+                        }))}
+                    </NavDropdown>
+                    <Nav.Link href="/chatbot">Chatbot</Nav.Link>
+                </Nav>
+                <Nav className="ml-auto">
+                    {refresh ? (
+                        <NavDropdown title="Profile" id="profile-nav-dropdown">
+                            <NavDropdown.Item href="/profile">내 정보</NavDropdown.Item>
+                            <NavDropdown.Item href="/appointmentstatus">예약 현황</NavDropdown.Item>
+                            {AccountInfo && AccountInfo.subject === 'Patient' && (
+                                <NavDropdown.Item href="/consultation">진료 기록</NavDropdown.Item>
                             )}
-                        </Nav>
-                    </Navbar.Collapse>
+                            <NavDropdown.Item onClick={handleLogout}>로그아웃</NavDropdown.Item>
+                        </NavDropdown>
+                    ) : (
+                        <Nav.Link href="/login">로그인</Nav.Link>
+                    )}
+                </Nav>
+            </Navbar.Collapse>
         </>
     )
 };

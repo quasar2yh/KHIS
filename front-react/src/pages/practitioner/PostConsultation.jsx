@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const PostConsultation = () => {
     const [showModal, setShowModal] = useState(false);
-    const [patientName, setPatientName] = useState('');
+    const [patientName, setPatientName] = useState({ name: null});
     const [patientList, setPatientList] = useState([]);
     const [selectedPatient, setSelectedPatient] = useState({ name: '', id: null });
     const [consultationData, setConsultationData] = useState({
@@ -17,6 +17,13 @@ const PostConsultation = () => {
     });
 
     const handleClose = () => setShowModal(false);
+
+    const searchHandler = (e) => {
+        setPatientName({
+            ...patientName,
+            [e.target.name]: e.target.value
+        });
+    }
 
     const handleSearch = () => {
         searchPatient(patientName).then(res => {
@@ -45,7 +52,7 @@ const PostConsultation = () => {
         navigator("/")
     };
 
-
+    console.log("selectedPatient", selectedPatient)
     return (
         <>
             <Modal show={showModal} onHide={handleClose}>
@@ -58,9 +65,10 @@ const PostConsultation = () => {
                         <Form.Control
                             type="text"
                             placeholder="이름을 입력하세요."
-                            value={patientName}
-                            onChange={(e) => setPatientName(e.target.value)}
-                        />
+                            name="name"
+                            value={patientName.name}
+                            onChange = {searchHandler}
+                            />
                     </Form.Group>
                     <Button variant="primary" onClick={handleSearch} className="mt-3">
                         검색
