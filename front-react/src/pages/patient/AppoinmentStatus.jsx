@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Card, ListGroup } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-import { getAppointmentStatus } from '../apis/apis';
+import { getAppointmentStatus } from '../../apis/apis';
 
 function AppointmentStatus() {
     const AccountInfo = useSelector(state => state.userReducer.AccountInfo);
     const [appointmentStatus, setAppointmentStatus] = useState([]);
 
     useEffect(() => {
-        if (AccountInfo) {
-            getAppointmentStatus(AccountInfo.patient).then(appointmentInfo => {
-                setAppointmentStatus(appointmentInfo);
+        if (AccountInfo && AccountInfo.patient) {
+            getAppointmentStatus(AccountInfo.patient).then(res => {
+                setAppointmentStatus(res);
             });
         }
     }, [AccountInfo]);

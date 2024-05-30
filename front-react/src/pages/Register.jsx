@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import PatientRegister from '../components/PatientRegister';
-import PractitionerRegister from '../components/PractitionerRegister';
+import PatientRegister from '../components/patient/PatientRegister';
+import PractitionerRegister from '../components/practitioner/PractitionerRegister';
 import Form from 'react-bootstrap/Form';
 
 function SelectRegisterForm() {
