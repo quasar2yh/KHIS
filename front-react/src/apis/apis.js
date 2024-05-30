@@ -105,8 +105,14 @@ export const getConsultations = async (patientId) => {
     return response.data;
 }
 
-export const searchPatient = async (name) => {
-    const response = await instance.get(`/khis/patient-registration/search/?name=${name}`);
+export const searchPatient = async ({ name, telecom }) => {
+    let url = '/khis/patient-registration/search/';
+    if (name) {
+        url += `?name=${name}`;
+    } else if (telecom) {
+        url += `?telecom=${telecom}`;
+    }
+    const response = await instance.get(url);
     return response.data;
 }
 
