@@ -102,15 +102,20 @@ class RelatedPersonAPIView(APIView):
 
 
 class PatientSearchAPIView(APIView):
-    # 이름으로 환자 데이터 조회
+    # 이름, 연락처로 환자 데이터 조회
     def get(self, request):
         if request.user.is_authenticated and request.user.is_practitioner():
             name = request.GET.get('name')
+            telecom = request.GET.get('telecom')
             if name:
                 patients = Patient.objects.filter(name__name__icontains=name)
                 serializer = PatientSerializer(instance=patients, many=True)
                 return Response(serializer.data)
+            if telecom:
+                patients = Patient.objects.filter(telecom__value__icontains=telecom)
+                serializer = PatientSerializer(instance=patients, many=True)
+                return Response(serializer.data)
             else:
-                return Response({"detail": "이름을 제공해야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"detail": "이름이나 연락처를 제공해야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"detail": "사용 권한이 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
