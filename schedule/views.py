@@ -190,6 +190,8 @@ class HospitalScheduleDetailAPIView(APIView):
 # 공공 데이터 API로 공휴일 데이터 조회
 
 class HospitalPublicScheduleAPIView(APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request):
         # 공휴일 DB 저장
         save_holidays_from_api()
