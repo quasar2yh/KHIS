@@ -133,7 +133,7 @@ class PractitionerSerializer(CommonInfoSerializer):
 
     class Meta:
         model = Practitioner
-        fields = ['name','family'] 
+        fields = '__all__'
 
     def create(self, validated_data):
         common_info = super().create(validated_data)
