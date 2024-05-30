@@ -14,6 +14,7 @@ from account.models import Patient
 from .models import Appointment
 from django.contrib.auth.hashers import check_password
 from django.utils.dateparse import parse_datetime
+from rest_framework.permissions import AllowAny
 
 
 class AppointMentAPIView(APIView):  # 예약기능 CRUD
@@ -201,6 +202,7 @@ class WaitingListView(APIView):
 
 
 class AiConsultationView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         user_message = request.data.get('message')
         if not user_message:
