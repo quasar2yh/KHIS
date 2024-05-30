@@ -85,7 +85,7 @@ class Practitioner(CommonInfo):
     # 해당 자격증의 번호
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     # Physician | Assistant
-    rank = models.IntegerField()
+    rank = models.IntegerField(null=False)
     # 권한 레벨 1~3
 
     def delete(self, *args, **kwargs):
@@ -156,4 +156,3 @@ class GeneralPractitioner():
     # 환자와 담당의사 중계 테이블
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE)
     practitioner = models.ForeignKey('Practitioner', on_delete=models.CASCADE)
-

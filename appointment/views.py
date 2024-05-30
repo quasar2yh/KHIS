@@ -12,6 +12,8 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from account.models import Patient
 from django.contrib.auth.hashers import check_password
+from django.utils.dateparse import parse_datetime
+from rest_framework.permissions import AllowAny
 from django.utils.dateparse import parse_datetime, parse_time, parse_date
 from schedule.models import Annual, HospitalSchedule
 from datetime import datetime
@@ -857,6 +859,7 @@ class WaitingListView(APIView):
 
 
 class AiConsultationView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         user_message = request.data.get('message')
         if not user_message:

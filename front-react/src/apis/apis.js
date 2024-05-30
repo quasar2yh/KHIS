@@ -44,6 +44,22 @@ export const loginAction = async (data) => {
     return response.data;
 };
 
+export const getAccountInfo = async (userId) => {
+    if (userId) {
+    const response = await instance.get(`/khis/account/${userId}/`);
+    return response.data;
+    }
+    else {
+        return null;
+    }
+};
+
+export const passwordChange = async (userId, data) => {
+    const response = await instance.put(`/khis/account/pwchange/${userId}/`, data);
+    return response.data;
+}
+
+
 export const appointmentAction = async (data, userId) => {
     const response = await instance.post(`/khis/appointment/patient/${userId}/`, data);
     return response.data;
@@ -69,14 +85,9 @@ export const getPractitionerInfo = async (practitionerId) => {
     return response.data;
 };
 
-export const getAccountInfo = async (userId) => {
-    if (userId) {
-    const response = await instance.get(`/khis/account/${userId}/`);
+export const updatePractitionerInfo = async (practitionerId, data) => { 
+    const response = await instance.put(`/khis/practitioner-registration/${practitionerId}/`, data);
     return response.data;
-    }
-    else {
-        return null;
-    }
 };
 
 export const getAppointmentStatus = async (patientId) => {
@@ -86,6 +97,31 @@ export const getAppointmentStatus = async (patientId) => {
 
 export const sendChatMessage = async (data) => {
     const response = await instance.post(`/khis/appointment/chatbot/`, data);
+    return response.data;
+}
+
+export const getConsultations = async (patientId) => {
+    const response = await instance.get(`/khis/consultations/${patientId}/`);
+    return response.data;
+}
+
+export const searchPatient = async (name) => {
+    const response = await instance.get(`/khis/patient-registration/search/?name=${name}`);
+    return response.data;
+}
+
+export const consultationAction = async (patientId, data) => {
+    const response = await instance.post(`/khis/consultations/${patientId}/`, data);
+    return response.data;
+}
+
+export const annualAction = async (data) => {
+    const response = await instance.post(`/khis/schedule/medical/`, data);
+    return response.data;
+}
+
+export const getAnnual = async () => {
+    const response = await instance.get(`/khis/schedule/medical/`);
     return response.data;
 }
 

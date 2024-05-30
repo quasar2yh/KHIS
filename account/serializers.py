@@ -141,9 +141,8 @@ class PractitionerSerializer(CommonInfoSerializer):
     def create(self, validated_data):
         common_info = super().create(validated_data)
         department_data = validated_data.pop('department', None)
-
         practitioner = Practitioner.objects.create(
-            name=common_info['name'], telecom=common_info['telecom'], address=common_info['address'], **validated_data)
+            name=common_info['name'], telecom=common_info['telecom'], address=common_info['address'],**validated_data)
 
         if department_data:
             practitioner.department = department_data

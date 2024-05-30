@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { appointmentAction } from '../apis/apis';
+import { appointmentAction } from '../../apis/apis';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getDepartmentListAction } from '../redux/modules/departmentActions';
+import { getDepartmentListAction } from '../../redux/modules/departmentActions';
 
 function Appointment() {
     const userId = useSelector(state => state.userReducer.userId);
@@ -95,7 +95,7 @@ function Appointment() {
                         >
                             <option>부서를 선택하세요.</option>
                             {departmentList && departmentList.map((department) => (
-                                <option key={department.id} value={department.id}>{department.department}</option>
+                                <option key={department.id} value={department.id}>{department.department_name}</option>
                             ))}
                         </Form.Control>
                     </Col>
