@@ -3,8 +3,8 @@ import { Container, Row, Col, Card, ListGroup, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPatientInfoAction, getPractitionerInfoAction } from '../redux/modules/userActions';
 import Account from '../components/Account';
-import ProfileUpdate from '../components/ProfileUpdate';
-import PractitionerProfileUpdate from '../components/PractitionerProfileUpdate';
+import ProfileUpdate from '../components/patient/ProfileUpdate';
+import PractitionerProfileUpdate from '../components/practitioner/PractitionerProfileUpdate';
 
 function Profile() {
     const AccountInfo = useSelector(state => state.userReducer.AccountInfo);

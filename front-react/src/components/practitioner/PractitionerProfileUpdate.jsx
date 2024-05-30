@@ -2,20 +2,20 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { updatePatientInfo } from '../apis/apis';
-import AddressForm from './AddressForm';
+import { updatePractitionerInfo } from '../../apis/apis';
+import AddressForm from '../AddressForm';
 
-function ProfileUpdate({ onClose }) {
-    const patientInfo = useSelector(state => state.userReducer.patientInfo);
+function PractitionerProfileUpdate({ onClose }) {
+    const PractitionerInfo = useSelector(state => state.userReducer.practitionerInfo);
     const navigator = useNavigate()
+    console.log("PractitionerInfo", PractitionerInfo)
 
     const [formData, setFormData] = useState({
-        familyName: patientInfo.name.family,
-        name: patientInfo.name.name,
-        address: patientInfo.address,
-        gender: patientInfo.gender,
-        allergies: patientInfo.allergies,
-        telecom: patientInfo.telecom.value
+        familyName: PractitionerInfo.name.family,
+        name: PractitionerInfo.name.name,
+        address: PractitionerInfo.address,
+        gender: PractitionerInfo.gender,
+        telecom: PractitionerInfo.telecom.value
     });
 
     const handleChange = (e) => {
@@ -35,16 +35,16 @@ function ProfileUpdate({ onClose }) {
             },
             address: formData.address,
             gender: formData.gender,
-            allergies: formData.allergies,
         };
 
-        if (formData.telecom !== patientInfo.telecom.value) {
+        if (formData.telecom !== PractitionerInfo.telecom.value) {
             body.telecom = { value: formData.telecom };
         }
         if (formData.gender === '성별') {
-            body.gender = patientInfo.gender;
+            body.gender = PractitionerInfo.gender;
         }
-        updatePatientInfo(patientInfo.id, body).then(() => {
+
+        updatePractitionerInfo(PractitionerInfo.id, body).then(() => {
             alert("정보 수정 성공")
             navigator("/");
         });
@@ -102,17 +102,6 @@ function ProfileUpdate({ onClose }) {
                                 </Form.Group>
 
                                 <Form.Group className="mt-3">
-                                    <Form.Label>Allergies</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="allergies"
-                                        value={formData.allergies}
-                                        onChange={handleChange}
-                                        placeholder="Enter allergies"
-                                    />
-                                </Form.Group>
-
-                                <Form.Group className="mt-3">
                                     <Form.Label>Telecom</Form.Label>
                                     <Form.Control
                                         type="text"
@@ -138,4 +127,4 @@ function ProfileUpdate({ onClose }) {
     );
 }
 
-export default ProfileUpdate;
+export default PractitionerProfileUpdate;

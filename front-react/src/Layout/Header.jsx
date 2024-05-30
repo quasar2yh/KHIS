@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from 'react-redux';
 import { getDepartmentListAction } from '../redux/modules/departmentActions';
-import PatientMenu from '../components/PatientMenu';
-import PractitionerMenu from '../components/PractitionerMenu';
+import PatientMenu from '../components/patient/PatientMenu';
+import PractitionerMenu from '../components/practitioner/PractitionerMenu';
 
 function Header() {
     const AccountInfo = useSelector(state => state.userReducer.AccountInfo);

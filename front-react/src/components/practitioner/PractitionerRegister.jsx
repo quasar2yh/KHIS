@@ -4,8 +4,8 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import CommonInfoForm from './CommonInfoForm';
-import { registerAction } from '../apis/apis';
+import CommonInfoForm from '../CommonInfoForm';
+import { registerAction } from '../../apis/apis';
 
 function PractitionerRegister() {
 
