@@ -5,11 +5,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import IdPwForm from '../components/IdPwForm';
 import { loginAction } from '../apis/apis';
 import Cookies from 'js-cookie';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAccountInfoAction, getUserIdAction } from '../redux/modules/userActions';
 
 function Login() {
-
+    const userId = useSelector(state => state.userReducer.userId);
+    const dispatch = useDispatch()
     const navigate = useNavigate();
-
     const [id, setId] = useState('');
     const [pw, setPw] = useState('');
 
@@ -29,12 +31,12 @@ function Login() {
 
         try {
             const response = await loginAction(body);
-            console.log(response);
 
             if (response.access) {
-                Cookies.set('access', response.access, { path: '' }); // 쿠키에 액세스 토큰 저장
-                Cookies.set('refresh', response.refresh, { path: '' }); // 쿠키에 리프레시 토큰 저장
-                // console.log("쿠키 : ", cookies.get('refresh'))
+                Cookies.set('access', response.access, { path: '' });
+                Cookies.set('refresh', response.refresh, { path: '' }); 
+                dispatch(getUserIdAction(response.access));
+                dispatch(getAccountInfoAction(userId));
                 navigate('/');
             } else {
                 alert('로그인 실패');

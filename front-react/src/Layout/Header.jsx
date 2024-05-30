@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getDepartmentListAction } from '../redux/modules/departmentActions';
 import PatientMenu from '../components/patient/PatientMenu';
 import PractitionerMenu from '../components/practitioner/PractitionerMenu';
+import { resetUserAction } from '../redux/modules/userActions';
 
 function Header() {
     const AccountInfo = useSelector(state => state.userReducer.AccountInfo);
@@ -20,11 +21,15 @@ function Header() {
         }
     }, [departmentList, dispatch])
 
+
     const handleLogout = () => {
         Cookies.remove('access', { path: '/' });
         Cookies.remove('refresh', { path: '/' });
+        dispatch(resetUserAction());
         navigate('/login');
     };
+
+    console.log("AccountInfo", AccountInfo)
 
     return (<>
         <Navbar expand="lg" className="bg-body-tertiary">

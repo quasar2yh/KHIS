@@ -8,11 +8,13 @@ import { getAccountInfoAction, getUserIdAction } from '../redux/modules/userActi
 export default function TokenRefresher({ children }) {
     const userId = useSelector(state => state.userReducer.userId);
     const dispatch = useDispatch();
-    const token = Cookies.get("access");
 
     useEffect(() => {
+        const token = Cookies.get("access");
         if (token) {
+            console.log("userId", userId)
             dispatch(getUserIdAction(token));
+            console.log("afteruserId", userId)
         }
 
         const refreshAPI = axios.create({
@@ -26,9 +28,9 @@ export default function TokenRefresher({ children }) {
                     refresh: Cookies.get('refresh'),
                 });
                 Cookies.set('access', response.data.access, { path: '' });
-                console.log('토큰이 성공적으로 갱신되었습니다.');
+                console.log('토큰 갱신');
             } catch (error) {
-                console.error('토큰 갱신 중 오류 발생:', error);
+                console.error('토큰 갱신 중 오류', error);
                 Cookies.remove('access');
                 Cookies.remove('refresh');
             }
@@ -48,7 +50,7 @@ export default function TokenRefresher({ children }) {
         if (userId) {
             dispatch(getAccountInfoAction(userId));
         }
-    }, [dispatch, token, userId]);
+    }, [dispatch, userId]);
 
     return <>{children}</>;
 }
