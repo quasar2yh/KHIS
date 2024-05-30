@@ -63,6 +63,7 @@ function ProfileUpdate({ onClose }) {
                                 <Form.Group>
                                     <Form.Label>Family Name</Form.Label>
                                     <Form.Control
+                                        required
                                         type="text"
                                         name="familyName"
                                         value={formData.familyName}
@@ -74,6 +75,7 @@ function ProfileUpdate({ onClose }) {
                                 <Form.Group>
                                     <Form.Label>Name</Form.Label>
                                     <Form.Control
+                                        required
                                         type="text"
                                         name="name"
                                         value={formData.name}
@@ -115,6 +117,7 @@ function ProfileUpdate({ onClose }) {
                                 <Form.Group className="mt-3">
                                     <Form.Label>Telecom</Form.Label>
                                     <Form.Control
+                                        required
                                         type="text"
                                         name="telecom"
                                         value={formData.telecom}

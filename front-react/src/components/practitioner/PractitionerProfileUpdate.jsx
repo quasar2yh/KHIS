@@ -6,16 +6,16 @@ import { updatePractitionerInfo } from '../../apis/apis';
 import AddressForm from '../AddressForm';
 
 function PractitionerProfileUpdate({ onClose }) {
-    const PractitionerInfo = useSelector(state => state.userReducer.practitionerInfo);
+    const practitionerInfo = useSelector(state => state.userReducer.practitionerInfo);
     const navigator = useNavigate()
-    console.log("PractitionerInfo", PractitionerInfo)
+    console.log("practitionerInfo", practitionerInfo)
 
     const [formData, setFormData] = useState({
-        familyName: PractitionerInfo.name.family,
-        name: PractitionerInfo.name.name,
-        address: PractitionerInfo.address,
-        gender: PractitionerInfo.gender,
-        telecom: PractitionerInfo.telecom.value
+        familyName: practitionerInfo.name.family,
+        name: practitionerInfo.name.name,
+        address: practitionerInfo.address,
+        gender: practitionerInfo.gender,
+        telecom: practitionerInfo.telecom.value
     });
 
     const handleChange = (e) => {
@@ -37,14 +37,14 @@ function PractitionerProfileUpdate({ onClose }) {
             gender: formData.gender,
         };
 
-        if (formData.telecom !== PractitionerInfo.telecom.value) {
+        if (formData.telecom !== practitionerInfo.telecom.value) {
             body.telecom = { value: formData.telecom };
         }
         if (formData.gender === '성별') {
-            body.gender = PractitionerInfo.gender;
+            body.gender = practitionerInfo.gender;
         }
 
-        updatePractitionerInfo(PractitionerInfo.id, body).then(() => {
+        updatePractitionerInfo(practitionerInfo.id, body).then(() => {
             alert("정보 수정 성공")
             navigator("/");
         });
@@ -104,6 +104,7 @@ function PractitionerProfileUpdate({ onClose }) {
                                 <Form.Group className="mt-3">
                                     <Form.Label>Telecom</Form.Label>
                                     <Form.Control
+                                        required
                                         type="text"
                                         name="telecom"
                                         value={formData.telecom}

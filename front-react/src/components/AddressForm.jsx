@@ -28,6 +28,7 @@ const AddressForm = ({ formData, setFormData }) => {
                 </Col>
                 <Col xs={12} md={12} className="mb-2">
                     <Form.Control
+                        required
                         type="text"
                         name="city"
                         value={address.city}
@@ -37,6 +38,7 @@ const AddressForm = ({ formData, setFormData }) => {
                 </Col>
                 <Col xs={12} md={6} className="mb-2">
                     <Form.Control
+                        required
                         type="text"
                         name="postal_code"
                         value={address.postal_code}
@@ -46,6 +48,7 @@ const AddressForm = ({ formData, setFormData }) => {
                 </Col>
                 <Col xs={12} md={6} className="mb-2">
                     <Form.Control
+                        required
                         type="text"
                         name="text"
                         value={address.text}

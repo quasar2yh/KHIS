@@ -86,7 +86,7 @@ export const getPractitionerInfo = async (practitionerId) => {
 };
 
 export const updatePractitionerInfo = async (practitionerId, data) => { 
-    const response = await instance.get(`/khis/practitioner-registration/${practitionerId}/`, data);
+    const response = await instance.put(`/khis/practitioner-registration/${practitionerId}/`, data);
     return response.data;
 };
 
