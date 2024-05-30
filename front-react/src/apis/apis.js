@@ -46,8 +46,8 @@ export const loginAction = async (data) => {
 
 export const getAccountInfo = async (userId) => {
     if (userId) {
-    const response = await instance.get(`/khis/account/${userId}/`);
-    return response.data;
+        const response = await instance.get(`/khis/account/${userId}/`);
+        return response.data;
     }
     else {
         return null;
@@ -80,12 +80,12 @@ export const updatePatientInfo = async (patientId, data) => {
     return response.data;
 }
 
-export const getPractitionerInfo = async (practitionerId) => { 
+export const getPractitionerInfo = async (practitionerId) => {
     const response = await instance.get(`/khis/practitioner-registration/${practitionerId}/`);
     return response.data;
 };
 
-export const updatePractitionerInfo = async (practitionerId, data) => { 
+export const updatePractitionerInfo = async (practitionerId, data) => {
     const response = await instance.put(`/khis/practitioner-registration/${practitionerId}/`, data);
     return response.data;
 };
@@ -106,13 +106,7 @@ export const getConsultations = async (patientId) => {
 }
 
 export const searchPatient = async ({ name, telecom }) => {
-    let url = '/khis/patient-registration/search/';
-    if (name) {
-        url += `?name=${name}`;
-    } else if (telecom) {
-        url += `?telecom=${telecom}`;
-    }
-    const response = await instance.get(url);
+    const response = await instance.get('/khis/patient-registration/search/', { params: { name, telecom } });
     return response.data;
 }
 
@@ -130,5 +124,16 @@ export const getAnnual = async () => {
     const response = await instance.get(`/khis/schedule/medical/`);
     return response.data;
 }
+
+export const getAbleAppointmentPractitioner = async ({ date, time, department }) => {
+    const response = await instance.get(`/khis/appointment/checklist/`, { params: {date, time, department}});
+    return response.data;
+}
+
+export const getHoliday = async() => {
+    const response = await instance.get(`/khis/schedule/hospital/Public/`)
+    return response.data;
+}
+
 
 export default instance;

@@ -13,6 +13,7 @@ import Department from "./Department";
 import Consultation from "./patient/Consultation";
 import PostConsultation from "./practitioner/PostConsultation";
 import Annual from "./practitioner/Annual";
+import Holiday from "./Holiday";
 
 
 const Router = () => {
@@ -33,6 +34,7 @@ const Router = () => {
                         <Route path="/consultation" element={<Consultation />} />
                         <Route path="/medical-record" element={<PostConsultation />} />
                         <Route path="/annual" element={<Annual />} />
+                        <Route path="/holiday" element={<Holiday />} />
                     </Routes>
                 </Layout>
             </TokenRefresher>

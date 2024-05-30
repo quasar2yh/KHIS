@@ -14,6 +14,7 @@ function PatientMenu({ refresh, handleLogout }) {
                 <Nav className="me-auto">
                     <Nav.Link href="/appointment">Appointment</Nav.Link>
                     <Nav.Link href="/schedule">Schedule</Nav.Link>
+                    <Nav.Link href="/holiday">Holiday</Nav.Link>
                     <NavDropdown title="Department" id="basic-nav-dropdown">
                         {departmentList && departmentList.map((department => {
                             return <NavDropdown.Item href={`/department/${department.id}`} key={department.id}>{department.department_name}</NavDropdown.Item>
