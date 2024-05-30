@@ -16,6 +16,7 @@ from django.utils.dateparse import parse_datetime, parse_time, parse_date
 from schedule.models import Annual, HospitalSchedule
 from datetime import datetime
 from django.db.models import Q
+import boto3
 
 
 class AppointMentAPIView(APIView):  # 예약기능 CRUD
@@ -24,6 +25,7 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
     def get_patient(self, patient_id):
 
         return get_object_or_404(Patient, pk=patient_id)
+    # 부서별 휴일
 
     def get_hospital_holidays(self):  # 병원 휴일 조회
         today = datetime.now().date()
@@ -75,9 +77,39 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
             appointment.appointment_clean_and_save = True
             appointment.save()
             appointment.appointment_clean_and_save = False
+            print(patient.telecom.value, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+            phone_number = patient.telecom.value
+            # 하이픈 제거
+            phone_number = phone_number.replace('-', '')
+            # 국제 전화번호 형식으로 변환
+            international_number = self.convert_to_international(phone_number)
+            print(international_number,
+                  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+            # SMS 보내기
+            try:
+                sms_response = self.send_sms(
+                    international_number, "안녕하세요, 예약이 완료되었습니다.")
+                print(sms_response, "SMS response")
+            except Exception as e:
+                print(e, "문자 발송 실패")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def send_sms(self, phone_number, message):
+        sns_client = boto3.client('sns', region_name='ap-northeast-1')
+        response = sns_client.publish(
+            PhoneNumber=phone_number,
+            Message=message
+        )
+        return response
+
+    def convert_to_international(self, phone_number):
+        # 대한민국 국제 전화번호 형식 +82
+        if phone_number.startswith('010'):
+            return '+82' + phone_number[1:]
+        else:
+            raise ValueError('전화번호 형식이 올바르지 않습니다.')
 
     def get(self, request, patient_id):
         patient = self.get_patient(patient_id)
@@ -132,7 +164,7 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
 
     def put(self, request, patient_id):
         patient = self.get_patient(patient_id)
-        restart = request.data.get('restart')
+        restart = request.data.get('restart')  # 기존예약 시간
         data = request.data
         practitioner = data.get('practitioner')
         datetime = parse_datetime(data.get('start'))
@@ -170,16 +202,7 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
-class AppointMentDateAPIView(APIView):  # 시간으로 조회
-    def get(self, request):
-        practitioner = request.query_params.get('practitioner')
-        date = request.query_params.get('date')
-
-        return Response("가리겟겟")
-
-
 class AppointmentListAPIView(APIView):
-    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = AppointmentListSerializer(data=request.data)
@@ -689,7 +712,9 @@ class AppointmentListAPIView(APIView):
                 practitioner_id=practitioner, start=datetimes)
             if appointments:
                 return Response(f"{practitioner}의사는 {datetimes}에 예약이 있습니다.")
-            return Response(f"일, 시간, 의사 선택 완료: 일-{date}, 시간-{time}, 의사-{practitioner} 예약이 가능합니다.", status=status.HTTP_200_OK)
+            final_practitioner = PractitionerAppointmentSerializer(
+                practitioner, many=True).data
+            return Response(f"일, 시간, 의사 선택 완료: 일-{date}, 시간-{time}, 의사-{final_practitioner} 예약이 가능합니다.", status=status.HTTP_200_OK)
         elif date and department and practitioner and not time:  # 일,부서,의사 선택 특정 날짜에 해당 부서와 의사의 예약 상태 의사와 일선택과 같음
             # 해당 의사 조회
             try:
@@ -806,7 +831,9 @@ class AppointmentListAPIView(APIView):
                 practitioner_id=practitioner, start=datetimes)
             if appointments:
                 return Response(f"{practitioner}의사는 {datetimes}에 예약이 있습니다.")
-            return Response(f"일, 시간, 의사 선택 완료: 일-{date}, 시간-{time}, 의사-{practitioner} 예약이 가능합니다.", status=status.HTTP_200_OK)
+            final_practitioner = PractitionerAppointmentSerializer(
+                practitioner, many=True).data
+            return Response(f"일, 시간, 의사 선택 완료: 일-{date}, 시간-{time}, 의사-{final_practitioner} 예약이 가능합니다.", status=status.HTTP_200_OK)
 
         return Response("잘못된 선택입니다", status=status.HTTP_400_BAD_REQUEST)
 
