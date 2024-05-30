@@ -1,3 +1,4 @@
+amqp==5.2.0
 annotated-types==0.6.0
 anyio==4.3.0
 asgiref==3.8.1
@@ -14,6 +15,7 @@ decorator==5.1.1
 distro==1.9.0
 Django==4.2
 django-appconf==1.0.6
+django-celery-beat==2.6.0
 django-cors-headers==4.3.1
 django-cryptography==1.1
 django-debug-toolbar==4.3.0
@@ -22,6 +24,7 @@ django-extensions==3.2.3
 django-redis==5.4.0
 django-seed==0.3.1
 django-silk==5.1.0
+django-timezone-field==6.1.0
 djangorestframework==3.15.1
 djangorestframework-simplejwt==5.3.1
 drf-spectacular==0.27.2
