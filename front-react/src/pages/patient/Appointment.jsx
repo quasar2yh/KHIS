@@ -14,7 +14,7 @@ function Appointment() {
     const departmentList = useSelector(state => state.departmentReducer.departmentList);
 
     // 예약 가능한 의사 : 초기값 null
-    const [ablePractitioner, setAblePractitioner] = useState(null);
+    const [ablePractitioner, setAblePractitioner] = useState([]);
 
     // 예약 요청 보낼 데이터
     const [appointmentData, setAppointmentData] = useState({
@@ -42,6 +42,7 @@ function Appointment() {
         const fetchAblePractitioner = async () => {
             if (appointmentData.date && appointmentData.time && appointmentData.department) {
                     const res = await getAbleAppointmentPractitioner(appointmentData);
+                    console.log("res", res)
                     setAblePractitioner(res);
             }
         };
@@ -101,7 +102,7 @@ function Appointment() {
 
 
     console.log("appointmentData", appointmentData)
-    console.log("ablePractitioner", ablePractitioner)
+    console.log("ablePractitioner", ablePractitioner[0])
     console.log("departmentList", departmentList)
     return (
         <>
@@ -133,6 +134,8 @@ function Appointment() {
                             <Form.Control
                                 type="date"
                                 name="date"
+                                value={appointmentData.date}
+                                onChange={handleChange}
                             />
                         </Col>
                     </Form.Group>
