@@ -2,6 +2,8 @@ import React from 'react';
 import { Form, Row, Col } from 'react-bootstrap';
 import Postcode from './PostCode';
 
+
+// 주소 입력 폼
 const AddressForm = ({ formData, setFormData }) => {
     const address = formData.address || {
         city: '',

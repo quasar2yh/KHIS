@@ -7,9 +7,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getDepartmentListAction } from '../../redux/modules/departmentActions';
 
 function Appointment() {
+    // userReducer의 userId
     const userId = useSelector(state => state.userReducer.userId);
+
+    // departmentReducer의 departmentList
     const departmentList = useSelector(state => state.departmentReducer.departmentList);
+
+    // 예약 가능한 의사 : 초기값 null
     const [ablePractitioner, setAblePractitioner] = useState(null);
+
+    // 예약 요청 보낼 데이터
     const [appointmentData, setAppointmentData] = useState({
         date: '',
         time: '',
@@ -29,7 +36,8 @@ function Appointment() {
     }, [departmentList, dispatch]);
 
 
-
+    // 예약 요청 데이터가 변경 될 때 날짜, 시간, 부서가 모두 선택됐으면
+    // 해당 조건에 예약 가능한 의사 리스트 set
     useEffect(() => {
         const fetchAblePractitioner = async () => {
             if (appointmentData.date && appointmentData.time && appointmentData.department) {

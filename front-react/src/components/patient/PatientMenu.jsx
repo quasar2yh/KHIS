@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 
 function PatientMenu({ refresh, handleLogout }) {
     const AccountInfo = useSelector(state => state.userReducer.AccountInfo);
-    const departmentList = useSelector(state => state.departmentReducer.departmentList);
+    const departmentList = useSelector(state => state.departmentReducer.departmentList) || [];
 
     return (
         <>
@@ -15,9 +15,11 @@ function PatientMenu({ refresh, handleLogout }) {
                     <Nav.Link href="/appointment">예약하기</Nav.Link>
                     <Nav.Link href="/schedule">병원 휴일</Nav.Link>
                     <NavDropdown title="진료과" id="basic-nav-dropdown">
-                        {departmentList && departmentList.map((department => {
-                            return <NavDropdown.Item href={`/department/${department.id}`} key={department.id}>{department.department_name}</NavDropdown.Item>
-                        }))}
+                        {Array.isArray(departmentList) && departmentList.map(department => (
+                            <NavDropdown.Item href={`/department/${department.id}`} key={department.id}>
+                                {department.department_name}
+                            </NavDropdown.Item>
+                        ))}
                     </NavDropdown>
                     <Nav.Link href="/chatbot">Chatbot</Nav.Link>
                 </Nav>
