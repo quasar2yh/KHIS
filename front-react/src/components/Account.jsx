@@ -3,6 +3,8 @@ import { Container, Row, Col, Card, ListGroup, Button } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import PasswordChange from './PasswordChange';
 
+
+// 프로필 페이지에 계정 정보 랜더링하는 컴포넌트
 function Account() {
     const AccountInfo = useSelector(state => state.userReducer.AccountInfo);
 

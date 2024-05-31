@@ -1,6 +1,8 @@
 import React from 'react';
 import { Form, Col, Row } from 'react-bootstrap';
 
+
+// 회원가입 할 때 사용하는 CommonInfoForm
 function CommonInfoForm({ registerData, handleChange }) {
 
     return (

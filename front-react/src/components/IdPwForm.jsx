@@ -2,6 +2,7 @@ import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 
+// 로그인 할 때 사용하는 IdPwForm 컴포넌트
 function IdPwForm({ id, pw, idHandler, pwHandler }) {
     return (
         <>
