@@ -12,9 +12,9 @@ function PatientMenu({ refresh, handleLogout }) {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
-                    <Nav.Link href="/appointment">Appointment</Nav.Link>
-                    <Nav.Link href="/schedule">Schedule</Nav.Link>
-                    <NavDropdown title="Department" id="basic-nav-dropdown">
+                    <Nav.Link href="/appointment">예약하기</Nav.Link>
+                    <Nav.Link href="/schedule">병원 휴일</Nav.Link>
+                    <NavDropdown title="진료과" id="basic-nav-dropdown">
                         {departmentList && departmentList.map((department => {
                             return <NavDropdown.Item href={`/department/${department.id}`} key={department.id}>{department.department_name}</NavDropdown.Item>
                         }))}

@@ -2,7 +2,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import TokenRefresher from "../components/TokenRefresher";
 import Home from "./Home";
 import Appointment from "./patient/Appointment";
-import Schedule from "./Schedule";
 import Layout from "../Layout/Layout";
 import Login from "./Login";
 import SelectRegisterForm from "./Register";
@@ -13,6 +12,7 @@ import Department from "./Department";
 import Consultation from "./patient/Consultation";
 import PostConsultation from "./practitioner/PostConsultation";
 import Annual from "./practitioner/Annual";
+import Schedule from "./Schedule";
 
 
 const Router = () => {
