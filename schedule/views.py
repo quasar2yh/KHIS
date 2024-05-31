@@ -85,8 +85,8 @@ class SpecificScheduleAPIView(APIView):
             # 연차 조회
             annuals = Annual.objects.filter(
                 practitioner=practitioner,
-                start_date__lte=end_date,
-                end_date__gte=start_date
+                start_date__gte=start_date,
+                end_date__lte=end_date
             ).order_by('-start_date')
             serializer = AnnualSerializer(annuals, many=True)
             return Response(serializer.data)
