@@ -33,8 +33,8 @@ function Appointment() {
     useEffect(() => {
         const fetchAblePractitioner = async () => {
             if (appointmentData.date && appointmentData.time && appointmentData.department) {
-                    const practitioners = await getAbleAppointmentPractitioner(appointmentData);
-                    setAblePractitioner(practitioners);
+                    const res = await getAbleAppointmentPractitioner(appointmentData);
+                    setAblePractitioner(res);
             }
         };
         fetchAblePractitioner();
@@ -125,9 +125,6 @@ function Appointment() {
                             <Form.Control
                                 type="date"
                                 name="date"
-                                value={appointmentData.date}
-                                onChange={handleChange}
-                                required
                             />
                         </Col>
                     </Form.Group>

@@ -120,8 +120,8 @@ export const annualAction = async (data) => {
     return response.data;
 }
 
-export const getAnnual = async () => {
-    const response = await instance.get(`/khis/schedule/medical/`);
+export const getAnnual = async (data) => {
+    const response = await instance.get(`/khis/schedule/medical/specific/`, { params: {start_date:data.start_date, end_date:data.end_date}});
     return response.data;
 }
 
@@ -134,6 +134,7 @@ export const getHoliday = async() => {
     const response = await instance.get(`/khis/schedule/hospital/Public/`)
     return response.data;
 }
+
 
 
 export default instance;
