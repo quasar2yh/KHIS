@@ -201,5 +201,10 @@ export const getHoliday = async () => {
     return response.data;
 }
 
+// 부서별 의사 조회
+export const getPractitionerFromDepartment = async (department_id) => { 
+    const response = await instance.get(`/khis/schedule/department/${department_id}/Practitioner/`)
+    return response.data;
+}
 
 export default instance;
