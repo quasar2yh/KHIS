@@ -117,8 +117,8 @@ class MedicalSpecificIntegratedAPIView(APIView):
         if request.user.is_authenticated and request.user.is_practitioner():
 
             # 시작 날짜와 끝 날짜 가져오기
-            start_date_str = request.data.get('start_date')
-            end_date_str = request.data.get('end_date')
+            start_date_str = request.GET.get('start_date')
+            end_date_str = request.GET.get('end_date')
 
             if not start_date_str or not end_date_str:
                 return Response({"message": "시작 날짜와 끝 날짜를 지정해야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
@@ -226,6 +226,7 @@ class IntegratedScheduleAPIView(APIView):
 
  # 부서등록
 
+
 class DepartmentRegisterAPIView(APIView):
     def post(self, request):
         department_name = request.data.get('department_name')
@@ -239,9 +240,9 @@ class DepartmentRegisterAPIView(APIView):
             serializer.save()  # 데이터를 데이터베이스에 저장
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
  # 부서목록 조회
+
 
 class DepartmentListAPIView(APIView):
     permission_classes = [AllowAny]
