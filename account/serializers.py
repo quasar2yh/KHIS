@@ -69,7 +69,8 @@ class CommonInfoSerializer(serializers.ModelSerializer):
 
         if name_data:
             if instance.name:
-                name_serializer = HumanNameSerializer(instance.name, data=name_data, partial=True)
+                name_serializer = HumanNameSerializer(
+                    instance.name, data=name_data, partial=True)
                 if name_serializer.is_valid():
                     name_serializer.save()
             else:
@@ -77,7 +78,8 @@ class CommonInfoSerializer(serializers.ModelSerializer):
 
         if telecom_data:
             if instance.telecom:
-                telecom_serializer = ContactPointSerializer(instance.telecom, data=telecom_data, partial=True)
+                telecom_serializer = ContactPointSerializer(
+                    instance.telecom, data=telecom_data, partial=True)
                 if telecom_serializer.is_valid():
                     telecom_serializer.save()
             else:
@@ -85,7 +87,8 @@ class CommonInfoSerializer(serializers.ModelSerializer):
 
         if address_data:
             if instance.address:
-                address_serializer = AddressSerializer(instance.address, data=address_data, partial=True)
+                address_serializer = AddressSerializer(
+                    instance.address, data=address_data, partial=True)
                 if address_serializer.is_valid():
                     address_serializer.save()
             else:
@@ -133,7 +136,7 @@ class PractitionerSerializer(CommonInfoSerializer):
 
     class Meta:
         model = Practitioner
-        fields = ['name','family']
+        fields = '__all__'
 
     def create(self, validated_data):
         common_info = super().create(validated_data)

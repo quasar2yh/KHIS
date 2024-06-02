@@ -7,5 +7,6 @@ urlpatterns = [
     path('khis/schedule/', include("schedule.urls")),
     path('khis/appointment/', include("appointment.urls")),
     path('khis/patient-registration/', include("registration.urls")),
+    path('khis/practitioner-registration/', include("practitioner_registration.urls")),
     path('khis/consultations/', include("ocs.urls")),
 ]

@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
-import { updatePatientInfo } from '../apis/apis';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { updatePractitionerInfo } from '../../apis/apis';
+import AddressForm from '../AddressForm';
 
-function ProfileUpdate({ onClose }) {
-    const patientInfo = useSelector(state => state.userReducer.patientInfo);
-    console.log('patientInfo', patientInfo)
+function PractitionerProfileUpdate({ onClose }) {
+    const practitionerInfo = useSelector(state => state.userReducer.practitionerInfo);
+    const navigator = useNavigate()
+    console.log("practitionerInfo", practitionerInfo)
 
     const [formData, setFormData] = useState({
-        familyName: patientInfo.name.family,
-        name: patientInfo.name.name,
-        address: patientInfo.address,
-        gender: patientInfo.gender,
-        maritalStatus: patientInfo.marital_status,
-        allergies: patientInfo.allergies,
-        telecom: patientInfo.telecom
+        familyName: practitionerInfo.name.family,
+        name: practitionerInfo.name.name,
+        address: practitionerInfo.address,
+        gender: practitionerInfo.gender,
+        telecom: practitionerInfo.telecom.value
     });
 
     const handleChange = (e) => {
@@ -32,17 +33,20 @@ function ProfileUpdate({ onClose }) {
                 family: formData.familyName,
                 name: formData.name
             },
-            address: formData.address || null,
+            address: formData.address,
             gender: formData.gender,
-            marital_status: formData.maritalStatus,
-            allergies: formData.allergies,
-            telecom: {
-                value: formData.telecom
-            }
+        };
+
+        if (formData.telecom !== practitionerInfo.telecom.value) {
+            body.telecom = { value: formData.telecom };
+        }
+        if (formData.gender === '성별') {
+            body.gender = practitionerInfo.gender;
         }
 
-        updatePatientInfo(patientInfo.id, body).then(() => {
-            onClose();
+        updatePractitionerInfo(practitionerInfo.id, body).then(() => {
+            alert("정보 수정 성공")
+            navigator("/");
         });
     };
 
@@ -56,15 +60,14 @@ function ProfileUpdate({ onClose }) {
                         </Card.Header>
                         <Card.Body>
                             <Form onSubmit={handleSubmit}>
-
                                 <Form.Group>
                                     <Form.Label>Family Name</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        name="familName"
+                                        name="familyName"
                                         value={formData.familyName}
                                         onChange={handleChange}
-                                        placeholder="Enter name"
+                                        placeholder="Enter family name"
                                     />
                                 </Form.Group>
 
@@ -79,16 +82,11 @@ function ProfileUpdate({ onClose }) {
                                     />
                                 </Form.Group>
 
-                                <Form.Group className="mt-3">
-                                    <Form.Label>Address</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="address"
-                                        value={formData.address}
-                                        onChange={handleChange}
-                                        placeholder="Enter address"
-                                    />
-                                </Form.Group>
+                                <AddressForm
+                                    formData={formData}
+                                    setFormData={setFormData}
+                                />
+
                                 <Form.Group className="mt-3">
                                     <Form.Label>Gender</Form.Label>
                                     <Form.Control
@@ -97,41 +95,19 @@ function ProfileUpdate({ onClose }) {
                                         value={formData.gender}
                                         onChange={handleChange}
                                     >
-                                        <option>Select gender</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
+                                        <option>성별</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
                                     </Form.Control>
-                                </Form.Group>
-                                <Form.Group className="mt-3">
-                                    <Form.Label>Marital Status</Form.Label>
-                                    <Form.Control
-                                        as="select"
-                                        name="maritalStatus"
-                                        value={formData.maritalStatus}
-                                        onChange={handleChange}
-                                    >
-                                        <option>Select marital status</option>
-                                        <option value={false}>Single</option>
-                                        <option value={true}>Married</option>
-                                    </Form.Control>
-                                </Form.Group>
-                                <Form.Group className="mt-3">
-                                    <Form.Label>Allergies</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="allergies"
-                                        value={formData.allergies}
-                                        onChange={handleChange}
-                                        placeholder="Enter allergies"
-                                    />
                                 </Form.Group>
 
                                 <Form.Group className="mt-3">
                                     <Form.Label>Telecom</Form.Label>
                                     <Form.Control
+                                        required
                                         type="text"
                                         name="telecom"
-                                        value={formData.telecom.value}
+                                        value={formData.telecom}
                                         onChange={handleChange}
                                         placeholder="Enter telecom"
                                     />
@@ -152,4 +128,4 @@ function ProfileUpdate({ onClose }) {
     );
 }
 
-export default ProfileUpdate;
+export default PractitionerProfileUpdate;

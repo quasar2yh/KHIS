@@ -69,8 +69,8 @@ class SpecificScheduleAPIView(APIView):
             practitioner = request.user.practitioner
 
             # 시작 날짜와 끝 날짜 가져오기
-            start_date_str = request.data.get('start_date')
-            end_date_str = request.data.get('end_date')
+            start_date_str = request.GET.get('start_date')
+            end_date_str = request.GET.get('end_date')
 
             if not start_date_str or not end_date_str:
                 return Response({"message": "시작 날짜와 끝 날짜를 지정해야 합니다."}, status=status.HTTP_400_BAD_REQUEST)

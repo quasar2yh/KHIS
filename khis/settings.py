@@ -41,6 +41,7 @@ CUSTOM_APPS = [
     'ocs',
     'acceptance',
     'registration',
+    'practitioner_registration'
 ]
 SYSTEM_APPS = ['django.contrib.admin',
                'django.contrib.auth',
@@ -109,6 +110,7 @@ DATABASES = {
         'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT'),
+
     }
 }
 
