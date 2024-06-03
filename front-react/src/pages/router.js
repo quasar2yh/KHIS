@@ -13,6 +13,7 @@ import Consultation from "./patient/Consultation";
 import PostConsultation from "./practitioner/PostConsultation";
 import Annual from "./practitioner/Annual";
 import Schedule from "./Schedule";
+import Procedure from "./practitioner/Procedure";
 
 
 const Router = () => {
@@ -32,6 +33,7 @@ const Router = () => {
                         <Route path="/department/:id" element={<Department />} />
                         <Route path="/consultation" element={<Consultation />} />
                         <Route path="/medical-record" element={<PostConsultation />} />
+                        <Route path="/procedure" element={<Procedure />} />
                         <Route path="/annual" element={<Annual />} />
                     </Routes>
                 </Layout>
