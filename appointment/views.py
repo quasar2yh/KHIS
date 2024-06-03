@@ -15,7 +15,7 @@ from django.contrib.auth.hashers import check_password
 from django.utils.dateparse import parse_datetime
 from rest_framework.permissions import AllowAny
 from django.utils.dateparse import parse_datetime, parse_time, parse_date
-from schedule.models import Annual, HospitalSchedule
+from schedule.models import Annual, HospitalSchedule, DepartmentEvent
 from datetime import datetime
 from django.db.models import Q
 import boto3
@@ -102,7 +102,7 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
         sns_client = boto3.client('sns', region_name='ap-northeast-1')
         response = sns_client.publish(
             PhoneNumber=phone_number,
-            Message=message
+            Message=message,
         )
         return response
 
@@ -320,7 +320,7 @@ class AppointmentListAPIView(APIView):
             practitionerserializer = PractitionerAppointmentSerializer(
                 available_practitioners, many=True)
 
-            return Response(f"일 선택 완료: {date} 예약가능한 의사:{practitionerserializer.data}", status=status.HTTP_200_OK)
+            return Response(practitionerserializer.data, status=status.HTTP_200_OK)
         elif time and not (date or department or practitioner):  # 시간만 선택 해당시간에 예약 가능한 의사
             today = timezone.now().date()
             thirty_days_later = today + timedelta(days=30)
@@ -369,7 +369,7 @@ class AppointmentListAPIView(APIView):
                 appointment_available_practitioners, many=True
             )
 
-            return Response(f"시간 선택 완료: {time} 병원휴일{holidays} 예약가능한 의사: {practitionerserializer.data}", status=status.HTTP_200_OK)
+            return Response(practitionerserializer.data, status=status.HTTP_200_OK)
         # 부서만 선택 부서의 의사목록과 의사별 예약 가능한 시간대
         elif department and not (date or time or practitioner):
             # 해당 부서의 의사 목록 조회
@@ -423,13 +423,9 @@ class AppointmentListAPIView(APIView):
                             if local_time_slot_str not in booked_times:
                                 available_times[practitioner.id].append(
                                     local_time_slot_str)
-
-            return Response({
-                "message": "부서 선택 완료",
-                "practitioners": practitioners_serializer.data,
-                "available_times": available_times,
-                "holidays": list(holidays)
-            }, status=status.HTTP_200_OK)
+            # "available_times": available_times, "holidays": list(holidays)
+            return Response(
+                practitioners_serializer.data, status=status.HTTP_200_OK)
 
         # 의사만선택  해당 의사의 전체 스케줄(예약된 시간 포함)
         elif practitioner and not (date or time or department):
@@ -456,26 +452,20 @@ class AppointmentListAPIView(APIView):
             practitioner_annual = AnnualSerializer(
                 annual_leaves, many=True).data
             # 결과 구성
-            result = {
-                "practitioner": practitioner_data,
-                "예약현황": appointments_data,
-                "선생님쉬는날": practitioner_annual
-            }
+            result = {practitioner_data, appointments_data, practitioner_annual
+                      }
 
             return Response(result, status=status.HTTP_200_OK)
         # 일,시 선택 예약 가능한 의사 목록과 예약 가능한 상태
         elif date and time and not (department or practitioner):
             datetimes = datetime.combine(date, time)
-            print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", datetimes)
-            holidays = self.get_hospital_holidays()
-            print(holidays, "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
-            if date in holidays:
-                return Response({"error": f"{date}는 병원의 휴일입니다."}, status=status.HTTP_200_OK)
             # 해당날자의 예약 조회
-            appointments = Appointment.objects.filter(start=datetimes)
-            # 해당 날자의 연차인 의사 제외
+            appointments = Appointment.objects.filter(
+                start=datetimes, active=True).values_list('practitioner_id', flat=True)
+            print(appointments, datetimes)
+            # 해당 날자의 연차인 의사 조회
             annual_practitioners = Annual.objects.filter(
-                start_date__lte=datetimes, end_date__gte=datetimes)
+                start_date__lte=datetimes, end_date__gte=datetimes).values_list('practitioner_id', flat=True)
             # 예약 있는 의사를 제외
             practitioners = Practitioner.objects.exclude(
                 id__in=appointments).exclude(id__in=annual_practitioners)
@@ -483,7 +473,7 @@ class AppointmentListAPIView(APIView):
             practitioners_serializer = PractitionerAppointmentSerializer(
                 practitioners, many=True).data
 
-            return Response(f"예약 가능한 의사 선택 완료: 일,시에{datetimes}예약가능의사:{practitioners_serializer}", status=status.HTTP_200_OK)
+            return Response(practitioners_serializer, status=status.HTTP_200_OK)
         # 일 , 부서 선택 해당 날짜에 부서별로 예약 가능한 의사 목록과 시간대
         elif date and department and not (time or practitioner):
             # 해당 부서의 의사 조회
@@ -546,6 +536,7 @@ class AppointmentListAPIView(APIView):
 
             if is_on_leave:
                 return Response({"message": "해당 의사는 선택한 날짜에 연차입니다."}, status=status.HTTP_200_OK)
+            # 해당 날짜에 departmentevent가 있는지
 
             # 해당 의사의 특정 날짜 예약 조회
             appointments = Appointment.objects.filter(
@@ -573,11 +564,10 @@ class AppointmentListAPIView(APIView):
             practitioner_serializer = PractitionerAppointmentSerializer(
                 practitioners)
             # 의사 정보와 예약 가능한 시간대 반환
-            return Response({
-                'practitioner': practitioner_serializer.data,
-                'available_times': time_slots,
-                'appointments': list(appointments.values('start', 'end'))
-            }, status=status.HTTP_200_OK)
+            return Response(
+                practitioner_serializer.data, status=status.HTTP_200_OK)
+            # 'available_times': time_slots,
+            # 'appointments': list(appointments.values('start', 'end'))
 
         # 시간 ,부서 선택 해당 시간대에 해당 부서의 예약 가능한 의사 목록
         elif time and department and not (date or practitioner):
@@ -594,7 +584,7 @@ class AppointmentListAPIView(APIView):
             final_practitioner = PractitionerAppointmentSerializer(
                 practitioners, many=True)
 
-            return Response(f"해당 시간에 30일내로 예약가능 한 부서의 의사{final_practitioner.data}", status=status.HTTP_200_OK)
+            return Response(final_practitioner.data, status=status.HTTP_200_OK)
 
         # 시간 ,의사 선택 해당 시간에 의사의 예약 상태(예약 가능 여부)
         elif time and practitioner and not (date or department):
@@ -638,12 +628,12 @@ class AppointmentListAPIView(APIView):
                 if not practitioner_appointments:
                     available_times.append(single_date.strftime('%Y-%m-%d'))
 
-            return Response({
-                'practitioner': PractitionerAppointmentSerializer(practitioners).data,
-                '예약 가능한 일': available_times,
-                '의사님 쉬는날 ': annuals_data,
-                '병원 휴일': holidays
-            }, status=status.HTTP_200_OK)
+            return Response(
+                PractitionerAppointmentSerializer(practitioners).data,
+                # '예약 가능한 일': available_times,
+                # '의사님 쉬는날 ': annuals_data,
+                # '병원 휴일': holidays
+                status=status.HTTP_200_OK)
 
         # 부서 ,의사 선택 해당 부서에서 특정 의사의 스케줄 의사만 선택과 같네
         elif department and practitioner and not (date or time):
@@ -675,9 +665,9 @@ class AppointmentListAPIView(APIView):
                 annual_leaves, many=True).data
             # 결과 구성
             result = {
-                "practitioner": practitioner_data,
-                "예약현황": appointments_data,
-                "선생님쉬는날": practitioner_annual
+                practitioner_data,
+                appointments_data,
+                practitioner_annual
             }
 
             return Response(result, status=status.HTTP_200_OK)
@@ -698,7 +688,7 @@ class AppointmentListAPIView(APIView):
             final_practitoner = PractitionerAppointmentSerializer(
                 practitioners_appointments, many=True)
 
-            return Response(f"일, 시간, 부서 선택 완료: 일-{date}, 시간-{time}, 부서-{department} 해당부서의 예약가능한 의사:{final_practitoner.data}", status=status.HTTP_200_OK)
+            return Response(final_practitoner.data, status=status.HTTP_200_OK)
         # 일,시 ,의사 선택 특정 날짜와 시간대에 의사의 예약 상태(예약 가능 여부)
         elif date and time and practitioner and not department:
             datetimes = datetime.combine(date, time)
@@ -716,7 +706,7 @@ class AppointmentListAPIView(APIView):
                 return Response(f"{practitioner}의사는 {datetimes}에 예약이 있습니다.")
             final_practitioner = PractitionerAppointmentSerializer(
                 practitioner, many=True).data
-            return Response(f"일, 시간, 의사 선택 완료: 일-{date}, 시간-{time}, 의사-{final_practitioner} 예약이 가능합니다.", status=status.HTTP_200_OK)
+            return Response(final_practitioner, status=status.HTTP_200_OK)
         elif date and department and practitioner and not time:  # 일,부서,의사 선택 특정 날짜에 해당 부서와 의사의 예약 상태 의사와 일선택과 같음
             # 해당 의사 조회
             try:
@@ -760,11 +750,11 @@ class AppointmentListAPIView(APIView):
             practitioner_serializer = PractitionerAppointmentSerializer(
                 practitioner)
             # 의사 정보와 예약 가능한 시간대 반환
-            return Response({
-                'practitioner': practitioner_serializer.data,
-                'available_times': time_slots,
-                'appointments': list(appointments.values('start', 'end'))
-            }, status=status.HTTP_200_OK)
+            return Response(
+                practitioner_serializer.data,
+                # 'available_times': time_slots,
+                # 'appointments': list(appointments.values('start', 'end'))
+                status=status.HTTP_200_OK)
         # 시 ,부서,의사 선택 특정 시간대에 해당 부서와 의사의 예약 상태 의사,시 선택과 같음
         elif time and department and practitioner and not date:
             try:
@@ -807,12 +797,12 @@ class AppointmentListAPIView(APIView):
                 if not practitioner_appointments:
                     available_times.append(single_date.strftime('%Y-%m-%d'))
 
-            return Response({
-                'practitioner': PractitionerAppointmentSerializer(practitioners).data,
-                '예약 가능한 일': available_times,
-                '의사님 쉬는날 ': annuals_data,
-                '병원 휴일': holidays
-            }, status=status.HTTP_200_OK)
+            return Response(
+                PractitionerAppointmentSerializer(practitioners).data,
+                # '예약 가능한 일': available_times,
+                # '의사님 쉬는날 ': annuals_data,
+                # '병원 휴일': holidays
+                status=status.HTTP_200_OK)
 
         # 일,시,부서,의사 선택 특정 날짜와 시간대에 해당 부서와 의사의 예약 상태(예약 가능 여부) 일,시,의사와 같음
         elif date and time and department and practitioner:
@@ -835,7 +825,7 @@ class AppointmentListAPIView(APIView):
                 return Response(f"{practitioner}의사는 {datetimes}에 예약이 있습니다.")
             final_practitioner = PractitionerAppointmentSerializer(
                 practitioner, many=True).data
-            return Response(f"일, 시간, 의사 선택 완료: 일-{date}, 시간-{time}, 의사-{final_practitioner} 예약이 가능합니다.", status=status.HTTP_200_OK)
+            return Response(final_practitioner, status=status.HTTP_200_OK)
 
         return Response("잘못된 선택입니다", status=status.HTTP_400_BAD_REQUEST)
 
@@ -860,6 +850,7 @@ class WaitingListView(APIView):
 
 class AiConsultationView(APIView):
     permission_classes = [AllowAny]
+
     def post(self, request):
         user_message = request.data.get('message')
         if not user_message:
