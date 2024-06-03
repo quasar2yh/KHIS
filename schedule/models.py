@@ -2,10 +2,22 @@ from django.db import models
 from account.models import Practitioner, Practitioner
 from account.models import Department
 
-# Create your models here.
+
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 
-class Annual(models.Model):  # 의료진 연차 스케줄
+#의료진이 생성될 때마다 연차 정보를 자동으로 생성하도록 설정
+@receiver(post_save, sender=Practitioner)
+def create_annual_leave(sender, instance, created, **kwargs):
+    if created:
+        AnnualLeave.objects.create(practitioner=instance)
+
+
+
+# 의료진 연차 스케줄
+
+class Annual(models.Model):
     practitioner = models.ForeignKey(Practitioner, on_delete=models.CASCADE)
 
     # 연차 사용한 날짜 (시작,끝)
@@ -18,8 +30,10 @@ class Annual(models.Model):  # 의료진 연차 스케줄
     def __str__(self):
         return f"{self.practitioner} - {self.start_date} ~ {self.end_date}"
 
+ # 병원 전체 휴일
 
-class HospitalSchedule(models.Model):      # 병원 전체 휴일
+
+class HospitalSchedule(models.Model):
 
     date = models.DateField()
     date_name = models.CharField(max_length=255)
@@ -31,6 +45,7 @@ class HospitalSchedule(models.Model):      # 병원 전체 휴일
 
 
 # 부서별 일정
+
 class DepartmentEvent(models.Model):
     department = models.ForeignKey(
         'account.Department', on_delete=models.CASCADE, db_column='department_id')
@@ -42,3 +57,18 @@ class DepartmentEvent(models.Model):
 
     def __str__(self):
         return f"{self.event_title} - {self.start_time} ~ {self.end_time}"
+
+
+# 연차 소진일
+class AnnualLeave(models.Model):
+    practitioner = models.OneToOneField(Practitioner, on_delete=models.CASCADE)
+    annual_leave_count = models.IntegerField(default=15)  # 매년 15일 연차 지급
+    leave_taken = models.IntegerField(default=0)  # 사용한 연차 수
+
+    def remaining_leave(self):
+        return self.annual_leave_count - self.leave_taken
+
+    def __str__(self):
+        return f"{self.practitioner} - Remaining Leave: {self.remaining_leave()}"
+    
+
