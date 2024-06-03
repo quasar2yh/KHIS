@@ -378,24 +378,14 @@ class DepartmentEventDetailAPIView(APIView):
 
 
 # 의료진 알람 메일 발송
+from schedule.tasks import send_department_event_reminder
 
 class MailAPIView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request, *args, **kwargs):
-        serializer = MailSerializer(data=request.data)
-
-        if serializer.is_valid():
-            email = serializer.validated_data['email']
-            subject = serializer.validated_data['subject']
-            message = serializer.validated_data['message']
-
-            # Celery를 사용하여 작업을 예약합니다.
-            send_email_async.delay(
-                subject, message, 'ritsukoice@naver.com', email)
-            return Response({"success": "메일이 예약되었습니다"}, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get(self, request, *args, **kwargs):
+        # 부서 ID를 전달하여 작업을 호출
+        department_id = 1  # 예시로 부서 ID를 1로 지정
+        send_department_event_reminder.delay(department_id)
+        return Response({"message": "작업이 예약되었습니다."})
 
 
     # 본인 연차 소진일 조회

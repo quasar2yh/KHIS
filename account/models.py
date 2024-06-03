@@ -87,6 +87,8 @@ class Practitioner(CommonInfo):
     # Physician | Assistant
     rank = models.IntegerField(null=False)
     # 권한 레벨 1~3
+    
+    email = models.EmailField(max_length=254)
 
     def delete(self, *args, **kwargs):
         if self.department:
