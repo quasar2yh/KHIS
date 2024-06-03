@@ -25,10 +25,10 @@ const PostConsultation = () => {
     });
 
     useEffect(() => {
-        if (!practitionerInfo) {
-            dispatch(getPractitionerInfoAction(accountInfo.practitioner))
+        if (!practitionerInfo && accountInfo?.practitioner) {
+            dispatch(getPractitionerInfoAction(accountInfo.practitioner));
         }
-    }, [dispatch, accountInfo, practitionerInfo])
+    }, [dispatch, accountInfo, practitionerInfo]);
 
     const handleClose = () => setShowModal(false);
 

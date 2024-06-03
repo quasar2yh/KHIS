@@ -10,7 +10,7 @@ from .serializers import MedicalRecordSerializer, ProcedureSerializer, Procedure
 
 class MedicalRecordAPIView(APIView):
     # 환자 진료 기록 생성
-    def post(self, request, patient_id):
+    def post(self, request):
         serializer = MedicalRecordSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -31,15 +31,11 @@ class MedicalRecordAPIView(APIView):
         patient = get_object_or_404(Patient, pk=patient_id)
         medical_record = patient.medicalrecord_set.get(
             pk=medical_record_id)
-
         serializer = MedicalRecordSerializer(
             instance=medical_record, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return Response(data=serializer.data)
-
-
-# 테스트용 AllowAny
 
 
 class ProcedureAPIView(APIView):
