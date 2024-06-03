@@ -103,8 +103,8 @@ function Appointment() {
 
 
     console.log("appointmentData", appointmentData)
-    console.log("ablePractitioner", ablePractitioner[0])
-    console.log("departmentList", departmentList)
+    console.log("ablePractitioner", ablePractitioner)
+
     return (
         <>
             <div className="container mt-5">
@@ -170,8 +170,8 @@ function Appointment() {
                                 required
                             >
                                 <option>의사를 선택하세요.</option>
-                                {departmentList && departmentList.map((department) => (
-                                    <option key={department.id} value={department.id}>{department.department}</option>
+                                {ablePractitioner && ablePractitioner.map((practitioner) => (
+                                    <option key={practitioner.id} value={practitioner.id}>{practitioner.name.family} {practitioner.name.name}</option>
                                 ))}
                             </Form.Control>
                         </Col>
