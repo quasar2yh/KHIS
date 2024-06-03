@@ -252,7 +252,7 @@ class DepartmentListAPIView(APIView):
         serializer = DepartmentSerializer(departments, many=True)
         return Response(serializer.data)
 
- # 부서별 연차 조회
+ # 부서별 의료진 연차 조회
 
 
 class DepartmentMedicalScheduleAPIView(APIView):
@@ -263,6 +263,41 @@ class DepartmentMedicalScheduleAPIView(APIView):
             practitioner__in=practitioners).order_by('start_date')
         serializer = AnnualSerializer(annuals, many=True)
         return Response(serializer.data)
+
+
+
+ # 부서별 의료진 연차 구간 조회
+class DepartmentMedicalSpecificScheduleAPIView(APIView):
+    def get(self,request, department_id):
+        if request.user.is_authenticated and request.user.is_practitioner():
+           # 시작 날짜와 끝 날짜 가져오기
+            start_date_str = request.GET.get('start_date')
+            end_date_str = request.GET.get('end_date')
+
+            if not start_date_str or not end_date_str:
+                return Response({"message": "시작 날짜와 끝 날짜를 지정해야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                start_date = datetime.strptime(
+                    start_date_str, '%Y-%m-%d').date()
+                end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+            except ValueError:
+                return Response({"message": "올바른 날짜 형식이 아닙니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+            practitioners = Practitioner.objects.filter(
+            department_id=department_id)
+            annuals = Annual.objects.filter(
+                practitioner__in=practitioners,
+                start_date__lte=end_date,
+                end_date__gte=start_date
+            ).order_by('start_date')
+
+            serializer = AnnualSerializer(annuals, many=True)
+            return Response(serializer.data)
+        else:
+            return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_401_UNAUTHORIZED)
+
+
 
 
 # 부서별 의료진 조회

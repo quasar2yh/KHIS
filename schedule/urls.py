@@ -15,7 +15,8 @@ from .views import (
     DepartmentRegisterAPIView,
     DepartmentPractitionerAPIView,
     DepartmentEventAPIView,
-    DepartmentEventDetailAPIView
+    DepartmentEventDetailAPIView,
+    DepartmentMedicalSpecificScheduleAPIView
 )
 
 
@@ -49,32 +50,35 @@ urlpatterns = [
 
     path("integration/", IntegratedScheduleAPIView.as_view(),
          name="integrated_holiday"),  # 병원 + 의료진 전체 일정 조회
-    
-    
+
+
     path("department_Register/", DepartmentRegisterAPIView.as_view(),
          name="department_list"),  # 부서 등록
 
     path("department/", DepartmentListAPIView.as_view(),
          name="department_list"),  # 부서 조회
 
-    path("department/<int:department_id>/holiday", DepartmentMedicalScheduleAPIView.as_view(),
+    path("department/<int:department_id>/holiday/", DepartmentMedicalScheduleAPIView.as_view(),
          name="department_medical_holiday"),  # 부서별 의료진 연차 조회
 
+    path("department/<int:department_id>/specific/holiday/", DepartmentMedicalSpecificScheduleAPIView.as_view(),
+         name="department_medical_specific_holiday"),  # 부서별 의료진 연차 구간조회
 
-     path("department/<int:department_id>/Practitioner/", DepartmentPractitionerAPIView.as_view(),
+
+    path("department/<int:department_id>/Practitioner/", DepartmentPractitionerAPIView.as_view(),
          name="department_Practitioner"),  # 부서별 의료진 조회
-     
-     
-     path("department/<int:department_id>/event", DepartmentEventAPIView.as_view(),
+
+
+    path("department/<int:department_id>/event", DepartmentEventAPIView.as_view(),
          name="department_event"),  # 부서별 일정 등록
-     
-       path("department/<int:department_id>/event/<int:event_id>", DepartmentEventDetailAPIView.as_view(),
+
+    path("department/<int:department_id>/event/<int:event_id>/", DepartmentEventDetailAPIView.as_view(),
          name="department_event_detail"),  # 부서별 일정 수정 및 삭제
-     
+
 
     path('send_email/', MailAPIView.as_view(), name='send_email'),  # 메일 보내기
-    
-    
-    
-    
+
+
+
+
 ]
