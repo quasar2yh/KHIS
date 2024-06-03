@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MedicalRecord, ProcedureRecord, Procedure
+from .models import MedicalRecord, ProcedureRecord, Procedure, ProcedureFee
 
 
 class MedicalRecordSerializer(serializers.ModelSerializer):
@@ -43,3 +43,8 @@ class ProcedureRecordSerializer(serializers.ModelSerializer):
         response = super().to_representation(instance)
         response['procedure'] = ProcedureSerializer(instance.procedure).data
         return response
+
+class ProcedureFeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProcedureFee
+        fields = '__all__'
