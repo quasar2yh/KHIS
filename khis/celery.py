@@ -4,13 +4,13 @@ import os
 # Django 설정 모듈을 Celery 애플리케이션의 설정으로 사용
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'khis.settings')
 
-# Celery 애플리케이션 생성
+# Celery 애플리케이션 생성 (보통 Django 프로젝트의 이름을 사용)
 app = Celery('khis')
 
 # Django 설정 모듈을 Celery 애플리케이션의 설정으로 사용
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
-# 등록할 작업 모듈의 위치를 지정
+# 등록할 작업 모듈의 위치를 지정(tasks.py 파일을 찾아서 등록)
 app.autodiscover_tasks()
 
 # Celery Beat 설정 추가

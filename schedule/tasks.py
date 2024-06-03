@@ -24,9 +24,9 @@ def send_email_async(subject, message, sender_email, recipient_email):
 @shared_task
 def send_department_event_reminder(): # 부서별 일정 알람
     now = timezone.now()
-    # 이벤트 시작 1시간 전의 시간 계산
+    # 현재시간 1시간 후의 시간 계산
     start_time = now + timedelta(hours=1)
-    # 이벤트 시작 2시간 후의 시간 계산
+    # 현재시간 2시간 후의 시간 계산
     end_time = now + timedelta(hours=2)
 
     # 이벤트 시작 시간이 start_time과 end_time 사이인 이벤트들 필터링
