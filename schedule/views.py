@@ -388,7 +388,7 @@ class MailAPIView(APIView):
         return Response({"message": "작업이 예약되었습니다."})
 
 
-    # 본인 연차 소진일 조회
+# 본인 연차 소진일 조회
 class AnnualLeaveStatusAPIView(APIView):
     def get(self, request):
         if request.user.is_authenticated and request.user.is_practitioner():

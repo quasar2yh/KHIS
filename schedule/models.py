@@ -14,7 +14,6 @@ def create_annual_leave(sender, instance, created, **kwargs):
         AnnualLeave.objects.create(practitioner=instance)
 
 
-
 # 의료진 연차 스케줄
 
 class Annual(models.Model):

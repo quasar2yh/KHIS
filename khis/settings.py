@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from celery import Celery
 from datetime import timedelta
 from pathlib import Path
 import os
@@ -201,17 +200,3 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 
-app = Celery()
-app.conf.update(
-    BROKER_URL='redis://localhost:6379/0',
-)
-
-
-def get_active_tasks():
-    insp = app.control.inspect()
-    active_tasks = insp.active()
-    return active_tasks
-
-
-active_tasks = get_active_tasks()
-print(active_tasks)

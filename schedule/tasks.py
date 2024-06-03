@@ -6,6 +6,7 @@ from .models import DepartmentEvent, Practitioner
 from django.core.mail import send_mail
 from account.models import Department
 
+
 @shared_task
 def send_email_async(subject, message, sender_email, recipient_email):
     try:
@@ -27,6 +28,7 @@ def send_email_async(subject, message, sender_email, recipient_email):
 def send_department_event_reminder(department_id):
     try:
         department = Department.objects.get(id=department_id)
+        print(f"Department with ID OKAY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     except Department.DoesNotExist:
         print(f"Department with ID {department_id} does not exist.")
         return
