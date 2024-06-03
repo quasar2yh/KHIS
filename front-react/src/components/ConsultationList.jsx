@@ -1,7 +1,10 @@
 import React from 'react'
 import { Table, Button, Modal } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 
-function ConsultationList({consultations, selectConsultation, show, handleClose, handleShow}) {
+function ConsultationList({ consultations, selectConsultation, show, handleClose, handleShow }) {
+    const accountInfo = useSelector(state => state.userReducer.accountInfo)
+
     return (
         <div className="container mt-5">
             <h2>Consultations</h2>

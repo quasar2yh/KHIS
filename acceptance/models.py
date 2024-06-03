@@ -18,4 +18,3 @@ class ChargeItem(models.Model):
     claim_id = models.ForeignKey(Claim, on_delete=models.PROTECT)
     quantity = models.PositiveSmallIntegerField()
     total = models.DecimalField(max_digits=11, decimal_places=2)
-
