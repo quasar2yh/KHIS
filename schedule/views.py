@@ -54,7 +54,7 @@ class MedicalScheduleAPIView(APIView):
         if request.user.is_authenticated:
             practitioner = request.user.practitioner
             annuals = Annual.objects.filter(
-                practitioner=practitioner).order_by('-start_date')
+                practitioner=practitioner).order_by('start_date')
             serializer = AnnualSerializer(annuals, many=True)
             return Response(serializer.data)
         else:
@@ -85,9 +85,9 @@ class SpecificScheduleAPIView(APIView):
             # 연차 조회
             annuals = Annual.objects.filter(
                 practitioner=practitioner,
-                start_date__gte=start_date,
-                end_date__lte=end_date
-            ).order_by('-start_date')
+                start_date__lte=end_date,
+                end_date__gte=start_date
+            ).order_by('start_date')
             serializer = AnnualSerializer(annuals, many=True)
             return Response(serializer.data)
         else:
@@ -104,7 +104,7 @@ class MedicalIntegratedAPIView(APIView):
         if not request.user.is_practitioner():
             return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_403_FORBIDDEN)
 
-        medical_staff_schedules = Annual.objects.all().order_by('-start_date')
+        medical_staff_schedules = Annual.objects.all().order_by('start_date')
         medical_staff_serializer = AnnualSerializer(
             medical_staff_schedules, many=True)
         return Response(medical_staff_serializer.data, status=status.HTTP_200_OK)
@@ -117,8 +117,8 @@ class MedicalSpecificIntegratedAPIView(APIView):
         if request.user.is_authenticated and request.user.is_practitioner():
 
             # 시작 날짜와 끝 날짜 가져오기
-            start_date_str = request.data.get('start_date')
-            end_date_str = request.data.get('end_date')
+            start_date_str = request.GET.get('start_date')
+            end_date_str = request.GET.get('end_date')
 
             if not start_date_str or not end_date_str:
                 return Response({"message": "시작 날짜와 끝 날짜를 지정해야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
@@ -133,7 +133,7 @@ class MedicalSpecificIntegratedAPIView(APIView):
             annuals = Annual.objects.filter(
                 start_date__lte=end_date,
                 end_date__gte=start_date
-            ).order_by('-start_date')
+            ).order_by('start_date')
 
             serializer = AnnualSerializer(annuals, many=True)
             return Response(serializer.data)
@@ -204,7 +204,7 @@ class HospitalPublicScheduleAPIView(APIView):
         return Response(serializer.data)
 
 
-# 전체 의료진 스케줄 + 전체 병원 스케줄 조회 (필요한지 기능인지 검토 필요)
+# 전체 의료진 스케줄 + 전체 병원 스케줄 조회
 
 class IntegratedScheduleAPIView(APIView):
     def get(self, request):
