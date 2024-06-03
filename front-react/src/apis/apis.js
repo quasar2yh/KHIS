@@ -111,7 +111,7 @@ export const passwordChange = async (userId, data) => {
 
 
 // 환자가 진료 예약하는 API
-export const appointmentAction = async (data, userId) => {
+export const postAppointment = async (data, userId) => {
     const response = await instance.post(`/khis/appointment/patient/${userId}/`, data);
     return response.data;
 };
@@ -172,8 +172,8 @@ export const searchPatient = async ({ name, telecom }) => {
 }
 
 // 의료진이 진료기록 생성하는 API
-export const consultationAction = async (patientId, data) => {
-    const response = await instance.post(`/khis/consultations/${patientId}/`, data);
+export const postConsultation = async (data) => {
+    const response = await instance.post(`/khis/consultations/`, data);
     return response.data;
 }
 
@@ -202,8 +202,18 @@ export const getHoliday = async () => {
 }
 
 // 부서별 의사 조회
-export const getPractitionerFromDepartment = async (department_id) => { 
-    const response = await instance.get(`/khis/schedule/department/${department_id}/Practitioner/`)
+export const getPractitionerFromDepartment = async (departmentId) => { 
+    const response = await instance.get(`/khis/schedule/department/${departmentId}/Practitioner/`)
+    return response.data;
+}
+
+export const getMedicalRecord = async (patientId) => {
+    const response = await instance.get(`/khis/consultations/${patientId}/`)
+    return response.data;
+}
+
+export const postProcedureRecord = async (data) => {
+    const response = await instance.post(`/khis/consultations/procedure-record/`, data)
     return response.data;
 }
 
