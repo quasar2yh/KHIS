@@ -133,6 +133,7 @@ const PostConsultation = () => {
                                 type="text"
                                 name="diagnosis"
                                 value={selectedPatient.name}
+                                readOnly
                             />
                         </Form.Group>
 
