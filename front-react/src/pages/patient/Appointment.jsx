@@ -43,6 +43,7 @@ function Appointment() {
             if (appointmentData.date && appointmentData.time && appointmentData.department) {
                     const res = await getAbleAppointmentPractitioner(appointmentData);
                     console.log("res", res)
+                    console.log("res 타입", typeof res)
                     setAblePractitioner(res);
             }
         };

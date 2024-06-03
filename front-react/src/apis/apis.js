@@ -172,8 +172,8 @@ export const searchPatient = async ({ name, telecom }) => {
 }
 
 // 의료진이 진료기록 생성하는 API
-export const consultationAction = async (patientId, data) => {
-    const response = await instance.post(`/khis/consultations/${patientId}/`, data);
+export const postConsultation = async (data) => {
+    const response = await instance.post(`/khis/consultations/`, data);
     return response.data;
 }
 

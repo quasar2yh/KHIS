@@ -4,21 +4,21 @@ import { useSelector } from 'react-redux';
 import { getAppointmentStatus } from '../../apis/apis';
 
 function AppointmentStatus() {
-    // userReducer 리듀서의 AccountInfo
-    const AccountInfo = useSelector(state => state.userReducer.AccountInfo);
+    // userReducer 리듀서의 accountInfo
+    const accountInfo = useSelector(state => state.userReducer.accountInfo);
 
     // 예약 현황
     const [appointmentStatus, setAppointmentStatus] = useState([]);
 
-    // AccountInfo의 환자 Id로 예약 현황 조회하는 API request
+    // accountInfo의 환자 Id로 예약 현황 조회하는 API request
     useEffect(() => {
-        if (AccountInfo && AccountInfo.patient) {
-            getAppointmentStatus(AccountInfo.patient).then(res => {
+        if (accountInfo && accountInfo.patient) {
+            getAppointmentStatus(accountInfo.patient).then(res => {
                 // 비동기로 예약 현황 set
                 setAppointmentStatus(res);
             });
         }
-    }, [AccountInfo]);
+    }, [accountInfo]);
 
     return (
         <>

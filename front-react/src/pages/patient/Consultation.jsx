@@ -4,18 +4,18 @@ import { getConsultations } from '../../apis/apis';
 import { useSelector } from 'react-redux';
 
 function Consultation() {
-    const AccountInfo = useSelector(state => state.userReducer.AccountInfo);
+    const accountInfo = useSelector(state => state.userReducer.accountInfo);
     const [consultations, setConsultations] = useState(null);
     const [selectConsultation, setSelectedConsultation] = useState(null);
     const [show, setShow] = useState(false);
 
     useEffect(() => {
-        if (AccountInfo && AccountInfo.subject === 'Patient') {
-            getConsultations(AccountInfo.patient).then(res=> {
+        if (accountInfo && accountInfo.subject === 'Patient') {
+            getConsultations(accountInfo.patient).then(res=> {
                 setConsultations(res)
             });
         }
-    }, [AccountInfo]);
+    }, [accountInfo]);
 
 
     const handleClose = () => setShow(false);

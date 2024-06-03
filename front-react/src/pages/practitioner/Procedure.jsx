@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 
 const Procedure = () => {
     const navigate = useNavigate()
-    const AccountInfo = useSelector(state => state.userReducer.AccountInfo);
+    const accountInfo = useSelector(state => state.userReducer.accountInfo);
 
     const [showModal, setShowModal] = useState(false);
     const [showRecords, setShowRecords] = useState(false);
@@ -60,7 +60,7 @@ const Procedure = () => {
         e.preventDefault();
         const body = {
             patient: selectedPatient.id,
-            practitioner: AccountInfo.practitioner,
+            practitioner: accountInfo.practitioner,
             medical_record: selectedMedicalRecord,
             procedure: {
                 procedure_code: procedure.procedure_code,
