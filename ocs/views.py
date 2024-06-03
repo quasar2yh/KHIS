@@ -1,3 +1,4 @@
+from rest_framework.permissions import AllowAny
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.views import APIView
@@ -10,7 +11,6 @@ from .serializers import MedicalRecordSerializer, ProcedureSerializer, Procedure
 class MedicalRecordAPIView(APIView):
     # 환자 진료 기록 생성
     def post(self, request, patient_id):
-        request.data['patient'] = patient_id
         serializer = MedicalRecordSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -39,12 +39,11 @@ class MedicalRecordAPIView(APIView):
         return Response(data=serializer.data)
 
 
-
 # 테스트용 AllowAny
-from rest_framework.permissions import AllowAny
+
 
 class ProcedureAPIView(APIView):
-    permission_classes = [AllowAny] # 테스트용 AllowAny
+    permission_classes = [AllowAny]  # 테스트용 AllowAny
 
     # 수술 데이터 생성
     def post(self, request):
@@ -52,7 +51,7 @@ class ProcedureAPIView(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return Response(data=serializer.data)
-    
+
     # 수술 데이터 조회
     def get(self, request, procedure_id):
         procedure = get_object_or_404(Procedure, pk=procedure_id)
@@ -61,18 +60,26 @@ class ProcedureAPIView(APIView):
 
 
 class ProcedureRecordAPIView(APIView):
-    permission_classes = [AllowAny] # 테스트용 AllowAny
+    permission_classes = [AllowAny]  # 테스트용 AllowAny
 
     # 수술 기록 데이터 생성
-    def post(self, request, procedure_id):
-        procedure = get_object_or_404(Procedure, pk=procedure_id)
-        request.data["procedure"] = procedure.id
+    def post(self, request):
         serializer = ProcedureRecordSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return Response(data=serializer.data)
-    
+
     def get(self, request, procedure_record_id):
-        procedure_record = get_object_or_404(ProcedureRecord, pk=procedure_record_id)
+        procedure_record = get_object_or_404(
+            ProcedureRecord, pk=procedure_record_id)
         serializer = ProcedureRecordSerializer(instance=procedure_record)
+        return Response(data=serializer.data)
+
+    def put(self, request, procedure_record_id):
+        procedure_record = get_object_or_404(
+            ProcedureRecord, pk=procedure_record_id)
+        serializer = ProcedureRecordSerializer(
+            instance=procedure_record, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
         return Response(data=serializer.data)

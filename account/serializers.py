@@ -142,7 +142,7 @@ class PractitionerSerializer(CommonInfoSerializer):
         common_info = super().create(validated_data)
         department_data = validated_data.pop('department', None)
         practitioner = Practitioner.objects.create(
-            name=common_info['name'], telecom=common_info['telecom'], address=common_info['address'],**validated_data)
+            name=common_info['name'], telecom=common_info['telecom'], address=common_info['address'], **validated_data)
 
         if department_data:
             practitioner.department = department_data
@@ -151,15 +151,12 @@ class PractitionerSerializer(CommonInfoSerializer):
 
     def update(self, instance, validated_data):
         department_data = validated_data.pop('department', None)
-        instance = super().update(instance, validated_data)
 
         if department_data:
-            department_serializer = DepartmentSerializer(
-                instance.department, data=department_data)
-            if department_serializer.is_valid():
-                department_serializer.save()
+            instance.department = department_data
+            instance.save()
 
-        return instance
+        return super().update(instance, validated_data)
 
 
 class ChangePasswordSerializer(serializers.Serializer):
