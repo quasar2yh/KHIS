@@ -8,7 +8,21 @@ class MedicalRecordSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ProcedureFeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProcedureFee
+        fields = '__all__'
+        read_only_fields = ('procedure',)
+
+
 class ProcedureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Procedure
+        fields = '__all__'
+
+
+class ProcedureDetailSerializer(serializers.ModelSerializer):
+    procedure_fee = ProcedureFeeSerializer(many=True, read_only=True)
     class Meta:
         model = Procedure
         fields = '__all__'
@@ -44,7 +58,4 @@ class ProcedureRecordSerializer(serializers.ModelSerializer):
         response['procedure'] = ProcedureSerializer(instance.procedure).data
         return response
 
-class ProcedureFeeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProcedureFee
-        fields = '__all__'
+

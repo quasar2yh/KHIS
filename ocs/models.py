@@ -39,10 +39,14 @@ class ProcedureRecord(models.Model):
     # 수술 시간
     start = models.DateTimeField()
     end = models.DateTimeField()
-    charge_item = models.ForeignKey(ChargeItem, on_delete=models.PROTECT, blank=True, null=True)
+    charge_item = models.ForeignKey(
+        ChargeItem, on_delete=models.PROTECT, blank=True, null=True)
 
 
 class ProcedureFee(models.Model):
-    procedure = models.ForeignKey(Procedure, on_delete=models.CASCADE)
+    procedure = models.ForeignKey(
+        Procedure, on_delete=models.CASCADE, related_name='procedure_fee')
     fee = models.DecimalField(max_digits=11, decimal_places=2)
-    effective_date = models.DateField()
+    effective_start = models.DateField()
+    effective_end = models.DateField()
+    updated = models.DateTimeField(auto_now=True)
