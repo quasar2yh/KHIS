@@ -1,10 +1,11 @@
 from rest_framework import serializers
 from .models import Appointment
 from schedule.models import HospitalSchedule, Annual
-from account.models import Patient, Practitioner, Department
+from account.models import Patient, Practitioner, Department, HumanName
 from datetime import time
 from django.utils import timezone
 from datetime import time, timedelta as td
+from account.serializers import HumanNameSerializer
 
 
 class AppointmentDelSerializer(serializers.ModelSerializer):
@@ -136,9 +137,13 @@ class AppointmentListSerializer(serializers.Serializer):
 
 
 class PractitionerAppointmentSerializer(serializers.ModelSerializer):
+    # name = serializers.CharField(source='name.name', read_only=True)
+    # family = serializers.CharField(source='name.family', read_only=True)
+    name = HumanNameSerializer()
+
     class Meta:
         model = Practitioner
-        fields = ['id', 'department',]
+        fields = ['id', 'department', 'name',]
 
 
 class HospitalScheduleSerializer(serializers.ModelSerializer):
