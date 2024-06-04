@@ -1,9 +1,7 @@
 import React from 'react'
 import { Table, Button, Modal } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
 
 function ConsultationList({ consultations, selectConsultation, show, handleClose, handleShow }) {
-    const accountInfo = useSelector(state => state.userReducer.accountInfo)
 
     return (
         <div className="container mt-5">
@@ -35,7 +33,7 @@ function ConsultationList({ consultations, selectConsultation, show, handleClose
                                     <td>{consultation.surgical_request_record}</td>
                                     <td>{consultation.surgical_result}</td>
                                     <td>
-                                        <Button variant="primary" onClick={() => handleShow(consultation)}>
+                                        <Button variant="primary" onClick={() => handleShow()}>
                                             상세보기
                                         </Button>
                                     </td>

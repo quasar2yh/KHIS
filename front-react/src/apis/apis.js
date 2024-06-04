@@ -217,4 +217,9 @@ export const postProcedureRecord = async (data) => {
     return response.data;
 }
 
+export const getProcedureRecordList = async (medicalRecordId) => {
+    const response = await instance.get(`/khis/consultations/procedure-record-list/${medicalRecordId}/`)
+    return response.data;
+}
+
 export default instance;

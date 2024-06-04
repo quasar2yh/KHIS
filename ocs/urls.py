@@ -8,4 +8,5 @@ urlpatterns = [
     path('procedure/', views.ProcedureAPIView.as_view()),
     path('procedure-record/', views.ProcedureRecordAPIView.as_view()),
     path('procedure-record/<int:procedure_record_id>/', views.ProcedureRecordAPIView.as_view()),
+    path('procedure-record-list/<int:medical_record_id>/', views.ProcedureRecordListAPIView.as_view()),
 ]

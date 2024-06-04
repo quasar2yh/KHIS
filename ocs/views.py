@@ -79,3 +79,12 @@ class ProcedureRecordAPIView(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return Response(data=serializer.data)
+
+class ProcedureRecordListAPIView(APIView):
+    permission_classes = [AllowAny]  # 테스트용 AllowAny
+
+    def get(self, request, medical_record_id):
+        procedure_records = ProcedureRecord.objects.filter(medical_record=medical_record_id)
+        serializer = ProcedureRecordSerializer(
+            instance=procedure_records, many=True)
+        return Response(data=serializer.data)
