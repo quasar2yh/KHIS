@@ -1,7 +1,7 @@
 from django.db import models
 from account.models import Patient, Practitioner, Department
 from acceptance.models import ChargeItem
-
+from procedure.models import Procedure
 
 class MedicalRecord(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
@@ -15,16 +15,6 @@ class MedicalRecord(models.Model):
     surgical_request_record = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-
-# 수술
-class Procedure(models.Model):
-    # 수술 코드
-    procedure_code = models.CharField(max_length=30)
-    # 수술 이름
-    procedure_name = models.CharField(max_length=30)
-    # 상세 설명
-    description = models.TextField()
 
 
 # 수술 기록
@@ -42,11 +32,3 @@ class ProcedureRecord(models.Model):
     charge_item = models.ForeignKey(
         ChargeItem, on_delete=models.PROTECT, blank=True, null=True)
 
-
-class ProcedureFee(models.Model):
-    procedure = models.ForeignKey(
-        Procedure, on_delete=models.CASCADE, related_name='procedure_fee')
-    fee = models.DecimalField(max_digits=11, decimal_places=2)
-    effective_start = models.DateField()
-    effective_end = models.DateField()
-    updated = models.DateTimeField(auto_now=True)

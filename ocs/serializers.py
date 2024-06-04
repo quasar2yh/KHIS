@@ -1,30 +1,11 @@
 from rest_framework import serializers
-from .models import MedicalRecord, ProcedureRecord, Procedure, ProcedureFee
-
+from .models import MedicalRecord, ProcedureRecord
+from procedure.models import Procedure
+from procedure.serializers import ProcedureSerializer
 
 class MedicalRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = MedicalRecord
-        fields = '__all__'
-
-
-class ProcedureFeeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProcedureFee
-        fields = '__all__'
-        read_only_fields = ('procedure',)
-
-
-class ProcedureSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Procedure
-        fields = '__all__'
-
-
-class ProcedureDetailSerializer(serializers.ModelSerializer):
-    procedure_fee = ProcedureFeeSerializer(many=True, read_only=True)
-    class Meta:
-        model = Procedure
         fields = '__all__'
 
 
