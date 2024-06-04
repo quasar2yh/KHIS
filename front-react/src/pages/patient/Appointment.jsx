@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { appointmentAction, getAbleAppointmentPractitioner } from '../../apis/apis';
+import { postAppointment, getAbleAppointmentPractitioner } from '../../apis/apis';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDepartmentListAction } from '../../redux/modules/departmentActions';
@@ -43,6 +43,7 @@ function Appointment() {
             if (appointmentData.date && appointmentData.time && appointmentData.department) {
                     const res = await getAbleAppointmentPractitioner(appointmentData);
                     console.log("res", res)
+                    console.log("res 타입", typeof res)
                     setAblePractitioner(res);
             }
         };
@@ -72,7 +73,7 @@ function Appointment() {
         };
 
         try {
-            const response = await appointmentAction(body, userId);
+            const response = await postAppointment(body, userId);
             console.log(response)
 
             if (response.active) {
@@ -102,8 +103,8 @@ function Appointment() {
 
 
     console.log("appointmentData", appointmentData)
-    console.log("ablePractitioner", ablePractitioner[0])
-    console.log("departmentList", departmentList)
+    console.log("ablePractitioner", ablePractitioner)
+
     return (
         <>
             <div className="container mt-5">
@@ -169,8 +170,8 @@ function Appointment() {
                                 required
                             >
                                 <option>의사를 선택하세요.</option>
-                                {departmentList && departmentList.map((department) => (
-                                    <option key={department.id} value={department.id}>{department.department}</option>
+                                {ablePractitioner && ablePractitioner.map((practitioner) => (
+                                    <option key={practitioner.id} value={practitioner.id}>{practitioner.name.family} {practitioner.name.name}</option>
                                 ))}
                             </Form.Control>
                         </Col>

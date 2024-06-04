@@ -135,10 +135,13 @@ class AppointmentListSerializer(serializers.Serializer):
     practitioner_all = serializers.CharField(required=False)  # 전체의사 조회할때 쓰는 필드
 
 
+from account.serializers import HumanNameSerializer
+
 class PractitionerAppointmentSerializer(serializers.ModelSerializer):
+    name = HumanNameSerializer()
     class Meta:
         model = Practitioner
-        fields = ['id', 'department',]
+        fields = ['id', 'department', 'name']
 
 
 class HospitalScheduleSerializer(serializers.ModelSerializer):

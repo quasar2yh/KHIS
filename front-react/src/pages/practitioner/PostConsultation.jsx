@@ -1,20 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Button, Form, ListGroup } from 'react-bootstrap';
 import { searchPatient } from '../../apis/apis';
-import { consultationAction } from '../../apis/apis';
+import { postConsultation } from '../../apis/apis';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getPractitionerInfoAction } from '../../redux/modules/userActions';
 
 const PostConsultation = () => {
+    const accountInfo = useSelector(state => state.userReducer.accountInfo)
+    const practitionerInfo = useSelector(state => state.userReducer.practitionerInfo)
+    const dispatch = useDispatch()
     const [showModal, setShowModal] = useState(false);
     const [patientName, setPatientName] = useState({ name: null});
     const [patientList, setPatientList] = useState([]);
-    const [selectedPatient, setSelectedPatient] = useState({ name: '', id: null });
+    const [selectedPatient, setSelectedPatient] = useState({ name: '', id: 0 });
     const [consultationData, setConsultationData] = useState({
+        patient: 0,
+        practitioner : 0,
+        department: 0,
         diagnosis: '',
         diagnostic_results: '',
         surgical_request_record: '',
         surgical_result: ''
     });
+
+    useEffect(() => {
+        if (!practitionerInfo && accountInfo?.practitioner) {
+            dispatch(getPractitionerInfoAction(accountInfo.practitioner));
+        }
+    }, [dispatch, accountInfo, practitionerInfo]);
 
     const handleClose = () => setShowModal(false);
 
@@ -47,7 +61,16 @@ const PostConsultation = () => {
 
     const navigator = useNavigate()
     const handleSubmit = () => {
-        consultationAction(selectedPatient.id, consultationData)
+        const body = {
+            patient: selectedPatient.id,
+            practitioner : practitionerInfo.id,
+            department: practitionerInfo.department,
+            diagnosis: consultationData.diagnosis,
+            diagnostic_results: consultationData.diagnostic_results,
+            surgical_request_record: consultationData.surgical_request_record,
+            surgical_result: consultationData.surgical_result
+        }
+        postConsultation(body)
         alert("진단 기록 생성 완료")
         navigator("/")
     };
@@ -110,6 +133,7 @@ const PostConsultation = () => {
                                 type="text"
                                 name="diagnosis"
                                 value={selectedPatient.name}
+                                readOnly
                             />
                         </Form.Group>
 

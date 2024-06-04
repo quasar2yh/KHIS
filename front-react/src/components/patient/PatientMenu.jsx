@@ -3,7 +3,7 @@ import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 
 function PatientMenu({ refresh, handleLogout }) {
-    const AccountInfo = useSelector(state => state.userReducer.AccountInfo);
+    const accountInfo = useSelector(state => state.userReducer.accountInfo);
     const departmentList = useSelector(state => state.departmentReducer.departmentList) || [];
 
     return (
@@ -28,7 +28,7 @@ function PatientMenu({ refresh, handleLogout }) {
                         <NavDropdown title="Profile" id="profile-nav-dropdown">
                             <NavDropdown.Item href="/profile">내 정보</NavDropdown.Item>
                             <NavDropdown.Item href="/appointmentstatus">예약 현황</NavDropdown.Item>
-                            {AccountInfo && AccountInfo.subject === 'Patient' && (
+                            {accountInfo && accountInfo.subject === 'Patient' && (
                                 <NavDropdown.Item href="/consultation">진료 기록</NavDropdown.Item>
                             )}
                             <NavDropdown.Item onClick={handleLogout}>로그아웃</NavDropdown.Item>

@@ -9,7 +9,7 @@ import PractitionerMenu from '../components/practitioner/PractitionerMenu';
 import { resetUserAction } from '../redux/modules/userActions';
 
 function Header() {
-    const AccountInfo = useSelector(state => state.userReducer.AccountInfo);
+    const accountInfo = useSelector(state => state.userReducer.accountInfo);
     const departmentList = useSelector(state => state.departmentReducer.departmentList);
     const refresh = Cookies.get("refresh");
     const navigate = useNavigate();
@@ -29,12 +29,12 @@ function Header() {
         navigate('/login');
     };
 
-    console.log("AccountInfo", AccountInfo)
+    console.log("accountInfo", accountInfo)
 
     return (<>
         <Navbar expand="lg" className="bg-body-tertiary">
             <Container>
-                {AccountInfo && AccountInfo.subject === 'Practitioner'
+                {accountInfo && accountInfo.subject === 'Practitioner'
                     ? <PractitionerMenu refresh={refresh} handleLogout={handleLogout} />
                     : <PatientMenu refresh={refresh} handleLogout={handleLogout} />}
             </Container>

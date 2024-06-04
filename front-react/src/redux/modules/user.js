@@ -2,7 +2,7 @@ const initialState = {
     userId: null,
     patientInfo: null,
     practitionerInfo: null,
-    AccountInfo: null,
+    accountInfo: null,
 };
 
 const userReducer = (state = initialState, action) => {
@@ -25,13 +25,13 @@ const userReducer = (state = initialState, action) => {
         case 'SET_ACCOUNT_INFO':
             return {
                 ...state,
-                AccountInfo: action.payload,
+                accountInfo: action.payload,
             };
         case 'RESET_USER':
             return {
                 ...state,
                 userId: action.payload,
-                AccountInfo: action.payload
+                accountInfo: action.payload
             }
         default:
             return state;
