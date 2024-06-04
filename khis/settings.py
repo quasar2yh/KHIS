@@ -20,13 +20,13 @@ dotenv.load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-# print(os.environ.get('OPENAI_API_KEY'))
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -44,7 +44,9 @@ CUSTOM_APPS = [
     'ocs',
     'acceptance',
     'registration',
-    'practitioner_registration'
+    'practitioner_registration',
+    'procedure',
+    'procedure_fee',
 ]
 SYSTEM_APPS = ['django.contrib.admin',
                'django.contrib.auth',
@@ -198,3 +200,5 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': timedelta(hours=1),  # 매 시간마다 실행
     },
 }
+
+

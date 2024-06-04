@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from .models import Annual, HospitalSchedule
+from .models import Annual, HospitalSchedule,AnnualLeave,DepartmentEvent
 from account.models import Practitioner
-from .models import DepartmentEvent
 
 
 class AnnualSerializer(serializers.ModelSerializer):
@@ -31,3 +30,10 @@ class DepartmentEventSerializer(serializers.ModelSerializer):
         model = DepartmentEvent
         fields = ['id', 'department', 'event_title',
                   'event_content', 'start_time', 'end_time']
+
+
+class AnnualLeaveSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AnnualLeave
+        fields = ['practitioner', 'annual_leave_count', 'leave_taken', 'remaining_leave']

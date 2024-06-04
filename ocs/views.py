@@ -162,3 +162,4 @@ class ProcedureFeeDetailAPIView(APIView):
         procedure_fee = get_object_or_404(ProcedureFee, pk=procedurefee_id)
         serializer = ProcedureFeeSerializer(procedure_fee)
         return Response(data=serializer.data)
+
