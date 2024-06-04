@@ -13,8 +13,12 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 import os
+import dotenv
+dotenv.load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -41,7 +45,9 @@ CUSTOM_APPS = [
     'ocs',
     'acceptance',
     'registration',
-    'practitioner_registration'
+    'practitioner_registration',
+    'procedure',
+    'procedure_fee',
 ]
 SYSTEM_APPS = ['django.contrib.admin',
                'django.contrib.auth',
