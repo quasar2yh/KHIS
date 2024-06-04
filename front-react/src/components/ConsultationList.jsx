@@ -34,12 +34,12 @@ function ConsultationList({ consultations }) {
 
     return (
         <div className="container mt-5">
-            <h2>Consultations</h2>
+            <h2>진단 기록</h2>
             <Table striped bordered hover>
                 <thead>
                     <tr>
                         <th>진단 번호</th>
-                        <th>담당 의사</th>
+                        <th>담당 의사 ID</th>
                         <th>내용</th>
                         <th>결과</th>
                         <th>수술 요청</th>
@@ -88,7 +88,7 @@ function ConsultationList({ consultations }) {
                                 <thead>
                                     <tr>
                                         <th>수술기록 번호</th>
-                                        <th>담당 의사</th>
+                                        <th>담당 의사 ID</th>
                                         <th>수술 번호</th>
                                         <th>수술 코드</th>
                                         <th>수술 이름</th>

@@ -77,7 +77,7 @@ const PostConsultation = () => {
 
     console.log("selectedPatient", selectedPatient)
     return (
-        <>
+        <div className="container mt-5">
             <Modal show={showModal} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>환자 정보</Modal.Title>
@@ -179,7 +179,7 @@ const PostConsultation = () => {
                     </Form>
                 </div>
             )}
-        </>
+        </div>
     );
 };
 

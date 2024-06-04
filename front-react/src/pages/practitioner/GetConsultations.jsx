@@ -48,8 +48,8 @@ function GetConsultations() {
     };
     
     return (
-        <>
-            <Modal show={showSearchPatientModal} onHide={() => setShowSearchPatientModal(false)}>
+        <div className="container mt-5">
+                    <Modal show={showSearchPatientModal} onHide={() => setShowSearchPatientModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>환자 정보</Modal.Title>
                 </Modal.Header>
@@ -111,7 +111,7 @@ function GetConsultations() {
                     consultations={consultations}
                 />
             )}
-        </>
+        </div>
     );
 }
 
