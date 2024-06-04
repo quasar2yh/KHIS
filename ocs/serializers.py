@@ -1,16 +1,11 @@
 from rest_framework import serializers
-from .models import MedicalRecord, ProcedureRecord, Procedure, ProcedureFee
-
+from .models import MedicalRecord, ProcedureRecord
+from procedure.models import Procedure
+from procedure.serializers import ProcedureSerializer
 
 class MedicalRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = MedicalRecord
-        fields = '__all__'
-
-
-class ProcedureSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Procedure
         fields = '__all__'
 
 
@@ -44,7 +39,4 @@ class ProcedureRecordSerializer(serializers.ModelSerializer):
         response['procedure'] = ProcedureSerializer(instance.procedure).data
         return response
 
-class ProcedureFeeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProcedureFee
-        fields = '__all__'
+
