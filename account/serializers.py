@@ -154,12 +154,10 @@ class PractitionerSerializer(CommonInfoSerializer):
         instance = super().update(instance, validated_data)
 
         if department_data:
-            department_serializer = DepartmentSerializer(
-                instance.department, data=department_data)
-            if department_serializer.is_valid():
-                department_serializer.save()
+            instance.department = department_data
+            instance.save()
 
-        return instance
+        return super().update(instance, validated_data)
 
 
 class ChangePasswordSerializer(serializers.Serializer):

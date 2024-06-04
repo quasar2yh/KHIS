@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { passwordChange } from '../apis/apis';
 
 function PasswordChange({ onClose }) {
-    const accountInfo = useSelector(state => state.userReducer.AccountInfo)
+    const accountInfo = useSelector(state => state.userReducer.accountInfo)
     const navigator = useNavigate()
 
     const [formData, setFormData] = useState({

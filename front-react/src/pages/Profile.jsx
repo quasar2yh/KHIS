@@ -7,7 +7,7 @@ import ProfileUpdate from '../components/patient/ProfileUpdate';
 import PractitionerProfileUpdate from '../components/practitioner/PractitionerProfileUpdate';
 
 function Profile() {
-    const AccountInfo = useSelector(state => state.userReducer.AccountInfo);
+    const accountInfo = useSelector(state => state.userReducer.accountInfo);
     const patientInfo = useSelector(state => state.userReducer.patientInfo);
     const practitionerInfo = useSelector(state => state.userReducer.practitionerInfo);
     const dispatch = useDispatch();
@@ -18,15 +18,15 @@ function Profile() {
     const [showPractitionerProfileUpdate, setShowPractitionerProfileUpdate] = useState(false);
 
     useEffect(() => {
-        // AccounInfo가 환자면 환자 정보 가져오는 Reducer Action 실행
-        if (AccountInfo && AccountInfo.subject === 'Patient' && !patientInfo) {
-            dispatch(getPatientInfoAction(AccountInfo.patient));
+        // accountInfo 가 환자면 환자 정보 가져오는 Reducer Action 실행
+        if (accountInfo && accountInfo.subject === 'Patient' && !patientInfo) {
+            dispatch(getPatientInfoAction(accountInfo.patient));
         
-        // AccounInfo가 의료진이면 의료진 정보 가져오는 Reducer Action 실행
-        } else if (AccountInfo && AccountInfo.subject === 'Practitioner' && !practitionerInfo) {
-            dispatch(getPractitionerInfoAction(AccountInfo.practitioner));
+        // accountInfo 가 의료진이면 의료진 정보 가져오는 Reducer Action 실행
+        } else if (accountInfo && accountInfo.subject === 'Practitioner' && !practitionerInfo) {
+            dispatch(getPractitionerInfoAction(accountInfo.practitioner));
         }
-    }, [dispatch, AccountInfo, patientInfo, practitionerInfo]);
+    }, [dispatch, accountInfo, patientInfo, practitionerInfo]);
 
 
     // Info가 없으면 Loading... 렌더링
