@@ -1,4 +1,6 @@
 from django.shortcuts import get_object_or_404
+from django.db.models import F, CharField, Value
+from django.db.models.functions import Concat
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -108,11 +110,16 @@ class PatientSearchAPIView(APIView):
             name = request.GET.get('name')
             telecom = request.GET.get('telecom')
             if name:
-                patients = Patient.objects.filter(name__name__icontains=name)
+                patients = Patient.objects.annotate(
+                    # name_family와 name_name을 ''을 기준으로 합친 'full_name' CharField 생성 후 필터
+                    full_name=Concat(F('name__family'), Value(''), F('name__name'), output_field=CharField())).filter(full_name__icontains=name)
+
                 serializer = PatientSerializer(instance=patients, many=True)
                 return Response(serializer.data)
+
             if telecom:
-                patients = Patient.objects.filter(telecom__value__icontains=telecom)
+                patients = Patient.objects.filter(
+                    telecom__value__icontains=telecom)
                 serializer = PatientSerializer(instance=patients, many=True)
                 return Response(serializer.data)
             else:

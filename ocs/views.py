@@ -1,9 +1,11 @@
+from rest_framework.permissions import AllowAny
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from account.models import Patient
-from .serializers import MedicalRecordSerializer
+from .models import ProcedureRecord
+from .serializers import MedicalRecordSerializer, ProcedureRecordSerializer
 
 
 class MedicalRecordAPIView(APIView):
@@ -33,4 +35,41 @@ class MedicalRecordAPIView(APIView):
             instance=medical_record, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
+        return Response(data=serializer.data)
+
+
+class ProcedureRecordAPIView(APIView):
+    permission_classes = [AllowAny]  # 테스트용 AllowAny
+
+    # 수술 기록 데이터 생성
+    def post(self, request):
+        serializer = ProcedureRecordSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return Response(data=serializer.data)
+
+    def get(self, request, procedure_record_id):
+        procedure_record = get_object_or_404(
+            ProcedureRecord, pk=procedure_record_id)
+        serializer = ProcedureRecordSerializer(instance=procedure_record)
+        return Response(data=serializer.data)
+
+    def put(self, request, procedure_record_id):
+        procedure_record = get_object_or_404(
+            ProcedureRecord, pk=procedure_record_id)
+        serializer = ProcedureRecordSerializer(
+            instance=procedure_record, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return Response(data=serializer.data)
+
+
+class ProcedureRecordListAPIView(APIView):
+    permission_classes = [AllowAny]  # 테스트용 AllowAny
+
+    def get(self, request, medical_record_id):
+        procedure_records = ProcedureRecord.objects.filter(
+            medical_record=medical_record_id)
+        serializer = ProcedureRecordSerializer(
+            instance=procedure_records, many=True)
         return Response(data=serializer.data)
