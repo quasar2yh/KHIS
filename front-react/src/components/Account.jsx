@@ -3,8 +3,10 @@ import { Container, Row, Col, Card, ListGroup, Button } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import PasswordChange from './PasswordChange';
 
+
+// 프로필 페이지에 계정 정보 랜더링하는 컴포넌트
 function Account() {
-    const AccountInfo = useSelector(state => state.userReducer.AccountInfo);
+    const accountInfo = useSelector(state => state.userReducer.accountInfo);
 
     const [showPasswordChange, setShowPasswordChange] = useState(false);
 
@@ -16,7 +18,7 @@ function Account() {
         setShowPasswordChange(false);
     }
 
-    if (!AccountInfo) {
+    if (!accountInfo) {
         return <div>Loading...</div>;
     }
 
@@ -34,29 +36,29 @@ function Account() {
                                     <ListGroup.Item>
                                         <Row>
                                             <Col md={4} className="text-right font-weight-bold">ID:</Col>
-                                            <Col md={8}>{AccountInfo.username}</Col>
+                                            <Col md={8}>{accountInfo.username}</Col>
                                         </Row>
                                     </ListGroup.Item>
 
                                     <ListGroup.Item>
                                         <Row>
                                             <Col md={4} className="text-right font-weight-bold">Subject:</Col>
-                                            <Col md={8}>{AccountInfo.subject}</Col>
+                                            <Col md={8}>{accountInfo.subject}</Col>
                                         </Row>
                                     </ListGroup.Item>
 
-                                    {AccountInfo.patient ?
+                                    {accountInfo.patient ?
                                         <ListGroup.Item>
                                             <Row>
                                                 <Col md={4} className="text-right font-weight-bold">Patient ID:</Col>
-                                                <Col md={8}>{AccountInfo.patient}</Col>
+                                                <Col md={8}>{accountInfo.patient}</Col>
                                             </Row>
                                         </ListGroup.Item>
 
                                         : <ListGroup.Item>
                                             <Row>
                                                 <Col md={4} className="text-right font-weight-bold">Practitioner ID:</Col>
-                                                <Col md={8}>{AccountInfo.practitioner || "N/A"}</Col>
+                                                <Col md={8}>{accountInfo.practitioner || "N/A"}</Col>
                                             </Row>
                                         </ListGroup.Item>
                                     }

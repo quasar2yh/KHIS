@@ -3,7 +3,7 @@ from django.conf import settings
 
 
 client = OpenAI(
-    api_key=settings.OPEN_API_KEY
+    api_key=settings.OPENAI_API_KEY
 )
 
 
@@ -23,5 +23,3 @@ def chatgpt(user_message):
         ]
     )
     return completion.choices[0].message.content
-
-

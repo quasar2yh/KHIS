@@ -6,9 +6,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getDepartmentListAction } from '../redux/modules/departmentActions';
 import PatientMenu from '../components/patient/PatientMenu';
 import PractitionerMenu from '../components/practitioner/PractitionerMenu';
+import { resetUserAction } from '../redux/modules/userActions';
 
 function Header() {
-    const AccountInfo = useSelector(state => state.userReducer.AccountInfo);
+    const accountInfo = useSelector(state => state.userReducer.accountInfo);
     const departmentList = useSelector(state => state.departmentReducer.departmentList);
     const refresh = Cookies.get("refresh");
     const navigate = useNavigate();
@@ -20,16 +21,20 @@ function Header() {
         }
     }, [departmentList, dispatch])
 
+
     const handleLogout = () => {
         Cookies.remove('access', { path: '/' });
         Cookies.remove('refresh', { path: '/' });
+        dispatch(resetUserAction());
         navigate('/login');
     };
+
+    console.log("accountInfo", accountInfo)
 
     return (<>
         <Navbar expand="lg" className="bg-body-tertiary">
             <Container>
-                {AccountInfo && AccountInfo.subject === 'Practitioner'
+                {accountInfo && accountInfo.subject === 'Practitioner'
                     ? <PractitionerMenu refresh={refresh} handleLogout={handleLogout} />
                     : <PatientMenu refresh={refresh} handleLogout={handleLogout} />}
             </Container>

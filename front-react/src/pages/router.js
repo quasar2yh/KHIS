@@ -2,7 +2,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import TokenRefresher from "../components/TokenRefresher";
 import Home from "./Home";
 import Appointment from "./patient/Appointment";
-import Schedule from "./Schedule";
 import Layout from "../Layout/Layout";
 import Login from "./Login";
 import SelectRegisterForm from "./Register";
@@ -13,6 +12,9 @@ import Department from "./Department";
 import Consultation from "./patient/Consultation";
 import PostConsultation from "./practitioner/PostConsultation";
 import Annual from "./practitioner/Annual";
+import Schedule from "./Schedule";
+import Procedure from "./practitioner/Procedure";
+import GetConsultations from "./practitioner/GetConsultations";
 
 
 const Router = () => {
@@ -32,6 +34,8 @@ const Router = () => {
                         <Route path="/department/:id" element={<Department />} />
                         <Route path="/consultation" element={<Consultation />} />
                         <Route path="/medical-record" element={<PostConsultation />} />
+                        <Route path="/medical-record-list" element={<GetConsultations />} />
+                        <Route path="/procedure" element={<Procedure />} />
                         <Route path="/annual" element={<Annual />} />
                     </Routes>
                 </Layout>

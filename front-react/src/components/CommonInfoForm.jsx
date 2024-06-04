@@ -1,8 +1,8 @@
 import React from 'react';
-import Form from 'react-bootstrap/Form';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
+import { Form, Col, Row } from 'react-bootstrap';
 
+
+// 회원가입 할 때 사용하는 CommonInfoForm
 function CommonInfoForm({ registerData, handleChange }) {
 
     return (
@@ -21,6 +21,24 @@ function CommonInfoForm({ registerData, handleChange }) {
                 <Form.Label>Password 확인</Form.Label>
                 <Form.Control type="password" />
             </Form.Group>
+
+            <Row className="mb-3">
+                <Col>
+                <Form.Group as={Col} xs={5}>
+                    <Form.Label>연락처</Form.Label>
+                    <Form.Control
+                        required
+                        type="text"
+                        name="contact"
+                        value={registerData.contact}
+                        onChange={handleChange}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                        유효한 연락처를 입력하세요.
+                    </Form.Control.Feedback>
+                </Form.Group>
+                </Col>
+            </Row>
 
             <Form.Group as={Col}>
                 <Form.Label>성별</Form.Label>
@@ -68,22 +86,6 @@ function CommonInfoForm({ registerData, handleChange }) {
                         onChange={handleChange}
                     />
                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                </Form.Group>
-            </Row>
-
-            <Row className="mb-3">
-                <Form.Group as={Col} xs={5}>
-                    <Form.Label>연락처</Form.Label>
-                    <Form.Control
-                        required
-                        type="text"
-                        name="contact"
-                        value={registerData.contact}
-                        onChange={handleChange}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                        유효한 연락처를 입력하세요.
-                    </Form.Control.Feedback>
                 </Form.Group>
             </Row>
         </>

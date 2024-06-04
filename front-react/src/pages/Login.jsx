@@ -5,23 +5,30 @@ import { Link, useNavigate } from 'react-router-dom';
 import IdPwForm from '../components/IdPwForm';
 import { loginAction } from '../apis/apis';
 import Cookies from 'js-cookie';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAccountInfoAction, getUserIdAction } from '../redux/modules/userActions';
 
 function Login() {
-
+    //userReducer의 userId
+    const userId = useSelector(state => state.userReducer.userId);
+    const dispatch = useDispatch()
     const navigate = useNavigate();
-
     const [id, setId] = useState('');
     const [pw, setPw] = useState('');
 
     const idHandler = (event) => {
         setId(event.target.value);
     };
+
     const pwHandler = (event) => {
         setPw(event.target.value);
     };
 
+    // 로그인 버튼 누르면 실행되는 함수
     const onSubmit = async (event) => {
         event.preventDefault();
+
+        // 서버가 받는 로그인 json 형식
         const body = {
             username: id,
             password: pw,
@@ -29,12 +36,18 @@ function Login() {
 
         try {
             const response = await loginAction(body);
-            console.log(response);
 
+            // response에 access 토큰이 있다면 Cookie에 세팅
             if (response.access) {
-                Cookies.set('access', response.access, { path: '' }); // 쿠키에 액세스 토큰 저장
-                Cookies.set('refresh', response.refresh, { path: '' }); // 쿠키에 리프레시 토큰 저장
-                // console.log("쿠키 : ", cookies.get('refresh'))
+                Cookies.set('access', response.access, { path: '' });
+                Cookies.set('refresh', response.refresh, { path: '' }); 
+            
+                // access 토큰 디코딩 후 userId 반환하는 API
+                dispatch(getUserIdAction(response.access));
+
+                // userId로 AccountInfo 반환하는 API
+                dispatch(getAccountInfoAction(userId));
+
                 navigate('/');
             } else {
                 alert('로그인 실패');

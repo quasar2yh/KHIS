@@ -24,9 +24,16 @@ export const getPractitionerInfoAction = (prectitionerId) => {
     };
 }
 export const getAccountInfoAction = (userId) => {
-    const userAccountInfo = getAccountInfo(userId);
+    const accountInfo = getAccountInfo(userId);
     return {
         type: 'SET_ACCOUNT_INFO',
-        payload: userAccountInfo
+        payload: accountInfo
+    }
+}
+
+export const resetUserAction = () => {
+    return {
+        type: 'RESET_USER',
+        payload: null
     }
 }
