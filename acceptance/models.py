@@ -19,4 +19,3 @@ class ChargeItem(models.Model):
         Claim, on_delete=models.CASCADE, related_name="chargeItem")
     quantity = models.PositiveSmallIntegerField()
     total = models.DecimalField(max_digits=11, decimal_places=2)
-

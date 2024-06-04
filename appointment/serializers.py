@@ -1,10 +1,11 @@
 from rest_framework import serializers
 from .models import Appointment
 from schedule.models import HospitalSchedule, Annual
-from account.models import Patient, Practitioner, Department
+from account.models import Patient, Practitioner, Department, HumanName
 from datetime import time
 from django.utils import timezone
 from datetime import time, timedelta as td
+from account.serializers import HumanNameSerializer
 
 
 class AppointmentDelSerializer(serializers.ModelSerializer):

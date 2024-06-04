@@ -14,8 +14,8 @@ from datetime import timedelta
 from pathlib import Path
 import os
 import dotenv
-dotenv.load_dotenv()
 
+dotenv.load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,7 +27,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-# print(os.environ.get('OPENAI_API_KEY'))
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -201,3 +200,5 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': timedelta(hours=1),  # 매 시간마다 실행
     },
 }
+
+
