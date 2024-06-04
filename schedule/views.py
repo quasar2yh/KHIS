@@ -8,8 +8,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Annual, HospitalSchedule, DepartmentEvent
-from .serializers import AnnualSerializer, HospitalScheduleSerializer, DepartmentEventSerializer
+from .models import Annual, HospitalSchedule, DepartmentEvent, AnnualLeave
+from .serializers import AnnualSerializer, HospitalScheduleSerializer, DepartmentEventSerializer, AnnualLeaveSerializer
 from django.utils.dateparse import parse_date
 from .utils import save_holidays_from_api
 from account.models import Department, Practitioner
@@ -38,8 +38,17 @@ class MedicalScheduleAPIView(APIView):
                     return Response({"message": "이미 신청된 날짜입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
                 reason = serializer.validated_data.get('reason', '')
+                
+                 # 연차 사용일 증가
+                delta = end_date - start_date
+                annual_leave_info = AnnualLeave.objects.get(practitioner=practitioner)
+                annual_leave_info.leave_taken += delta.days + 1
+                annual_leave_info.save()
+                                
+                
                 annual = Annual.objects.create(
                     practitioner=practitioner, start_date=start_date, end_date=end_date, reason=reason)
+                
                 return Response({"message": "연차 신청이 완료되었습니다."}, status=status.HTTP_201_CREATED)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -228,6 +237,8 @@ class IntegratedScheduleAPIView(APIView):
 
 
 class DepartmentRegisterAPIView(APIView):
+    permission_classes = [AllowAny]
+    
     def post(self, request):
         department_name = request.data.get('department_name')
 
@@ -252,7 +263,7 @@ class DepartmentListAPIView(APIView):
         serializer = DepartmentSerializer(departments, many=True)
         return Response(serializer.data)
 
- # 부서별 연차 조회
+ # 부서별 의료진 연차 조회
 
 
 class DepartmentMedicalScheduleAPIView(APIView):
@@ -263,6 +274,39 @@ class DepartmentMedicalScheduleAPIView(APIView):
             practitioner__in=practitioners).order_by('start_date')
         serializer = AnnualSerializer(annuals, many=True)
         return Response(serializer.data)
+
+ # 부서별 의료진 연차 구간 조회
+
+
+class DepartmentMedicalSpecificScheduleAPIView(APIView):
+    def get(self, request, department_id):
+        if request.user.is_authenticated and request.user.is_practitioner():
+           # 시작 날짜와 끝 날짜 가져오기
+            start_date_str = request.GET.get('start_date')
+            end_date_str = request.GET.get('end_date')
+
+            if not start_date_str or not end_date_str:
+                return Response({"message": "시작 날짜와 끝 날짜를 지정해야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                start_date = datetime.strptime(
+                    start_date_str, '%Y-%m-%d').date()
+                end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+            except ValueError:
+                return Response({"message": "올바른 날짜 형식이 아닙니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+            practitioners = Practitioner.objects.filter(
+                department_id=department_id)
+            annuals = Annual.objects.filter(
+                practitioner__in=practitioners,
+                start_date__lte=end_date,
+                end_date__gte=start_date
+            ).order_by('start_date')
+
+            serializer = AnnualSerializer(annuals, many=True)
+            return Response(serializer.data)
+        else:
+            return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 # 부서별 의료진 조회
@@ -334,21 +378,32 @@ class DepartmentEventDetailAPIView(APIView):
 
 
 # 의료진 알람 메일 발송
+from schedule.tasks import send_department_event_reminder
 
 class MailAPIView(APIView):
-    permission_classes = [AllowAny]
+    def get(self, request, *args, **kwargs):
+        # 부서 ID를 전달하여 작업을 호출
+        department_id = 1  # 예시로 부서 ID를 1로 지정
+        send_department_event_reminder.delay(department_id)
+        return Response({"message": "작업이 예약되었습니다."})
 
-    def post(self, request, *args, **kwargs):
-        serializer = MailSerializer(data=request.data)
 
-        if serializer.is_valid():
-            email = serializer.validated_data['email']
-            subject = serializer.validated_data['subject']
-            message = serializer.validated_data['message']
+# 본인 연차 소진일 조회
+class AnnualLeaveStatusAPIView(APIView):
+    def get(self, request):
+        if request.user.is_authenticated and request.user.is_practitioner():
+            practitioner = request.user.practitioner
+            # 연차 소진 정보 가져오기
+            try:
+                annual_leave_info = AnnualLeave.objects.get(
+                    practitioner=practitioner)
+            except AnnualLeave.DoesNotExist:
+                return Response({"message": "연차 소진 정보가 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+            serializer = AnnualLeaveSerializer(annual_leave_info)
+            return Response(serializer.data)
 
-            # Celery를 사용하여 작업을 예약합니다.
-            send_email_async.delay(
-                subject, message, 'ritsukoice@naver.com', email)
-            return Response({"success": "메일이 예약되었습니다"}, status=status.HTTP_200_OK)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+# 전체 직원 연차 소진일일 조회
