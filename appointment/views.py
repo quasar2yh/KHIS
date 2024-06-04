@@ -69,6 +69,11 @@ class AppointMentAPIView(APIView):  # 예약기능 CRUD
         date_in_annuals = annuals.exists()
         if date_in_annuals:
             return Response(f"{select_date}일은 {practitioner}의사의 연차일 입니다")
+        # 부서 이벤트
+        department_event = DepartmentEvent.objects.filter(
+            start_time__date__lte=select_date, end_time__date__gte=select_date, department=department)
+        if department_event:
+            return Response("해당 의사는 부서 이벤트로 인해 예약 불가 ")
 
         serializer = AppointmentSerializer(
             data=request.data, context={'patient': patient, 'subject': subject})
