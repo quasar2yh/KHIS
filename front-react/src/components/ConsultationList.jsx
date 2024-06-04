@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
-import { Table, Button, Modal } from 'react-bootstrap';
-import { getProcedureRecordList } from '../apis/apis';
+import React, { useState, useEffect } from 'react'
+import { Table, Button, Modal, Form } from 'react-bootstrap';
+import { getProcedureRecordList, updateProcedureRecord } from '../apis/apis';
 
 function ConsultationList({ consultations }) {
     const [showConsultationModal, setShowConsultationModal] = useState(false);
     const [selectConsultation, setSelectConsultation] = useState([]);
+    const [showProcedureRecordUpdateModal, setShowProcedureRecordUpdateModal] = useState(false);
+    const [selectedProcedureRecord, setSelectedProcedureRecord] = useState(null);
 
     const handleShow = (consultationId) => {
         setShowConsultationModal(true);
@@ -18,15 +20,18 @@ function ConsultationList({ consultations }) {
             }
         };
         getAndSetProcedureRecordList(consultationId);
-
     };
 
     const handleClose = () => {
         setShowConsultationModal(false);
     };
 
-    console.log("consultations", consultations);
-    console.log("ConsultationList-selectConsultation", selectConsultation)
+    const handleProcedureRecordUpdate = (record) => {
+        setSelectedProcedureRecord(record);
+        setShowProcedureRecordUpdateModal(true);
+    };
+
+
     return (
         <div className="container mt-5">
             <h2>Consultations</h2>
@@ -70,7 +75,6 @@ function ConsultationList({ consultations }) {
                         </tr>
                     )}
                 </tbody>
-
             </Table>
 
             <Modal show={showConsultationModal} onHide={handleClose} size="lg">
@@ -107,6 +111,11 @@ function ConsultationList({ consultations }) {
                                                 <td>{procedureRecord.start}</td>
                                                 <td>{procedureRecord.end}</td>
                                                 <td>{procedureRecord.procedure_result}</td>
+                                                <td>
+                                                    <Button variant="primary" onClick={() => handleProcedureRecordUpdate(procedureRecord)}>
+                                                        수정
+                                                    </Button>
+                                                </td>
                                             </tr>
                                         ))
                                     ) : (
@@ -125,8 +134,117 @@ function ConsultationList({ consultations }) {
                     </Button>
                 </Modal.Footer>
             </Modal>
+
+            {selectedProcedureRecord && (
+                <ProcedureRecordUpdateModal
+                    show={showProcedureRecordUpdateModal}
+                    handleClose={() => setShowProcedureRecordUpdateModal(false)}
+                    procedureRecord={selectedProcedureRecord}
+                />
+            )}
         </div>
-    )
+    );
 }
+
+function ProcedureRecordUpdateModal({ show, handleClose, procedureRecord }) {
+    const [updatedRecord, setUpdatedRecord] = useState(procedureRecord);
+
+    useEffect(() => {
+        setUpdatedRecord(procedureRecord);
+    }, [procedureRecord]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        const keys = name.split('.');
+        if (keys.length === 2) {
+            setUpdatedRecord({
+                ...updatedRecord,
+                [keys[0]]: {
+                    ...updatedRecord[keys[0]],
+                    [keys[1]]: value,
+                },
+            });
+        } else {
+            setUpdatedRecord({
+                ...updatedRecord,
+                [name]: value,
+            });
+        }
+    };
+
+    const handleSubmit = () => {
+        updateProcedureRecord(procedureRecord.id, updatedRecord);
+        handleClose();
+    };
+
+    return (
+        <Modal show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+                <Modal.Title>수술 기록 수정</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form>
+                    <Form.Group>
+                        <Form.Label>수술 코드</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="procedure.procedure_code"
+                            value={updatedRecord.procedure?.procedure_code || ''}
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>수술 이름</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="procedure.procedure_name"
+                            value={updatedRecord.procedure?.procedure_name || ''}
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>상세 설명</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="procedure.description"
+                            value={updatedRecord.procedure?.description || ''}
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>시작 시간</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="start"
+                            value={updatedRecord.start || ''}
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>종료 시간</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="end"
+                            value={updatedRecord.end || ''}
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>수술 결과</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="procedure_result"
+                            value={updatedRecord.procedure_result || ''}
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+                    <Button variant="primary" onClick={handleSubmit}>
+                        완료
+                    </Button>
+                </Form>
+            </Modal.Body>
+        </Modal>
+    );
+};
 
 export default ConsultationList
