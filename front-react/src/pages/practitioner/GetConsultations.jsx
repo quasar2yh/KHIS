@@ -9,8 +9,6 @@ function GetConsultations() {
     const [selectedPatient, setSelectedPatient] = useState({ name: '', id: 0 });
     const [showSearchPatientModal, setShowSearchPatientModal] = useState(false);
     const [consultations, setConsultations] = useState([]);
-    const [selectConsultation] = useState(null);
-    const [showConsultationModal, setShowConsultationModal] = useState(false);
 
     const searchHandler = (e) => {
         setPatientName({
@@ -47,17 +45,8 @@ function GetConsultations() {
             };
         }
         getAndSetConsultations();
-        console.log("consultations", consultations);
     };
-
-    const handleShowConsultationModal = () => {
-        setShowConsultationModal(true);
-    };
-
-    const handleCloseConsultationModal = () => {
-        setShowConsultationModal(false);
-    };
-
+    
     return (
         <>
             <Modal show={showSearchPatientModal} onHide={() => setShowSearchPatientModal(false)}>
@@ -120,10 +109,6 @@ function GetConsultations() {
             {selectedPatient.id !== 0 && (
                 <ConsultationList
                     consultations={consultations}
-                    selectConsultation={selectConsultation}
-                    show={showConsultationModal}
-                    handleClose={handleCloseConsultationModal}
-                    handleShow={handleShowConsultationModal}
                 />
             )}
         </>
