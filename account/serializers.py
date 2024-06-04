@@ -140,9 +140,9 @@ class PractitionerSerializer(CommonInfoSerializer):
 
     def create(self, validated_data):
         common_info = super().create(validated_data)
-        department_data = validated_data.pop('department', None)
+        department_data = validated_data.get('department')
         practitioner = Practitioner.objects.create(
-            name=common_info['name'], telecom=common_info['telecom'], address=common_info['address'],**validated_data)
+            name=common_info['name'], telecom=common_info['telecom'], address=common_info['address'], **validated_data)
 
         if department_data:
             practitioner.department = department_data
@@ -150,7 +150,7 @@ class PractitionerSerializer(CommonInfoSerializer):
         return practitioner
 
     def update(self, instance, validated_data):
-        department_data = validated_data.pop('department', None)
+        department_data = validated_data.get('department')
         instance = super().update(instance, validated_data)
 
         if department_data:

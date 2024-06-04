@@ -196,7 +196,6 @@ CELERY_BEAT_SCHEDULE = {
     'send-department-event-reminder': {
         'task': 'schedule.tasks.send_department_event_reminder',
         'schedule': timedelta(hours=1),  # 매 시간마다 실행
+        'args': (1,),  # department_id 값을 여기에 넣습니다.
     },
 }
-
-
