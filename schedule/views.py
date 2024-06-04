@@ -1,5 +1,4 @@
 from django.http import HttpRequest
-from .tasks import test_task
 from schedule.tasks import send_department_event_reminder
 from .tasks import send_email_async
 from django.core.mail import send_mail
@@ -60,7 +59,6 @@ class MedicalScheduleAPIView(APIView):
 
 
 # 본인 연차 조회 (시작 일 빠른 순)
-
 
     def get(self, request):
         if request.user.is_authenticated:
@@ -384,9 +382,7 @@ class DepartmentEventDetailAPIView(APIView):
 
 class MailAPIView(APIView):
     def get(self, request):
-        # 부서 ID를 전달하여 작업을 호출
-        department_id = 1  # 예시로 부서 ID를 1로 지정
-        send_department_event_reminder.delay(department_id)
+        send_department_event_reminder.delay()
         return Response({"message": "작업이 예약되었습니다."})
 
 
@@ -406,14 +402,3 @@ class AnnualLeaveStatusAPIView(APIView):
 
         else:
             return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_401_UNAUTHORIZED)
-
-
-# 샐러리 테스트
-
-
-class Test(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request: HttpRequest):
-        test_task.delay(2, 5)
-        return Response("Celery Task Running")
