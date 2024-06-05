@@ -111,8 +111,8 @@ class PatientSearchAPIView(APIView):
             telecom = request.GET.get('telecom')
             if name:
                 patients = Patient.objects.annotate(
-                    # name_family와 name_name을 ''을 기준으로 합친 'full_name' CharField 생성 후 필터
-                    full_name=Concat(F('name__family'), Value(''), F('name__name'), output_field=CharField())).filter(full_name__icontains=name)
+                    # name_family와 name_name을 합친 'full_name' CharField 생성 후 필터
+                    full_name=Concat(F('name__family'), F('name__name'), output_field=CharField())).filter(full_name__icontains=name)
 
                 serializer = PatientSerializer(instance=patients, many=True)
                 return Response(serializer.data)
