@@ -111,15 +111,6 @@ function PractitionerRegister() {
                 </Form.Group>
             </Row>
 
-            <Row className="mb-3">
-                <Col xs={2}>
-                    <Form.Group>
-                        <Form.Label>권한</Form.Label>
-                        <Form.Control type="text" id='rank' name="rank" value={practitionerRegisterData.rank} onChange={handleChange} />
-                    </Form.Group>
-                </Col>
-            </Row>
-
             <Row className="mb-">
                 <Form.Group as={Col} xs={5}>
                     <Button type="submit" variant="primary">회원가입</Button>
