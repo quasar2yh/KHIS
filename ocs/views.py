@@ -3,7 +3,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.pagination import PageNumberPagination
 from account.models import Patient
 from .models import ProcedureRecord
 from .serializers import MedicalRecordSerializer, ProcedureRecordSerializer
@@ -65,3 +64,12 @@ class ProcedureRecordAPIView(APIView):
         return Response(data=serializer.data)
 
 
+class ProcedureRecordListAPIView(APIView):
+    permission_classes = [AllowAny]  # 테스트용 AllowAny
+
+    def get(self, request, medical_record_id):
+        procedure_records = ProcedureRecord.objects.filter(
+            medical_record=medical_record_id)
+        serializer = ProcedureRecordSerializer(
+            instance=procedure_records, many=True)
+        return Response(data=serializer.data)

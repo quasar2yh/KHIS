@@ -22,9 +22,9 @@ const Procedure = () => {
         procedure_code: '',
         procedure_name: '',
         description: '',
-        procedure_result: '',
+        procedure_result: null,
         start: '',
-        end: '',
+        end: null,
     });
 
     const searchHandler = (e) => {
@@ -226,7 +226,6 @@ const Procedure = () => {
                                     name="procedure_result"
                                     value={procedure.procedure_result}
                                     onChange={handleChange}
-                                    required
                                 />
                             </Form.Group>
                         </Col>
@@ -252,7 +251,6 @@ const Procedure = () => {
                                     name="end"
                                     value={procedure.end}
                                     onChange={handleChange}
-                                    required
                                 />
                             </Form.Group>
                         </Col>

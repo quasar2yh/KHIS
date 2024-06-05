@@ -9,8 +9,6 @@ function GetConsultations() {
     const [selectedPatient, setSelectedPatient] = useState({ name: '', id: 0 });
     const [showSearchPatientModal, setShowSearchPatientModal] = useState(false);
     const [consultations, setConsultations] = useState([]);
-    const [selectConsultation, setSelectConsultation] = useState(null);
-    const [showConsultationModal, setShowConsultationModal] = useState(false);
 
     const searchHandler = (e) => {
         setPatientName({
@@ -47,22 +45,11 @@ function GetConsultations() {
             };
         }
         getAndSetConsultations();
-        console.log("consultations", consultations);
     };
-
-    const handleShowConsultationModal = (consultation) => {
-        setSelectConsultation(consultation);
-        setShowConsultationModal(true);
-    };
-
-    const handleCloseConsultationModal = () => {
-        setShowConsultationModal(false);
-        setSelectConsultation(null);
-    };
-
+    
     return (
-        <>
-            <Modal show={showSearchPatientModal} onHide={() => setShowSearchPatientModal(false)}>
+        <div className="container mt-5">
+                    <Modal show={showSearchPatientModal} onHide={() => setShowSearchPatientModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>환자 정보</Modal.Title>
                 </Modal.Header>
@@ -122,13 +109,9 @@ function GetConsultations() {
             {selectedPatient.id !== 0 && (
                 <ConsultationList
                     consultations={consultations}
-                    selectConsultation={selectConsultation}
-                    show={showConsultationModal}
-                    handleClose={handleCloseConsultationModal}
-                    handleShow={handleShowConsultationModal}
                 />
             )}
-        </>
+        </div>
     );
 }
 
