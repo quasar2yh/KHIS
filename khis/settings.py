@@ -200,5 +200,3 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': timedelta(hours=1),  # 매 시간마다 실행
     },
 }
-
-

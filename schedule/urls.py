@@ -17,8 +17,7 @@ from .views import (
     DepartmentEventAPIView,
     DepartmentEventDetailAPIView,
     DepartmentMedicalSpecificScheduleAPIView,
-    AnnualLeaveStatusAPIView
-  
+    AnnualLeaveStatusAPIView,
 )
 
 
@@ -86,6 +85,7 @@ urlpatterns = [
 
      path("medical/Annual-Leave", AnnualLeaveStatusAPIView.as_view(),
          name="medical_annual_leave"),  # 연차 소진일 조회
+     
 
 
 

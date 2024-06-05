@@ -1,3 +1,5 @@
+from django.http import HttpRequest
+from schedule.tasks import send_department_event_reminder
 from .tasks import send_email_async
 from django.core.mail import send_mail
 from .serializers import MailSerializer
@@ -38,17 +40,17 @@ class MedicalScheduleAPIView(APIView):
                     return Response({"message": "이미 신청된 날짜입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
                 reason = serializer.validated_data.get('reason', '')
-                
-                 # 연차 사용일 증가
+
+                # 연차 사용일 증가
                 delta = end_date - start_date
-                annual_leave_info = AnnualLeave.objects.get(practitioner=practitioner)
+                annual_leave_info = AnnualLeave.objects.get(
+                    practitioner=practitioner)
                 annual_leave_info.leave_taken += delta.days + 1
                 annual_leave_info.save()
-                                
-                
+
                 annual = Annual.objects.create(
                     practitioner=practitioner, start_date=start_date, end_date=end_date, reason=reason)
-                
+
                 return Response({"message": "연차 신청이 완료되었습니다."}, status=status.HTTP_201_CREATED)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -57,7 +59,6 @@ class MedicalScheduleAPIView(APIView):
 
 
 # 본인 연차 조회 (시작 일 빠른 순)
-
 
     def get(self, request):
         if request.user.is_authenticated:
@@ -238,7 +239,7 @@ class IntegratedScheduleAPIView(APIView):
 
 class DepartmentRegisterAPIView(APIView):
     permission_classes = [AllowAny]
-    
+
     def post(self, request):
         department_name = request.data.get('department_name')
 
@@ -378,13 +379,10 @@ class DepartmentEventDetailAPIView(APIView):
 
 
 # 의료진 알람 메일 발송
-from schedule.tasks import send_department_event_reminder
 
 class MailAPIView(APIView):
-    def get(self, request, *args, **kwargs):
-        # 부서 ID를 전달하여 작업을 호출
-        department_id = 1  # 예시로 부서 ID를 1로 지정
-        send_department_event_reminder.delay(department_id)
+    def get(self, request):
+        send_department_event_reminder.delay()
         return Response({"message": "작업이 예약되었습니다."})
 
 
@@ -404,6 +402,3 @@ class AnnualLeaveStatusAPIView(APIView):
 
         else:
             return Response({"message": "의사로 로그인해야 합니다."}, status=status.HTTP_401_UNAUTHORIZED)
-
-
-# 전체 직원 연차 소진일일 조회
