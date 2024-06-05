@@ -1,9 +1,10 @@
 import React from 'react';
 import { Form, Col, Row } from 'react-bootstrap';
+import AddressForm from './AddressForm';
 
 
 // 회원가입 할 때 사용하는 CommonInfoForm
-function CommonInfoForm({ registerData, handleChange }) {
+function CommonInfoForm({ registerData, setRegisterData, handleChange }) {
 
     return (
         <>
@@ -39,6 +40,13 @@ function CommonInfoForm({ registerData, handleChange }) {
                 </Form.Group>
                 </Col>
             </Row>
+
+            {/* AddressForm 컴포넌트 */}
+            <AddressForm 
+                formData={registerData}
+                setFormData={setRegisterData}
+                handleChange={handleChange}
+            />
 
             <Form.Group as={Col}>
                 <Form.Label>성별</Form.Label>
