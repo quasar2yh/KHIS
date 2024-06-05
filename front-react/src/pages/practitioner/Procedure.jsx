@@ -124,7 +124,7 @@ const Procedure = () => {
                 
                 <Modal show={showRecords} onHide={() => setShowRecords(false)}>
                     <Modal.Header closeButton>
-                        <Modal.Title>수술 목록</Modal.Title>
+                        <Modal.Title>진단 기록</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         {medicalRecords.length > 0 ? (

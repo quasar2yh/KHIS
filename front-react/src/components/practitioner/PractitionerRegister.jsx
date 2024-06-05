@@ -16,6 +16,13 @@ function PractitionerRegister() {
         name: '',
         gender: '',
         contact: '',
+        address: {
+            city: '',
+            postal_code: '',
+            text: '',
+            country: 'South Korea',
+            use: 'Home',
+        },
         licenseType: '',
         licenseNumber: 0,
         role: '',
@@ -34,7 +41,7 @@ function PractitionerRegister() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const { id, password, familyName, name, gender, contact, licenseType, licenseNumber, role, rank } = practitionerRegisterData;
+        const { id, password, familyName, name, gender, address, contact, licenseType, licenseNumber, role, rank } = practitionerRegisterData;
 
         const body = {
             username: id,
@@ -44,6 +51,7 @@ function PractitionerRegister() {
                 name,
             },
             gender,
+            address,
             telecom: {
                 system: "Phone",
                 value: contact,
@@ -77,6 +85,7 @@ function PractitionerRegister() {
         <Form noValidate onSubmit={handleSubmit}>
             <CommonInfoForm
                 registerData={practitionerRegisterData}
+                setRegisterData = {setPractitionerRegisterData}
                 handleChange={handleChange} />
 
             <Row className="mb-3">
@@ -100,15 +109,6 @@ function PractitionerRegister() {
                     <Form.Label>자격 번호</Form.Label>
                     <Form.Control type="text" id='licenseNumber' name="licenseNumber" value={practitionerRegisterData.licenseNumber} onChange={handleChange} />
                 </Form.Group>
-            </Row>
-
-            <Row className="mb-3">
-                <Col xs={2}>
-                    <Form.Group>
-                        <Form.Label>권한</Form.Label>
-                        <Form.Control type="text" id='rank' name="rank" value={practitionerRegisterData.rank} onChange={handleChange} />
-                    </Form.Group>
-                </Col>
             </Row>
 
             <Row className="mb-">

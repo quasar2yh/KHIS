@@ -13,6 +13,13 @@ function PatientRegister() {
         password: '',
         familyName: '',
         name: '',
+        address: {
+            city: '',
+            postal_code: '',
+            text: '',
+            country: 'South Korea',
+            use: 'Home',
+        },
         gender: '',
         contact: '',
     })
@@ -29,7 +36,7 @@ function PatientRegister() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const { id, password, familyName, name, gender, contact } = patientRegisterData;
+        const { id, password, familyName, name, address, gender, contact } = patientRegisterData;
 
         const body = {
             username: id,
@@ -38,6 +45,7 @@ function PatientRegister() {
                 family: familyName,
                 name,
             },
+            address,
             gender,
             telecom: {
                 system: "Phone",
@@ -49,6 +57,7 @@ function PatientRegister() {
         };
 
         try {
+            console.log("body", body)
             const response = await registerAction(body);
             
             if (response.id) {
@@ -70,7 +79,9 @@ function PatientRegister() {
             <Form noValidate onSubmit={handleSubmit}>
                 <CommonInfoForm
                     registerData={patientRegisterData}
-                    handleChange={handleChange} />
+                    setRegisterData={setPatientRegisterData}
+                    handleChange={handleChange}
+                    />
 
                 <Form.Group as={Col} xs={5}>
                     <Button type="submit" variant="primary">회원가입</Button>

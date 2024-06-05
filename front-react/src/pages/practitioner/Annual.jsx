@@ -21,7 +21,7 @@ const Annual = () => {
             }}
             getAnnualList();
             console.log("annualList", annualList)
-        }, [date])
+        }, [date, annualList])
 
     const datehandleChange = (e) => {
         setDate({

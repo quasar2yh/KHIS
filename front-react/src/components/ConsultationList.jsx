@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { Table, Button, Modal, Form } from 'react-bootstrap';
 import { getProcedureRecordList, updateProcedureRecord } from '../apis/apis';
+import { useSelector } from 'react-redux';
 
 function ConsultationList({ consultations }) {
+    const accountInfo = useSelector(state => state.userReducer.accountInfo)
     const [showConsultationModal, setShowConsultationModal] = useState(false);
     const [selectConsultation, setSelectConsultation] = useState([]);
     const [showProcedureRecordUpdateModal, setShowProcedureRecordUpdateModal] = useState(false);
@@ -31,7 +33,7 @@ function ConsultationList({ consultations }) {
         setShowProcedureRecordUpdateModal(true);
     };
 
-
+    console.log("accountInfo", accountInfo)
     return (
         <div className="container mt-5">
             <h2>진단 기록</h2>
@@ -111,11 +113,13 @@ function ConsultationList({ consultations }) {
                                                 <td>{procedureRecord.start}</td>
                                                 <td>{procedureRecord.end}</td>
                                                 <td>{procedureRecord.procedure_result}</td>
+                                            {accountInfo && accountInfo.subject==='Practitioner' && (
                                                 <td>
                                                     <Button variant="primary" onClick={() => handleProcedureRecordUpdate(procedureRecord)}>
                                                         수정
                                                     </Button>
                                                 </td>
+                                                )}
                                             </tr>
                                         ))
                                     ) : (
