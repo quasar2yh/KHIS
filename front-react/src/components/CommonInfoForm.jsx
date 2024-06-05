@@ -45,7 +45,6 @@ function CommonInfoForm({ registerData, setRegisterData, handleChange }) {
             <AddressForm 
                 formData={registerData}
                 setFormData={setRegisterData}
-                handleChange={handleChange}
             />
 
             <Form.Group as={Col}>

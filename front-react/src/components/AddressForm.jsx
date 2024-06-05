@@ -4,7 +4,7 @@ import Postcode from './PostCode';
 
 
 // 주소 입력 폼
-const AddressForm = ({ formData, setFormData, handleChange }) => {
+const AddressForm = ({ formData, setFormData }) => {
     const address = formData.address || {
         city: '',
         postal_code: '',
