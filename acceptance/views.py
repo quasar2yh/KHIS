@@ -6,7 +6,7 @@ from rest_framework import status
 from .models import ChargeItem, Claim
 # from ocs.models import ProcedureRecord, Procedure, ProcedureFee
 # from ocs.serializers import ProcedureSerializer
-from account.models import Patient
+
 
 class ChargeItemAPIView(APIView):
     def get(self, request, patient_id):
@@ -24,11 +24,3 @@ class ChargeItemAPIView(APIView):
     #     )
     #     return Response({'message': 'Item created successfully'}, status=status.HTTP_201_CREATED)
     
-
-class ProcedureDetailAPIView(APIView):
-    def get(self):
-        return Response()
-    
-
-
-

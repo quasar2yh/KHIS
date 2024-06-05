@@ -8,7 +8,7 @@ from .models import Procedure
 from .serializers import ProcedureSerializer, ProcedureDetailSerializer
 
 
-class ProcedureAPIView(APIView):
+class ProcedureCreateListAPIView(APIView):
     permission_classes = [AllowAny]  # 테스트용 AllowAny
     paginator = PageNumberPagination()
 
