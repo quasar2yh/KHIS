@@ -12,7 +12,7 @@ class Claim(models.Model):
         ('entered-in-error', 'entered-in-error'),
     ]
     patient = models.ForeignKey(
-        Patient, on_delete=models.PROTECT, related_name="claim")
+        Patient, on_delete=models.PROTECT, related_name="claims")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
     grand_total = models.DecimalField(
         max_digits=11, decimal_places=2, null=True)

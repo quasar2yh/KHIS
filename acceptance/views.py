@@ -4,9 +4,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.pagination import PageNumberPagination
-from .serializers import ChargeItemSerializer, ClaimSerializer
+from .serializers import ChargeItemSerializer, ClaimSerializer, PatientClaimSerializer
 from .models import ChargeItem, Claim
 from account.models import Patient
+import datetime
 
 
 class ChargeItemDetailAPIView(APIView):
@@ -67,7 +68,7 @@ class ClaimListAPIView(APIView):
         return paginator.get_paginated_response(claim_serializer.data)
 
 
-class PatientClaimCreateListAPIView(APIView):
+class PatientClaimCreateAPIView(APIView):
     permission_classes = [permissions.AllowAny]  # 테스트용 AllowAny
 
     def post(self, request):
@@ -79,33 +80,30 @@ class PatientClaimCreateListAPIView(APIView):
             serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def get(self, request):
-        """
-        Logic to get patient claims
-        """
-        query_set = Claim.objects.all().order_by("-id")
-        paginator = PageNumberPagination()
 
-        # Extract query parameters
-        start_date = request.query_params.get('start_date')
-        end_date = request.query_params.get('end_date')
-        status_filter = request.query_params.get('status')
+class PatientClaimListAPIView(APIView):
 
-        # Apply date range filtering
-        if start_date and end_date:
-            start_date = parse_date(start_date)
-            end_date = parse_date(end_date)
-            query_set = query_set.filter(
-                created__date__range=[start_date, end_date])
+    permission_classes = [permissions.AllowAny]  # For testing purposes
 
-        # Apply status filtering
-        if status_filter:
-            query_set = query_set.filter(status=status_filter)
+    def get(self, request, patient_id):
+        start_date = request.query_params.get('start_date', None)
+        if start_date:
+            try:
+                start_date = datetime.strptime(start_date, '%Y-%m-%d')
+            except ValueError:
+                return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            start_date = None
 
-        # Pagination & Serialize the filtered queryset
-        result_page = paginator.paginate_queryset(query_set, request)
-        claim_serializer = ClaimSerializer(result_page, many=True)
-        return paginator.get_paginated_response(claim_serializer.data)
+        patient = get_object_or_404(Patient, pk=patient_id)
+
+        # Filter claim based on the provided date
+        if start_date:
+            patient.claims = patient.claims.filter(created__date__lte=start_date)
+
+        serializer = PatientClaimSerializer(patient)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 
 
 class PatientClaimDetailAPIView(APIView):
