@@ -7,7 +7,7 @@ from rest_framework.pagination import PageNumberPagination
 from .models import ProcedureFee
 from .serializers import ProcedureFeeSerializer
 
-class ProcedureFeeAPIView(APIView):
+class ProcedureFeeCreateListAPIView(APIView):
     permission_classes = [AllowAny]  # 테스트용 AllowAny
     paginator = PageNumberPagination()
 
