@@ -81,10 +81,6 @@ class PatientClaimCreateAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class PatientClaimListAPIView(APIView):
-
-    permission_classes = [permissions.AllowAny]  # For testing purposes
-
     def get(self, request, patient_id):
         start_date = request.query_params.get('start_date', None)
         if start_date:
