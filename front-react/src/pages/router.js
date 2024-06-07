@@ -15,7 +15,8 @@ import Annual from "./practitioner/Annual";
 import Schedule from "./Schedule";
 import Procedure from "./practitioner/Procedure";
 import GetConsultations from "./practitioner/GetConsultations";
-import Claim from "./practitioner/Claim";
+import PostClaim from "./practitioner/PostClaim";
+import GetClaim from "./practitioner/GetClaim";
 
 
 const Router = () => {
@@ -38,7 +39,8 @@ const Router = () => {
                         <Route path="/medical-record-list" element={<GetConsultations />} />
                         <Route path="/procedure" element={<Procedure />} />
                         <Route path="/annual" element={<Annual />} />
-                        <Route path="/claim" element={<Claim />} />
+                        <Route path="/claim" element={<PostClaim />} />
+                        <Route path="/claim-list" element={<GetClaim />} />
                     </Routes>
                 </Layout>
             </TokenRefresher>

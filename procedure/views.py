@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from account.models import Patient
+from acceptance.models import ChargeItem
 from .models import Procedure
 from .serializers import ProcedureSerializer, ProcedureDetailSerializer
 
@@ -54,5 +55,15 @@ class ProcedureDetailAPIView(APIView):
         serializer = ProcedureSerializer(instance=procedure)
         if serializer.is_valid():
             serializer.delete()
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+        return Response(data=serializer.data)
 
+
+class UnchargedProcedureListAPIView(APIView):
+    permission_classes = [AllowAny]  # 테스트용 AllowAny
+
+    def get(self, request, patient_id):
+        patient = get_object_or_404(Patient, pk=patient_id)
+        procedures = Procedure.objects.filter(
+            procedurerecord__patient=patient, charge_items__isnull=True)
+        serializer = ProcedureSerializer(procedures, many=True)
+        return Response(serializer.data)

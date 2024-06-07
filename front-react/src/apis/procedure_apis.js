@@ -19,3 +19,8 @@ export const getProcedure = async (patientId) => {
     const response = await instance.get(`/khis/procedure/${patientId}/`)
     return response.data;
 }
+
+export const getUnchargedProcedure = async (patientId) => {
+    const response = await instance.get(`/khis/procedure/uncharged/${patientId}/`)
+    return response.data;
+}

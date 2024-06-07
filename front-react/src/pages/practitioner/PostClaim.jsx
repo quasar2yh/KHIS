@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Modal, Button, Form, ListGroup, Table } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { searchPatient } from '../../apis/apis';
-import { getProcedure } from '../../apis/procedure_apis';
+import { getUnchargedProcedure } from '../../apis/procedure_apis';
 import { postClaim, postChargeItem } from '../../apis/claim_apis';
 
-function Claim() {
+function PostClaim() {
     const navigate = useNavigate()
 
     const [patientName, setPatientName] = useState({ name: '' });
@@ -49,7 +49,7 @@ function Claim() {
 
         const getAndSetProcedures = async () => {
             try {
-                const res = await getProcedure(id);
+                const res = await getUnchargedProcedure(id);
                 setProcedureList(res);
             } catch (e) {
                 console.log("error", e);
@@ -149,7 +149,7 @@ return (
             </Form.Group>
         </Form>
 
-        {selectedPatient.id !== 0 && procedureList && procedureList.results && procedureList.results.length > 0 && (
+        {selectedPatient.id !== 0 && procedureList && procedureList.length > 0 && (
             <div style={{ overflowX: 'auto' }}>
                 <Table striped bordered hover>
                     <thead>
@@ -161,7 +161,7 @@ return (
                         </tr>
                     </thead>
                     <tbody>
-                        {procedureList.results.map(procedure => (
+                        {procedureList.map(procedure => (
                             <tr key={procedure.id}>
                                 <td>{procedure.id}</td>
                                 <td>{procedure.procedure_code}</td>
@@ -179,7 +179,7 @@ return (
             </div>
         )}
 
-        {selectedPatient.id !== 0 && procedureList && !procedureList.results && (
+        {selectedPatient.id !== 0 && procedureList && (
             <div className="text-center mt-3">
                 청구할 수술 기록이 없습니다.
             </div>
@@ -222,7 +222,6 @@ return (
 
 
         <div className="container mt-5">
-            {/* 기존 코드 유지 */}
             <h2>청구서</h2>
             <Table striped bordered hover>
                 <thead>
@@ -251,4 +250,4 @@ return (
 );
 }
 
-export default Claim;
+export default PostClaim;
