@@ -5,7 +5,7 @@ import { searchPatient } from '../../apis/apis';
 import { getUnchargedProcedure } from '../../apis/procedure_apis';
 import { postClaim, postChargeItem } from '../../apis/claim_apis';
 
-function Claim() {
+function PostClaim() {
     const navigate = useNavigate()
 
     const [patientName, setPatientName] = useState({ name: '' });
@@ -222,7 +222,6 @@ return (
 
 
         <div className="container mt-5">
-            {/* 기존 코드 유지 */}
             <h2>청구서</h2>
             <Table striped bordered hover>
                 <thead>
@@ -251,4 +250,4 @@ return (
 );
 }
 
-export default Claim;
+export default PostClaim;
