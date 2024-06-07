@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Form, Button, Container, Row, Col, ListGroup } from 'react-bootstrap';
-import { searchPatient, getMedicalRecord, postProcedureRecord } from '../../apis/apis';
+import { searchPatient, getMedicalRecord } from '../../apis/apis';
+import { postProcedureRecord } from '../../apis/procedure_apis';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 

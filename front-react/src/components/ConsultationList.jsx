@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Table, Button, Modal, Form } from 'react-bootstrap';
-import { getProcedureRecordList, updateProcedureRecord } from '../apis/apis';
+import { getProcedureRecordList, updateProcedureRecord } from '../apis/procedure_apis';
 import { useSelector } from 'react-redux';
 
 function ConsultationList({ consultations }) {

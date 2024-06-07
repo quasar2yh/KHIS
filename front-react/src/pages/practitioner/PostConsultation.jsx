@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Button, Form, ListGroup } from 'react-bootstrap';
 import { searchPatient } from '../../apis/apis';
-import { postConsultation } from '../../apis/apis';
+import { postConsultation } from '../../apis/consultation_apis';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPractitionerInfoAction } from '../../redux/modules/userActions';

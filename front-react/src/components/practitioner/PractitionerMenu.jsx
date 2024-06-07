@@ -14,7 +14,10 @@ function PractitionerMenu({ refresh, handleLogout }) {
                         <NavDropdown.Item href="/medical-record-list">조회</NavDropdown.Item>
                     </NavDropdown>
                     <Nav.Link href="/procedure">수술</Nav.Link>
-                    <Nav.Link href="/">일정</Nav.Link>
+                    <NavDropdown title="청구">
+                        <NavDropdown.Item href="/claim">작성</NavDropdown.Item>
+                        <NavDropdown.Item href="/claim">조회</NavDropdown.Item>
+                    </NavDropdown>
                     <Nav.Link href="/annual">연차</Nav.Link>
                 </Nav>
                 <Nav className="ml-auto">
