@@ -8,7 +8,7 @@ function Claim() {
     const [patientList, setPatientList] = useState([]);
     const [selectedPatient, setSelectedPatient] = useState({ name: '', id: 0 });
     const [showSearchPatientModal, setShowSearchPatientModal] = useState(false);
-    const [procedureList, setProcedureList] = useState([]);
+    const [procedureList, setProcedureList] = useState(null);
 
     const searchHandler = (e) => {
         setPatientName({
@@ -47,7 +47,7 @@ function Claim() {
         getAndSetProcedures();
     };
 
-    console.log("procedureList", procedureList.results);
+    console.log("procedureList", procedureList);
 
     return (
         <div className="container mt-5">
@@ -108,7 +108,7 @@ function Claim() {
                 </Form.Group>
             </Form>
 
-            {selectedPatient.id !== 0 && procedureList.results.length > 0 && (
+            {selectedPatient.id !== 0 && procedureList && procedureList.results && procedureList.results.length > 0 && (
                 <div style={{ overflowX: 'auto' }}>
                     <Table striped bordered hover>
                         <thead>
@@ -120,44 +120,31 @@ function Claim() {
                             </tr>
                         </thead>
                         <tbody>
-                            {procedureList.results.length ? (
-                                procedureList.results.map(procedure => (
-                                    <tr key={procedure.id}>
-                                        <td>{procedure.id}</td>
-                                        <td>{procedure.procedure_code}</td>
-                                        <td>{procedure.procedure_name}</td>
-                                        <td>{procedure.description}</td>
-                                        <td>
-                                            <Button variant="primary">
-                                                청구
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="10" className="text-center">Loading...</td>
+                            {procedureList.results.map(procedure => (
+                                <tr key={procedure.id}>
+                                    <td>{procedure.id}</td>
+                                    <td>{procedure.procedure_code}</td>
+                                    <td>{procedure.procedure_name}</td>
+                                    <td>{procedure.description}</td>
+                                    <td>
+                                        <Button variant="primary">
+                                            청구
+                                        </Button>
+                                    </td>
                                 </tr>
-                            )}
+                            ))}
                         </tbody>
                     </Table>
                 </div>
             )}
 
-            {selectedPatient.id !== 0 && procedureList.results.length === 0 && (
+            {selectedPatient.id !== 0 && procedureList && !procedureList.results && (
                 <div className="text-center mt-3">
                     수술 기록이 없습니다.
                 </div>
             )}
         </div>
     );
-}
-
-
-function PostClaim() {
-    return (
-        <div>Claim</div>
-    )
 }
 
 export default Claim;

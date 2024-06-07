@@ -82,13 +82,13 @@ export const getUserId = (token) => {
 
 // 회원가입 API
 export const registerAction = async (data) => {
-    const response = await instance.post(API_ENDPOINT + '/khis/account/register/', data);
+    const response = await instance.post('/khis/account/register/', data);
     return response.data;
 }
 
 // 로그인 API
 export const loginAction = async (data) => {
-    const response = await instance.post(API_ENDPOINT + '/khis/account/login/', data);
+    const response = await instance.post('/khis/account/login/', data);
     return response.data;
 };
 
