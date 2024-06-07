@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-import { Modal, Button, Form, ListGroup } from 'react-bootstrap';
+import { Modal, Button, Form, ListGroup, Table } from 'react-bootstrap';
 import { searchPatient } from '../../apis/apis';
-import { getConsultations } from '../../apis/consultation_apis';
-import ConsultationList from '../../components/ConsultationList';
+import { getProcedure } from '../../apis/procedure_apis';
 
 function Claim() {
     const [patientName, setPatientName] = useState({ name: '' });
     const [patientList, setPatientList] = useState([]);
     const [selectedPatient, setSelectedPatient] = useState({ name: '', id: 0 });
     const [showSearchPatientModal, setShowSearchPatientModal] = useState(false);
-    const [consultations, setConsultations] = useState([]);
+    const [procedureList, setProcedureList] = useState([]);
 
     const searchHandler = (e) => {
         setPatientName({
@@ -25,32 +24,34 @@ function Claim() {
                 setPatientList(res);
                 console.log("PatientList", res);
             } catch (e) {
-                console.log("error", e)
-            };
+                console.log("error", e);
+            }
         };
         searchAndSetPatient();
-    }
+    };
 
     const handlePatientClick = (id, family, given) => {
         const name = `${family} ${given}`;
         setSelectedPatient({ id, name });
         setShowSearchPatientModal(false);
-        console.log("selectedPatient", selectedPatient)
+        console.log("selectedPatient", selectedPatient);
 
-        const getAndSetConsultations = async () => {
+        const getAndSetProcedures = async () => {
             try {
-                const res = await getConsultations(id);
-                setConsultations(res);
+                const res = await getProcedure(id);
+                setProcedureList(res);
             } catch (e) {
-                console.log("error", e)
-            };
-        }
-        getAndSetConsultations();
+                console.log("error", e);
+            }
+        };
+        getAndSetProcedures();
     };
-    
+
+    console.log("procedureList", procedureList.results);
+
     return (
         <div className="container mt-5">
-                    <Modal show={showSearchPatientModal} onHide={() => setShowSearchPatientModal(false)}>
+            <Modal show={showSearchPatientModal} onHide={() => setShowSearchPatientModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>환자 정보</Modal.Title>
                 </Modal.Header>
@@ -107,13 +108,56 @@ function Claim() {
                 </Form.Group>
             </Form>
 
-            {selectedPatient.id !== 0 && (
-                <ConsultationList
-                    consultations={consultations}
-                />
+            {selectedPatient.id !== 0 && procedureList.results.length > 0 && (
+                <div style={{ overflowX: 'auto' }}>
+                    <Table striped bordered hover>
+                        <thead>
+                            <tr>
+                                <th>수술 번호</th>
+                                <th>수술 코드</th>
+                                <th>수술 이름</th>
+                                <th>상세 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {procedureList.results.length ? (
+                                procedureList.results.map(procedure => (
+                                    <tr key={procedure.id}>
+                                        <td>{procedure.id}</td>
+                                        <td>{procedure.procedure_code}</td>
+                                        <td>{procedure.procedure_name}</td>
+                                        <td>{procedure.description}</td>
+                                        <td>
+                                            <Button variant="primary">
+                                                청구
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="10" className="text-center">Loading...</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </Table>
+                </div>
+            )}
+
+            {selectedPatient.id !== 0 && procedureList.results.length === 0 && (
+                <div className="text-center mt-3">
+                    수술 기록이 없습니다.
+                </div>
             )}
         </div>
     );
+}
+
+
+function PostClaim() {
+    return (
+        <div>Claim</div>
+    )
 }
 
 export default Claim;

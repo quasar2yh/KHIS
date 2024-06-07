@@ -1,7 +1,8 @@
 import axios from "axios";
-import { API_ENDPOINT } from "./server";
 import Cookies from "js-cookie";
 import base64 from 'base-64';
+
+const API_ENDPOINT = 'http://127.0.0.1:8000'
 
 const instance = axios.create({
     baseURL: API_ENDPOINT,

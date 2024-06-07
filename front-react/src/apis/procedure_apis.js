@@ -14,3 +14,8 @@ export const updateProcedureRecord = async (procedureRecordId, data) => {
     const response = await instance.put(`/khis/consultations/procedure-record/${procedureRecordId}/`, data)
     return response.data;
 }
+
+export const getProcedure = async (patientId) => {
+    const response = await instance.get(`/khis/procedure/${patientId}/`)
+    return response.data;
+}
