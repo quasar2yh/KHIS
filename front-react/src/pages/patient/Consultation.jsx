@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getConsultations } from '../../apis/apis';
+import { getConsultations } from '../../apis/consultation_apis';
 import { useSelector } from 'react-redux';
 import ConsultationList from '../../components/ConsultationList';
 

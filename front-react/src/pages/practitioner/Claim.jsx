@@ -4,7 +4,7 @@ import { searchPatient } from '../../apis/apis';
 import { getConsultations } from '../../apis/consultation_apis';
 import ConsultationList from '../../components/ConsultationList';
 
-function GetConsultations() {
+function Claim() {
     const [patientName, setPatientName] = useState({ name: '' });
     const [patientList, setPatientList] = useState([]);
     const [selectedPatient, setSelectedPatient] = useState({ name: '', id: 0 });
@@ -116,4 +116,4 @@ function GetConsultations() {
     );
 }
 
-export default GetConsultations;
+export default Claim;
