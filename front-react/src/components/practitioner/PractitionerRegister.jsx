@@ -20,6 +20,7 @@ function PractitionerRegister() {
         licenseNumber: 0,
         role: '',
         rank: 0,
+        department: ''
     })
 
     const roleList = ['Physician', 'Assistant']
@@ -34,7 +35,7 @@ function PractitionerRegister() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const { id, password, familyName, name, gender, contact, licenseType, licenseNumber, role, rank } = practitionerRegisterData;
+        const { id, password, familyName, name, gender, contact, licenseType, licenseNumber, role, rank, department } = practitionerRegisterData;
 
         const body = {
             username: id,
@@ -55,6 +56,7 @@ function PractitionerRegister() {
             license_number: licenseNumber,
             role,
             rank,
+            department
         };
 
         try {
@@ -107,6 +109,16 @@ function PractitionerRegister() {
                     <Form.Group>
                         <Form.Label>권한</Form.Label>
                         <Form.Control type="text" id='rank' name="rank" value={practitionerRegisterData.rank} onChange={handleChange} />
+                    </Form.Group>
+                </Col>
+            </Row>
+
+
+            <Row className="mb-3">
+                <Col xs={2}>
+                    <Form.Group>
+                        <Form.Label>부서</Form.Label>
+                        <Form.Control type="text" id='rank' name="rank" value={practitionerRegisterData.department} onChange={handleChange} />
                     </Form.Group>
                 </Col>
             </Row>
