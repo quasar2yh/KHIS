@@ -14,6 +14,7 @@ class AccountSerializer(serializers.ModelSerializer):
     def save(self, **kwargs):
         password = self.validated_data.get('password', None)
         if password:
+            validate_password(password)
             self.validated_data['password'] = make_password(password)
         return super().save(**kwargs)
 
