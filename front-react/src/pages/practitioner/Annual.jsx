@@ -14,13 +14,10 @@ const Annual = () => {
     useEffect(() => {
         const getAnnualList = async () => {
         if (date.start_date && date.end_date) {
-            console.log("date", date)
             const res = await getAnnual(date);
                 setAnnualList(res);
-                console.log("res", res)
             }}
             getAnnualList();
-            console.log("annualList", annualList)
         }, [date, annualList])
 
     const datehandleChange = (e) => {

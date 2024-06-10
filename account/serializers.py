@@ -6,6 +6,8 @@ from .models import Patient, Practitioner, HumanName, RelatedPerson, ContactPoin
 
 
 class AccountSerializer(serializers.ModelSerializer):
+    confirm_password = serializers.CharField(write_only=True, required=True)
+
     class Meta:
         model = get_user_model()
         fields = '__all__'
@@ -13,10 +15,17 @@ class AccountSerializer(serializers.ModelSerializer):
 
     def save(self, **kwargs):
         password = self.validated_data.get('password', None)
-        if password:
-            validate_password(password)
-            self.validated_data['password'] = make_password(password)
+        self.validated_data['password'] = make_password(password)
         return super().save(**kwargs)
+
+    def validate(self, attrs):
+        password = attrs.pop('password')
+        confirm_password = attrs.pop('confirm_password')
+        if password:
+            if password != confirm_password:
+                raise serializers.ValidationError("비밀번호가 서로 일치하지 않습니다.")
+            validate_password(password)
+        return super().validate(attrs)
 
 
 class ContactPointSerializer(serializers.ModelSerializer):

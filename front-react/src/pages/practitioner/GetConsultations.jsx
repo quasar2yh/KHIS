@@ -23,7 +23,6 @@ function GetConsultations() {
             try {
                 const res = await searchPatient(patientName);
                 setPatientList(res);
-                console.log("PatientList", res);
             } catch (e) {
                 console.log("error", e)
             };
@@ -35,7 +34,6 @@ function GetConsultations() {
         const name = `${family} ${given}`;
         setSelectedPatient({ id, name });
         setShowSearchPatientModal(false);
-        console.log("selectedPatient", selectedPatient)
 
         const getAndSetConsultations = async () => {
             try {

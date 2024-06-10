@@ -57,7 +57,6 @@ function PatientRegister() {
         };
 
         try {
-            console.log("body", body)
             const response = await registerAction(body);
             
             if (response.id) {

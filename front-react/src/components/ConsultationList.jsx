@@ -33,7 +33,6 @@ function ConsultationList({ consultations }) {
         setShowProcedureRecordUpdateModal(true);
     };
 
-    console.log("accountInfo", accountInfo)
     return (
         <div className="container mt-5">
             <h2>진단 기록</h2>
