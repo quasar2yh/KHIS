@@ -28,11 +28,7 @@ const userReducer = (state = initialState, action) => {
                 accountInfo: action.payload,
             };
         case 'RESET_USER':
-            return {
-                ...state,
-                userId: action.payload,
-                accountInfo: action.payload
-            }
+            return initialState;
         default:
             return state;
     }
