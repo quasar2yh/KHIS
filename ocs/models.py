@@ -29,6 +29,6 @@ class ProcedureRecord(models.Model):
     # 수술 시간
     start = models.DateTimeField()
     end = models.DateTimeField()
-    charge_item = models.ForeignKey(
+    charge_item = models.OneToOneField(
         ChargeItem, on_delete=models.PROTECT, blank=True, null=True)
 

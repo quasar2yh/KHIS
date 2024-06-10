@@ -16,6 +16,13 @@ function PractitionerRegister() {
         name: '',
         gender: '',
         contact: '',
+        address: {
+            city: '',
+            postal_code: '',
+            text: '',
+            country: 'South Korea',
+            use: 'Home',
+        },
         licenseType: '',
         licenseNumber: 0,
         role: '',
@@ -45,6 +52,7 @@ function PractitionerRegister() {
                 name,
             },
             gender,
+            address,
             telecom: {
                 system: "Phone",
                 value: contact,
@@ -79,6 +87,7 @@ function PractitionerRegister() {
         <Form noValidate onSubmit={handleSubmit}>
             <CommonInfoForm
                 registerData={practitionerRegisterData}
+                setRegisterData = {setPractitionerRegisterData}
                 handleChange={handleChange} />
 
             <Row className="mb-3">
@@ -104,11 +113,12 @@ function PractitionerRegister() {
                 </Form.Group>
             </Row>
 
+
             <Row className="mb-3">
                 <Col xs={2}>
                     <Form.Group>
-                        <Form.Label>권한</Form.Label>
-                        <Form.Control type="text" id='rank' name="rank" value={practitionerRegisterData.rank} onChange={handleChange} />
+                        <Form.Label>부서</Form.Label>
+                        <Form.Control type="text" id='rank' name="rank" value={practitionerRegisterData.department} onChange={handleChange} />
                     </Form.Group>
                 </Col>
             </Row>

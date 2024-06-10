@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { postAppointment, getAbleAppointmentPractitioner } from '../../apis/apis';
+import { postAppointment, getAbleAppointmentPractitioner } from '../../apis/appointment_apis';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDepartmentListAction } from '../../redux/modules/departmentActions';
 
 function Appointment() {
     // userReducer의 userId
-    const userId = useSelector(state => state.userReducer.userId);
+    const accountInfo = useSelector(state => state.userReducer.accountInfo);
 
     // departmentReducer의 departmentList
     const departmentList = useSelector(state => state.departmentReducer.departmentList);
@@ -73,7 +73,7 @@ function Appointment() {
         };
 
         try {
-            const response = await postAppointment(body, userId);
+            const response = await postAppointment(body, accountInfo.patient);
             console.log(response)
 
             if (response.active) {

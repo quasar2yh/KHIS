@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, ListGroup } from 'react-bootstrap';
-import { searchPatient, getConsultations } from '../../apis/apis';
+import { searchPatient } from '../../apis/apis';
+import { getConsultations } from '../../apis/consultation_apis';
 import ConsultationList from '../../components/ConsultationList';
 
 function GetConsultations() {

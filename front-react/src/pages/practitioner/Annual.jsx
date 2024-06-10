@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Table, Container, Row, Col } from 'react-bootstrap';
-import { annualAction, getAnnual } from '../../apis/apis';
+import { postAnnual, getAnnual } from '../../apis/annual_apis';
 
 const Annual = () => {
     const [date, setDate] = useState({ start_date: '', end_date: '' });
@@ -21,7 +21,7 @@ const Annual = () => {
             }}
             getAnnualList();
             console.log("annualList", annualList)
-        }, [date])
+        }, [date, annualList])
 
     const datehandleChange = (e) => {
         setDate({
@@ -39,7 +39,7 @@ const Annual = () => {
     };
 
     const handleSubmit = () => {
-        annualAction(annual);
+        postAnnual(annual);
     };
 
     return (

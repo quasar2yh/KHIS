@@ -1,7 +1,8 @@
 import axios from "axios";
-import { API_ENDPOINT } from "./server";
 import Cookies from "js-cookie";
 import base64 from 'base-64';
+
+const API_ENDPOINT = 'http://127.0.0.1:8000'
 
 const instance = axios.create({
     baseURL: API_ENDPOINT,
@@ -81,13 +82,13 @@ export const getUserId = (token) => {
 
 // 회원가입 API
 export const registerAction = async (data) => {
-    const response = await instance.post(API_ENDPOINT + '/khis/account/register/', data);
+    const response = await instance.post('/khis/account/register/', data);
     return response.data;
 }
 
 // 로그인 API
 export const loginAction = async (data) => {
-    const response = await instance.post(API_ENDPOINT + '/khis/account/login/', data);
+    const response = await instance.post('/khis/account/login/', data);
     return response.data;
 };
 
@@ -108,14 +109,6 @@ export const passwordChange = async (userId, data) => {
     const response = await instance.put(`/khis/account/pwchange/${userId}/`, data);
     return response.data;
 }
-
-
-// 환자가 진료 예약하는 API
-export const postAppointment = async (data, userId) => {
-    const response = await instance.post(`/khis/appointment/patient/${userId}/`, data);
-    return response.data;
-};
-
 
 // 부서 조회 API
 export const getDepartments = async () => {
@@ -147,51 +140,15 @@ export const updatePractitionerInfo = async (practitionerId, data) => {
     return response.data;
 };
 
-// 환자 본인의 예약 내역 조회 API
-export const getAppointmentStatus = async (patientId) => {
-    const response = await instance.get(`/khis/appointment/patient/${patientId}/`);
-    return response.data;
-};
-
-// ChatGPT API
-export const sendChatMessage = async (data) => {
-    const response = await instance.post(`/khis/appointment/chatbot/`, data);
-    return response.data;
-}
-
-// 환자 본인의 진료기록 조회 API
-export const getConsultations = async (patientId) => {
-    const response = await instance.get(`/khis/consultations/${patientId}/`);
-    return response.data;
-}
-
 // 환자를 이름이나 연락처로 검색하는 API
 export const searchPatient = async ({ name, telecom }) => {
     const response = await instance.get('/khis/patient-registration/search/', { params: { name, telecom } });
     return response.data;
 }
 
-// 의료진이 진료기록 생성하는 API
-export const postConsultation = async (data) => {
-    const response = await instance.post(`/khis/consultations/`, data);
-    return response.data;
-}
-
-// 의료진이 연차 신청하는 API
-export const annualAction = async (data) => {
-    const response = await instance.post(`/khis/schedule/medical/`, data);
-    return response.data;
-}
-
-// 시작날짜, 종료날짜로 연차 조회 API
-export const getAnnual = async (data) => {
-    const response = await instance.get(`/khis/schedule/medical/specific/`, { params: { start_date: data.start_date, end_date: data.end_date } });
-    return response.data;
-}
-
-// 해당 부서, 날짜, 시간에 진료 가능한 의사 조회
-export const getAbleAppointmentPractitioner = async ({ date, time, department }) => {
-    const response = await instance.get(`/khis/appointment/checklist/`, { params: { date, time, department } });
+// ChatGPT API
+export const sendChatMessage = async (data) => {
+    const response = await instance.post(`/khis/appointment/chatbot/`, data);
     return response.data;
 }
 
@@ -209,21 +166,6 @@ export const getPractitionerFromDepartment = async (departmentId) => {
 
 export const getMedicalRecord = async (patientId) => {
     const response = await instance.get(`/khis/consultations/${patientId}/`)
-    return response.data;
-}
-
-export const postProcedureRecord = async (data) => {
-    const response = await instance.post(`/khis/consultations/procedure-record/`, data)
-    return response.data;
-}
-
-export const getProcedureRecordList = async (medicalRecordId) => {
-    const response = await instance.get(`/khis/consultations/procedure-record-list/${medicalRecordId}/`)
-    return response.data;
-}
-
-export const updateProcedureRecord = async (procedureRecordId, data) => {
-    const response = await instance.put(`/khis/consultations/procedure-record/${procedureRecordId}/`, data)
     return response.data;
 }
 
