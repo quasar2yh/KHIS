@@ -7,7 +7,9 @@ const API_ENDPOINT = 'http://127.0.0.1:8000'
 const instance = axios.create({
     baseURL: API_ENDPOINT,
     headers: { "Content-type": "application/json" },
+    withCredentials: true,
 });
+
 
 // 인터셉터를 사용하여 요청에 토큰을 추가
 instance.interceptors.request.use(
@@ -23,20 +25,17 @@ instance.interceptors.request.use(
     }
 );
 
-// 인터셉터로 리스폰이 401이면 도중에 refresh
 instance.interceptors.response.use(
 
     // response가 정상이면 response 리턴
-    (response) => response,  
-    async (error) => {          
+    (response) => response,
+    async (error) => {
         const originalRequest = error.config;
         const status = error.response?.status;
 
-        // response error 401(권한 문제)면서 Cookie에 refresh 가 있다면
-        // refreshAuthToken 함수 실행
-        if (status === 401 && Cookies.get('refresh')) {
+        // response error 401(권한 문제)면 refreshAuthToken 함수 실행
+        if (status === 401) {
             try {
-                
                 await refreshAuthToken();
                 return instance(originalRequest);
             } catch (error) {
@@ -51,19 +50,12 @@ instance.interceptors.response.use(
 // 토큰 갱신 함수
 async function refreshAuthToken() {
     try {
-        // 쿠키에서 refresh 가져와서 token/refresh API로 토큰 갱신 요청
-        const refresh = Cookies.get('refresh');
-        const response = await instance.post('/khis/account/token/refresh/', { refresh });
-
-        // 우리 서버는 access, refresh 둘 다 줘서 둘 다 새로 갱신
+        const response = await instance.post('/khis/account/token/refresh/');
         Cookies.set('access', response.data.access);
-        Cookies.set('refresh', response.data.refresh);
     } catch (error) {
         console.error('토큰 갱신 에러:', error);
-
-        // 갱신 에러 시 쿠키에서 토큰 전부 제거
         Cookies.remove('access');
-        Cookies.remove('refresh');
+        logoutAction();
         throw error;
     }
 }
@@ -92,6 +84,11 @@ export const loginAction = async (data) => {
     return response.data;
 };
 
+export const logoutAction = async () => {
+    const response = await instance.post('/khis/account/logout/');
+    return response.data;
+};
+
 // usrId로 계정 정보 가져오는 API
 export const getAccountInfo = async (userId) => {
     if (userId) {
@@ -102,7 +99,6 @@ export const getAccountInfo = async (userId) => {
         return null;
     }
 };
-
 
 // 비밀번호 변경 API
 export const passwordChange = async (userId, data) => {
@@ -159,7 +155,7 @@ export const getHoliday = async () => {
 }
 
 // 부서별 의사 조회
-export const getPractitionerFromDepartment = async (departmentId) => { 
+export const getPractitionerFromDepartment = async (departmentId) => {
     const response = await instance.get(`/khis/schedule/department/${departmentId}/Practitioner/`)
     return response.data;
 }
