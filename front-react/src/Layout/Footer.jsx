@@ -19,7 +19,7 @@ const Footer = () => {
               <div className="card-body">
                 <h5 className="card-title text-uppercase">예약하기</h5>
                 <ul className="list-unstyled">
-                  <li><a href="#!">Link 2</a></li>
+                  <li><a href="/appointment">바로가기</a></li>
                 </ul>
               </div>
             </div>
@@ -29,7 +29,7 @@ const Footer = () => {
               <div className="card-body">
                 <h5 className="card-title text-uppercase">병원 일정</h5>
                 <ul className="list-unstyled">
-                  <li><a href="#!">Link 4</a></li>
+                  <li><a href="/schedule">바로가기</a></li>
                 </ul>
               </div>
             </div>
@@ -37,9 +37,9 @@ const Footer = () => {
           <div className="col-md-3">
             <div className="card">
               <div className="card-body">
-                <h5 className="card-title text-uppercase">부서 바로가기</h5>
+                <h5 className="card-title text-uppercase">부서 소개</h5>
                 <ul className="list-unstyled">
-                  <li><a href="#!">Link 6</a></li>
+                  <li><a href="#!">바로가기</a></li>
                 </ul>
               </div>
             </div>
@@ -49,7 +49,7 @@ const Footer = () => {
               <div className="card-body">
                 <h5 className="card-title text-uppercase">AI 챗봇 </h5>
                 <ul className="list-unstyled">
-                  <li><a href="#!">Link 8</a></li>
+                  <li><a href="/chatbot">바로가기</a></li>
                 </ul>
               </div>
             </div>
