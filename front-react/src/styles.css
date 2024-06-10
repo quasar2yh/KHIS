@@ -1,7 +1,48 @@
 .color-nav {
-    background-color: #fae18f8e;
+    background-color: #87c3ff;
 }
 
 .indented {
     padding-left: 10px;
 }
+
+.page-footer {
+    background-color: #f8f9fa;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  
+  .footer-banner {
+    max-width: 100%;
+    height: auto;
+    width: 70%; 
+    margin-bottom: 2rem;
+  }
+  
+  .text-uppercase {
+    text-transform: uppercase;
+    color: #333;
+  }
+  
+  .card {
+    margin-bottom: 1rem; 
+  }
+  
+  .card-title {
+    text-transform: uppercase;
+    color: #007bff;
+  }
+  
+  a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  .list-unstyled {
+    padding-left: 0;
+    list-style: none;
+  }
