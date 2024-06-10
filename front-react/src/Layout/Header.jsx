@@ -7,7 +7,6 @@ import PatientMenu from '../components/patient/PatientMenu';
 import PractitionerMenu from '../components/practitioner/PractitionerMenu';
 import { logoutAction } from '../apis/apis';
 import { resetUserAction } from '../redux/modules/userActions';
-import Cookies from 'js-cookie';
 
 function Header() {
     const accountInfo = useSelector(state => state.userReducer.accountInfo);

@@ -1,5 +1,4 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.request import Request
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -91,12 +90,12 @@ class CookieTokenObtainPairView(TokenObtainPairView):
             )
 
         del response.data['refresh']
+
         return super().finalize_response(request, response, *args, **kwargs)
 
 
 class CookieTokenRefreshView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
-        print(f"\n\n\n\n{request.COOKIES}\n\n\n\n")
         serializer = self.get_serializer(data={"refresh": request.COOKIES.get("refresh")})
         try:
             serializer.is_valid(raise_exception=True)
@@ -113,8 +112,9 @@ class CookieTokenRefreshView(TokenRefreshView):
             samesite='none',
             secure=True
         )
-        print(f"\n\n\n\n serializer : {serializer.validated_data}\n\n\n")
+
         del response.data['refresh']
+
         return response
 
 
