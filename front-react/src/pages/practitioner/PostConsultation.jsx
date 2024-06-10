@@ -74,8 +74,7 @@ const PostConsultation = () => {
         alert("진단 기록 생성 완료")
         navigator("/")
     };
-
-    console.log("selectedPatient", selectedPatient)
+    
     return (
         <div className="container mt-5">
             <Modal show={showModal} onHide={handleClose}>

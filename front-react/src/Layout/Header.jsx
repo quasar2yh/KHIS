@@ -7,6 +7,7 @@ import PatientMenu from '../components/patient/PatientMenu';
 import PractitionerMenu from '../components/practitioner/PractitionerMenu';
 import { logoutAction } from '../apis/apis';
 import { resetUserAction } from '../redux/modules/userActions';
+import Cookies from 'js-cookie';
 
 function Header() {
     const accountInfo = useSelector(state => state.userReducer.accountInfo);
@@ -22,11 +23,14 @@ function Header() {
 
 
     const handleLogout = () => {
-        logoutAction();
+        Cookies.remove('access');
         dispatch(resetUserAction());
+        logoutAction();
         navigate('/login');
     };
 
+    console.log("accountInfo: ", accountInfo);
+    console.log("Cookies:", Cookies.get());
     return (<>
         <Navbar expand="lg" className="bg-body-tertiary">
             <Container>

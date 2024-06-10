@@ -45,8 +45,6 @@ function GetClaim() {
         getAndSetClaims();
     };
 
-    console.log("Claims", claims);
-
     return (
         <div className="container mt-5">
             <Modal show={showSearchPatientModal} onHide={() => setShowSearchPatientModal(false)}>

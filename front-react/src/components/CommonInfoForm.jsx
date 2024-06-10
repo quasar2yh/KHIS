@@ -20,7 +20,7 @@ function CommonInfoForm({ registerData, setRegisterData, handleChange }) {
 
             <Form.Group as={Col} xs={5}>
                 <Form.Label>Password 확인</Form.Label>
-                <Form.Control type="password" />
+                <Form.Control type="password" name="confirm_password" value={registerData.confirm_password} onChange={handleChange} />
             </Form.Group>
 
             <Row className="mb-3">
