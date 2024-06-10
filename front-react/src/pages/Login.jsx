@@ -40,7 +40,6 @@ function Login() {
             // response에 access 토큰이 있다면 Cookie에 세팅
             if (response.access) {
                 Cookies.set('access', response.access, { path: '' });
-                Cookies.set('refresh', response.refresh, { path: '' }); 
             
                 // access 토큰 디코딩 후 userId 반환하는 API
                 dispatch(getUserIdAction(response.access));
