@@ -1,37 +1,63 @@
-import React from "react"
+import React from "react";
 
-const Footer = () => <footer className="page-footer font-small blue pt-4">
-    <div className="container-fluid text-center text-md-left">
-        <div className="row">
-            <div className="col-md-6 mt-md-0 mt-3">
-                <h5 className="text-uppercase">Footer Content</h5>
-                <p>여기에 뭐 넣을까요?</p>
-            </div>
+const Footer = () => {
+  // 첫 페이지일 때만 Footer를 렌더
+  const isHomePage = window.location.pathname === '/';
 
-            <hr className="clearfix w-100 d-md-none pb-0"/>
+  
+  if (!isHomePage) return null;
 
-            <div className="col-md-3 mb-md-0 mb-3">
-                <h5 className="text-uppercase">컨텐트1</h5>
+  return (
+    <footer className="page-footer font-small blue pt-4">
+      <div className="container text-center">
+        <h5 className="text-uppercase">안녕하세요, KHIS 병원입니다</h5>
+        <img src="/image/병원 배너 사진.jpeg" alt="병원 배너 사진" className="footer-banner" />
+        
+        <div className="row mt-4">
+          <div className="col-md-3">
+            <div className="card">
+              <div className="card-body">
+                <h5 className="card-title text-uppercase">예약하기</h5>
                 <ul className="list-unstyled">
-                    <li><a href="#!">Link 1</a></li>
-                    <li><a href="#!">Link 2</a></li>
-                    <li><a href="#!">Link 3</a></li>
-                    <li><a href="#!">Link 4</a></li>
+                  <li><a href="/appointment">바로가기</a></li>
                 </ul>
+              </div>
             </div>
-
-            <div className="col-md-3 mb-md-0 mb-3">
-                <h5 className="text-uppercase">컨텐트2</h5>
+          </div>
+          <div className="col-md-3">
+            <div className="card">
+              <div className="card-body">
+                <h5 className="card-title text-uppercase">병원 일정</h5>
                 <ul className="list-unstyled">
-                    <li><a href="#!">Link 1</a></li>
-                    <li><a href="#!">Link 2</a></li>
-                    <li><a href="#!">Link 3</a></li>
-                    <li><a href="#!">Link 4</a></li>
+                  <li><a href="/schedule">바로가기</a></li>
                 </ul>
+              </div>
             </div>
+          </div>
+          <div className="col-md-3">
+            <div className="card">
+              <div className="card-body">
+                <h5 className="card-title text-uppercase">대기열</h5>
+                <ul className="list-unstyled">
+                  <li><a href="/waiting-list">바로가기</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-3">
+            <div className="card">
+              <div className="card-body">
+                <h5 className="card-title text-uppercase">AI 챗봇 </h5>
+                <ul className="list-unstyled">
+                  <li><a href="/chatbot">바로가기</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
+      </div>
+    </footer>
+  );
+};
 
-</footer>
-
-export default Footer
+export default Footer;
