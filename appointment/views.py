@@ -877,7 +877,6 @@ class AppointmentListAPIView(APIView):
         return Response("잘못된 선택입니다", status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class WaitingListView(APIView):
     paginator = PageNumberPagination()
 
@@ -894,7 +893,6 @@ class WaitingListView(APIView):
 
         serializer = AppointmentSerializer(page, many=True)
         return self.paginator.get_paginated_response(serializer.data)
-
 
 
 class AiConsultationView(APIView):
