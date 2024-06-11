@@ -169,4 +169,13 @@ export const getMedicalRecord = async (patientId) => {
     return response.data;
 }
 
+
+// 환자 대기열 조회
+export const getWaitingList = async () => {
+    const response = await instance.get(`/khis/appointment/waiting/`);
+    return response.data;
+};
+
+
+
 export default instance;

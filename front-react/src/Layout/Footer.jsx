@@ -37,9 +37,9 @@ const Footer = () => {
           <div className="col-md-3">
             <div className="card">
               <div className="card-body">
-                <h5 className="card-title text-uppercase">부서 소개</h5>
+                <h5 className="card-title text-uppercase">대기열</h5>
                 <ul className="list-unstyled">
-                  <li><a href="#!">바로가기</a></li>
+                  <li><a href="/waiting-list">바로가기</a></li>
                 </ul>
               </div>
             </div>

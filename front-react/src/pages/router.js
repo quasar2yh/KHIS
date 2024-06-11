@@ -17,6 +17,8 @@ import Procedure from "./practitioner/Procedure";
 import GetConsultations from "./practitioner/GetConsultations";
 import PostClaim from "./practitioner/PostClaim";
 import GetClaim from "./practitioner/GetClaim";
+import WaitingList from './WaitingList';
+
 
 
 const Router = () => {
@@ -41,6 +43,7 @@ const Router = () => {
                         <Route path="/annual" element={<Annual />} />
                         <Route path="/claim" element={<PostClaim />} />
                         <Route path="/claim-list" element={<GetClaim />} />
+                        <Route path="/waiting-list" element={<WaitingList />} /> 
                     </Routes>
                 </Layout>
             </TokenRefresher>
