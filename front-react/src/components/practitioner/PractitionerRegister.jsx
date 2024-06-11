@@ -12,6 +12,7 @@ function PractitionerRegister() {
     const [practitionerRegisterData, setPractitionerRegisterData] = useState({
         id: '',
         password: '',
+        confirm_password: '',
         familyName: '',
         name: '',
         gender: '',
@@ -42,11 +43,12 @@ function PractitionerRegister() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const { id, password, familyName, name, gender, contact, licenseType, licenseNumber, role, rank, department } = practitionerRegisterData;
+        const { id, password, confirm_password, familyName, name, gender, address, contact, licenseType, licenseNumber, role, rank, department} = practitionerRegisterData;
 
         const body = {
             username: id,
             password,
+            confirm_password,
             name: {
                 family: familyName,
                 name,

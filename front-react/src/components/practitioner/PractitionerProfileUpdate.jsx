@@ -8,7 +8,6 @@ import AddressForm from '../AddressForm';
 function PractitionerProfileUpdate({ onClose }) {
     const practitionerInfo = useSelector(state => state.userReducer.practitionerInfo);
     const navigator = useNavigate()
-    console.log("practitionerInfo", practitionerInfo)
 
     const [formData, setFormData] = useState({
         familyName: practitionerInfo.name.family,
