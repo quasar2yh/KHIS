@@ -1,0 +1,76 @@
+/* 전체 스타일 */
+.chat-container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .user-list {
+    width: 200px;
+  }
+  
+  .user-list h3 {
+    margin-bottom: 10px;
+  }
+  
+  .user-list ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .user-list li {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    margin-bottom: 5px;
+    border-radius: 5px;
+  }
+  
+  .user-list li:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .selected-user {
+    background-color: #c0c0c0;
+    font-weight: bold;
+  }
+  
+  .chat-box {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  .chat-box p {
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .message-form {
+    margin-top: 10px;
+  }
+  
+  .message-form input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .message-form button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .message-form button:hover {
+    background-color: #0056b3;
+  }
+  

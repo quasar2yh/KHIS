@@ -1,92 +1,125 @@
 import React, { useState, useEffect } from 'react';
-import { getChatMessages, sendMessage,getAccountInfo } from '../apis/apis';
+import { getChatMessages, sendMessage, getAllUser } from '../apis/apis';
+import { useSelector } from 'react-redux';
+import './Chat.css';
 
-const Chat = () => {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
-  const [receiver, setReceiver] = useState('');
-  const [user ,setUser]= useState([]);
+const Chat = ({loggedInUserId}) => {
+    // const accountInfo = useSelector(state => state.userReducer.accountInfo);  
+    const [messages, setMessages] = useState([]);
+    const [input, setInput] = useState('');
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [userMap, setUserMap] = useState({});
+    const [users, setUsers] = useState([]);
+    // console.log("dddddddddddddddddddddd",accountInfo)
+// accountInfo에서 로그인한 유저 ID를 가져옴
+ 
+    // // accountInfo가 로드될 때까지 로딩 상태 유지
+    // if (!accountInfo) {
+    //     return <div>Loading chat...</div>; // 로딩 상태 표시
+    // }
 
+    // const loggedInUserId = accountInfo.id; // accountInfo가 존재할 때만 id에 접근
+  useEffect(() => {
+    async function fetchAllUsers() {
+      const data = await getAllUser();
+      setUsers(data);
+      console.log("전체 유저:", data);
+
+      const userMap = data.reduce((acc, user) => {
+        acc[user.id] = `${user.last_name} ${user.first_name}`;
+        return acc;
+      }, {});
+      setUserMap(userMap);
+      console.log("Mapped users:", userMap);
+    }
+    fetchAllUsers();
+  }, []);
 
   useEffect(() => {
-    async function fetchMessages() {
-        const data = await getChatMessages();
-        setMessages(data);
-        console.log("data",data)
+    if (selectedUser) {
+      async function fetchMessages() {
+        const allMessages = await getChatMessages();
+        console.log("All Messages:", allMessages);
 
-      // 사용자 ID 목록 추출
-      // 사용자 ID 목록 추출
-      const senderIds = data.map(msg => msg.sender);
-      const receiverIds = data.map(msg => msg.receiver);
+        console.log("loggedInUserId:", loggedInUserId); // 로그에 출력
+        console.log("selectedUser.id:", selectedUser.id); // 로그에 출력
 
-    // 중복 제거된 사용자 ID 목록 생성
-      const userIds = [...new Set([...senderIds, ...receiverIds])];
-    
-    // 사용자 정보 가져오기
-        const userPromises = userIds.map(id => getAccountInfo(id));
-        const userData = await Promise.all(userPromises);
-        console.log(userData,"sssssssssssssssssssss")
-
-    // 사용자 정보를 ID를 키로, name을 값으로 저장
-        const userMap = userData.reduce((acc, user) => {
-        acc[user.id] = user.name.first_name + ' ' + user.name.last_name; // 이름 조합
-        return acc;
-        }, {});
-        setUser(userMap);
-        console.log("Fetched users:", userMap);
+        // 선택된 유저와 로그인한 유저 간의 메시지 필터링
+        const filteredMessages = allMessages.filter(msg =>
+          (msg.sender === loggedInUserId && msg.receiver === selectedUser.id) ||
+          (msg.sender === selectedUser.id && msg.receiver === loggedInUserId)
+        );
+        console.log("Filtered Messages:", filteredMessages); // 필터링된 메시지 콘솔에 출력
+        setMessages(filteredMessages);
+      }
+      fetchMessages();
     }
-    fetchMessages();
-  }, []); 
-
+  }, [selectedUser, loggedInUserId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (input.trim() === '' || receiver.trim() === '') return;
+    if (input.trim() === '' || !selectedUser) return;
 
-    const newMessage = await sendMessage(receiver, input);
+    const newMessage = await sendMessage(selectedUser.id, input);
     setMessages([...messages, newMessage]);
     setInput('');
-    
   };
+
   const escapeHTML = (str) => {
     if (typeof str !== 'string') {
-      return ''; // 문자열이 아닐 경우 빈 문자열 반환
+      return '';
     }
     return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   };
-  
 
   return (
-    <div>
-      <h2>Chat</h2>
-      <div className="chat-box">
-    
-        {messages.map((msg, index) => {
-            console.log("Message object:", msg); // 여기에서 msg 객체를 출력
-            return (
-              <p key={index}>
-                {user[msg.sender]} &rarr; 
-                {user[msg.receiver]}: 
-                {escapeHTML(msg.message)}
-              </p>
-            );
-          })}
+    <div className="chat-container">
+      <div className="user-list">
+        <h3>전체 유저</h3>
+        <ul>
+          {users.map((user) => (
+            <li 
+              key={user.id} 
+              className={selectedUser?.id === user.id ? 'selected-user' : ''}
+              onClick={() => {
+                setSelectedUser(user);
+                setInput('');
+              }}
+            >
+              {user.last_name} {user.first_name}
+            </li>
+          ))}
+        </ul>
       </div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="메세지를 입력하세요"
-        />
-        <input
-          type="text"
-          value={receiver}
-          onChange={(e) => setReceiver(e.target.value)}
-          placeholder="받는이"
-        />
-        <button type="submit">Send</button>
-      </form>
+      {selectedUser ? (
+        <div className="message-section">
+          <h3>메시지 창 - {userMap[selectedUser.id]}</h3>
+          <div className="chat-box">
+            {messages.length > 0 ? (
+              messages.map((msg, index) => (
+                <p key={index}>
+                  {userMap[msg.sender]} &rarr; {userMap[msg.receiver]}: {escapeHTML(msg.message)}
+                </p>
+              ))
+            ) : (
+              <p>No messages to show</p>
+            )}
+          </div>
+          <form className="message-form" onSubmit={handleSubmit}>
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="메세지를 입력하세요"
+            />
+            <button type="submit">Send</button>
+          </form>
+        </div>
+      ) : (
+        <div className="message-section">
+          <p>유저를 선택하세요</p>
+        </div>
+      )}
     </div>
   );
 };

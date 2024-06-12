@@ -2,16 +2,32 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.hashers import make_password
-from .models import Patient, Practitioner, HumanName, RelatedPerson, ContactPoint, Address, Department, CommonInfo
+from .models import Patient, Practitioner, HumanName, RelatedPerson, ContactPoint, Address, Department, CommonInfo, Account
 
 
 class AccountSerializer(serializers.ModelSerializer):
+    first_name = serializers.SerializerMethodField()
+    last_name = serializers.SerializerMethodField()
     confirm_password = serializers.CharField(write_only=True, required=True)
 
     class Meta:
         model = get_user_model()
         fields = '__all__'
         extra_kwargs = {'password': {'write_only': True}}
+
+    def get_first_name(self, obj):
+        if obj.patient and obj.patient.name:
+            return obj.patient.name.name
+        elif obj.practitioner and obj.practitioner.name:
+            return obj.practitioner.name.name
+        return None
+
+    def get_last_name(self, obj):
+        if obj.patient and obj.patient.name:
+            return obj.patient.name.family
+        elif obj.practitioner and obj.practitioner.name:
+            return obj.practitioner.name.family
+        return None
 
     def save(self, **kwargs):
         password = self.validated_data.get('password', None)
@@ -190,3 +206,5 @@ class ChangePasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError("새 비밀번호가 현재 비밀번호와 같습니다.")
         validate_password(new_password)
         return data
+
+

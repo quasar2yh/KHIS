@@ -8,4 +8,5 @@ urlpatterns = [
     path("register/", views.AccountSiginAPIView.as_view()),
     path("<int:account_id>/", views.AccountSiginAPIView.as_view()),
     path("pwchange/<int:account_id>/", views.ChangePasswordAPIView.as_view()),
+    path("alluser/", views.AccountAllUserAPIView.as_view()),
 ]

@@ -1,7 +1,7 @@
 import { getAccountInfo, getUserId, getPatientInfo, getPractitionerInfo } from '../../apis/apis';
 
 export const getUserIdAction = (token) => {
-    const userId = getUserId(token);
+    const userId =  getUserId(token);
     return {
         type: 'SET_USER_ID',
         payload: userId
