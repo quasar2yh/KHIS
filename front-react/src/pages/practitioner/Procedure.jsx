@@ -73,7 +73,6 @@ const Procedure = () => {
             end: procedure.end,
         };
         postProcedureRecord(body)
-        console.log(body);
         alert("수술 기록 작성 완료")
         navigate('/');
     };

@@ -1,7 +1,9 @@
 import React from 'react';
 import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 
-function PractitionerMenu({ refresh, handleLogout }) {
+function PractitionerMenu({ handleLogout }) {
+    const accountInfo = useSelector(state => state.userReducer.accountInfo);
 
     return (
         <>
@@ -21,7 +23,7 @@ function PractitionerMenu({ refresh, handleLogout }) {
                     <Nav.Link href="/annual">연차</Nav.Link>
                 </Nav>
                 <Nav className="ml-auto">
-                    {refresh ? (
+                    {accountInfo ? (
                         <NavDropdown title="Profile" id="profile-nav-dropdown">
                             <NavDropdown.Item href="/profile">내 정보</NavDropdown.Item>
                             <NavDropdown.Item onClick={handleLogout}>로그아웃</NavDropdown.Item>

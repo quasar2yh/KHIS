@@ -44,7 +44,7 @@ def send_department_event_reminder():
         )
 
     print(f"\n\n\n이벤트 가져오기! :", events)
-
+    
     for event in events:
         print("이벤트:", event)
 
@@ -70,3 +70,4 @@ def send_department_event_reminder():
                     subject, message, sender_email, practitioner.account.email)
         else:
             print("이벤트에 부서 정보가 없습니다.")
+  

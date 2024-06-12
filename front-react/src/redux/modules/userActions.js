@@ -22,18 +22,16 @@ export const getPractitionerInfoAction = (prectitionerId) => {
         type: 'SET_PRACTITIONER_INFO',
         payload: practitionerInfo
     };
-}
+};
+
 export const getAccountInfoAction = (userId) => {
     const accountInfo = getAccountInfo(userId);
     return {
         type: 'SET_ACCOUNT_INFO',
         payload: accountInfo
     }
-}
+};
 
-export const resetUserAction = () => {
-    return {
-        type: 'RESET_USER',
-        payload: null
-    }
-}
+export const resetUserAction = () => ({
+    type: 'RESET_USER',
+});

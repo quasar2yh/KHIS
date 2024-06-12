@@ -46,14 +46,14 @@ urlpatterns = [
     path("hospital/<int:hospitalschedule_id>/", HospitalScheduleDetailAPIView.as_view(),
          name="hospital_detail_holiday"),  # 병원 자체 휴일 수정 및 삭제
 
-    path('hospital/Public/', HospitalPublicScheduleAPIView.as_view(),
-         name='hospital_Public_holiday'),  # 국가 공휴일 조회
+    path('hospital/public/', HospitalPublicScheduleAPIView.as_view(),
+         name='hospital_public_holiday'),  # 국가 공휴일 조회
 
     path("integration/", IntegratedScheduleAPIView.as_view(),
          name="integrated_holiday"),  # 병원 + 의료진 전체 일정 조회
 
 
-    path("department_Register/", DepartmentRegisterAPIView.as_view(),
+    path("department-Register/", DepartmentRegisterAPIView.as_view(),
          name="department_list"),  # 부서 등록
 
     path("department/", DepartmentListAPIView.as_view(),
@@ -66,11 +66,11 @@ urlpatterns = [
          name="department_medical_specific_holiday"),  # 부서별 의료진 연차 구간조회
 
 
-    path("department/<int:department_id>/Practitioner/", DepartmentPractitionerAPIView.as_view(),
-         name="department_Practitioner"),  # 부서별 의료진 조회
+    path("department/<int:department_id>/practitioner/", DepartmentPractitionerAPIView.as_view(),
+         name="department_practitioner"),  # 부서별 의료진 조회
 
 
-    path("department/<int:department_id>/event", DepartmentEventAPIView.as_view(),
+    path("department/<int:department_id>/event/", DepartmentEventAPIView.as_view(),
          name="department_event"),  # 부서별 일정 등록
 
     path("department/<int:department_id>/event/<int:event_id>/", DepartmentEventDetailAPIView.as_view(),
@@ -80,12 +80,12 @@ urlpatterns = [
     path('send_email/', MailAPIView.as_view(), name='send_email'),  # 메일 보내기
 
 
-    path("medical/Annual-Leave", AnnualLeaveStatusAPIView.as_view(),
+    path("medical/annual-leave/", AnnualLeaveStatusAPIView.as_view(),
          name="medical_annual_leave"),  # 본인 연차 소진일 조회
 
-     path("medical/Annual-Leave", AnnualLeaveStatusAPIView.as_view(),
+    path("medical/annual-leave/", AnnualLeaveStatusAPIView.as_view(),
          name="medical_annual_leave"),  # 연차 소진일 조회
-     
+
 
 
 

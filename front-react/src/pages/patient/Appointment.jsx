@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -42,8 +43,6 @@ function Appointment() {
         const fetchAblePractitioner = async () => {
             if (appointmentData.date && appointmentData.time && appointmentData.department) {
                     const res = await getAbleAppointmentPractitioner(appointmentData);
-                    console.log("res", res)
-                    console.log("res 타입", typeof res)
                     setAblePractitioner(res);
             }
         };
@@ -74,7 +73,6 @@ function Appointment() {
 
         try {
             const response = await postAppointment(body, accountInfo.patient);
-            console.log(response)
 
             if (response.active) {
                 alert("예약 성공");
@@ -99,11 +97,6 @@ function Appointment() {
         }
         return options;
     };
-
-
-
-    console.log("appointmentData", appointmentData)
-    console.log("ablePractitioner", ablePractitioner)
 
     return (
         <>

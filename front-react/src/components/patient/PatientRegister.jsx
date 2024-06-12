@@ -36,11 +36,12 @@ function PatientRegister() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const { id, password, familyName, name, address, gender, contact } = patientRegisterData;
+        const { id, password, confirm_password, familyName, name, address, gender, contact } = patientRegisterData;
 
         const body = {
             username: id,
             password,
+            confirm_password,
             name: {
                 family: familyName,
                 name,
@@ -57,7 +58,6 @@ function PatientRegister() {
         };
 
         try {
-            console.log("body", body)
             const response = await registerAction(body);
             
             if (response.id) {
