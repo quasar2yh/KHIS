@@ -58,47 +58,47 @@
 ## 📌 주요 기능
 
 
-EMR (진료 기록관련)
+**EMR (진료 기록관련)**
 
--[환자 데이터 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/account/views.py)
+-[환자 데이터 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/registration/views.py)
 
--진단기록 CRUD
+-[진단기록 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/ocs/views.py)
 
--수술기록 CRUD
+-[수술기록 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/ocs/views.py)
 
-수납 시스템
+**수납 시스템**
 
--청구 항목 CRUD
+-[청구 항목 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/acceptance/views.py)
 
 수술,수술 요금
 
--수술 요금 CRUD
+-[수술 요금 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/procedure_fee/views.py)
 
--수술 CRUD
+-[수술 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/procedure_fee/views.py)
 
--연차/휴일 시스템
+**연차/휴일 시스템**
 
--연차신청 CRUD
+-[연차신청 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/schedule/views.py)
 
--병원 자체 휴일 CRUD
+-[병원 자체 휴일 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/schedule/views.py)
 
--공휴일 조회 
+-[공휴일 조회](https://github.com/quasar2yh/KHIS/blob/dev/schedule/views.py) 
 
--부서별 일정 CRUD
+-[부서별 일정 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/schedule/views.py)
 
-예약시스템
+**예약시스템**
 
--예약 CRUD
+-[예약 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/appointment/views.py)
 
--예약 가능조회 
+-[예약 가능조](https://github.com/quasar2yh/KHIS/blob/dev/appointment/views.py) 
 
--챗봇시스템 (증상을 입력하면 진료과 추천)
+-[챗봇시스템 (증상을 입력하면 진료과 추천)](https://github.com/quasar2yh/KHIS/blob/dev/appointment/open_ai.py)
 
-대기열 시스템
+**대기열 시스템**
 
-의료진 관련
+[의료진 관련](https://github.com/quasar2yh/KHIS/blob/dev/practitioner_registration/views.py)
 
-의료진 데이터 CRU
+[의료진 데이터 CRU](https://github.com/quasar2yh/KHIS/blob/dev/practitioner_registration/views.py)
 
 
 ## ⚙프로젝트 아키텍쳐
