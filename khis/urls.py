@@ -10,7 +10,7 @@ urlpatterns = [
     path('khis/practitioner-registration/',
          include("practitioner_registration.urls")),
     path('khis/consultations/', include("ocs.urls")),
-    path('khis/patient/', include("patient.urls")),
+    path('khis/acceptance/', include("acceptance.urls")),
     path('khis/procedure/', include("procedure.urls")),
     path('khis/procedure-fee/', include("procedure_fee.urls")),
     path('khis/chat/', include("chat.urls")),

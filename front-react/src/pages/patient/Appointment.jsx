@@ -1,14 +1,15 @@
+
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { postAppointment, getAbleAppointmentPractitioner } from '../../apis/apis';
+import { postAppointment, getAbleAppointmentPractitioner } from '../../apis/appointment_apis';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDepartmentListAction } from '../../redux/modules/departmentActions';
 
 function Appointment() {
     // userReducer의 userId
-    const userId = useSelector(state => state.userReducer.userId);
+    const accountInfo = useSelector(state => state.userReducer.accountInfo);
 
     // departmentReducer의 departmentList
     const departmentList = useSelector(state => state.departmentReducer.departmentList);
@@ -42,8 +43,6 @@ function Appointment() {
         const fetchAblePractitioner = async () => {
             if (appointmentData.date && appointmentData.time && appointmentData.department) {
                     const res = await getAbleAppointmentPractitioner(appointmentData);
-                    console.log("res", res)
-                    console.log("res 타입", typeof res)
                     setAblePractitioner(res);
             }
         };
@@ -73,8 +72,7 @@ function Appointment() {
         };
 
         try {
-            const response = await postAppointment(body, userId);
-            console.log(response)
+            const response = await postAppointment(body, accountInfo.patient);
 
             if (response.active) {
                 alert("예약 성공");
@@ -99,11 +97,6 @@ function Appointment() {
         }
         return options;
     };
-
-
-
-    console.log("appointmentData", appointmentData)
-    console.log("ablePractitioner", ablePractitioner)
 
     return (
         <>

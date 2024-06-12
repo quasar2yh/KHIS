@@ -12,14 +12,23 @@ function PractitionerRegister() {
     const [practitionerRegisterData, setPractitionerRegisterData] = useState({
         id: '',
         password: '',
+        confirm_password: '',
         familyName: '',
         name: '',
         gender: '',
         contact: '',
+        address: {
+            city: '',
+            postal_code: '',
+            text: '',
+            country: 'South Korea',
+            use: 'Home',
+        },
         licenseType: '',
         licenseNumber: 0,
         role: '',
         rank: 0,
+        department: ''
     })
 
     const roleList = ['Physician', 'Assistant']
@@ -34,16 +43,18 @@ function PractitionerRegister() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const { id, password, familyName, name, gender, contact, licenseType, licenseNumber, role, rank } = practitionerRegisterData;
+        const { id, password, confirm_password, familyName, name, gender, address, contact, licenseType, licenseNumber, role, rank, department} = practitionerRegisterData;
 
         const body = {
             username: id,
             password,
+            confirm_password,
             name: {
                 family: familyName,
                 name,
             },
             gender,
+            address,
             telecom: {
                 system: "Phone",
                 value: contact,
@@ -55,6 +66,7 @@ function PractitionerRegister() {
             license_number: licenseNumber,
             role,
             rank,
+            department
         };
 
         try {
@@ -77,6 +89,7 @@ function PractitionerRegister() {
         <Form noValidate onSubmit={handleSubmit}>
             <CommonInfoForm
                 registerData={practitionerRegisterData}
+                setRegisterData = {setPractitionerRegisterData}
                 handleChange={handleChange} />
 
             <Row className="mb-3">
@@ -102,11 +115,22 @@ function PractitionerRegister() {
                 </Form.Group>
             </Row>
 
+
             <Row className="mb-3">
                 <Col xs={2}>
                     <Form.Group>
-                        <Form.Label>권한</Form.Label>
-                        <Form.Control type="text" id='rank' name="rank" value={practitionerRegisterData.rank} onChange={handleChange} />
+                        <Form.Label>부서</Form.Label>
+                        <Form.Control type="text" id='rank' name="rank" value={practitionerRegisterData.department} onChange={handleChange} />
+                    </Form.Group>
+                </Col>
+            </Row>
+
+
+            <Row className="mb-3">
+                <Col xs={2}>
+                    <Form.Group>
+                        <Form.Label>부서</Form.Label>
+                        <Form.Control type="text" id='rank' name="rank" value={practitionerRegisterData.department} onChange={handleChange} />
                     </Form.Group>
                 </Col>
             </Row>

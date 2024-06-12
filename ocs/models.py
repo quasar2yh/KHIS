@@ -25,10 +25,10 @@ class ProcedureRecord(models.Model):
     practitioner = models.ForeignKey(Practitioner, on_delete=models.PROTECT)
     medical_record = models.ForeignKey(MedicalRecord, on_delete=models.PROTECT)
     # 수술 결과
-    procedure_result = models.TextField()
+    procedure_result = models.TextField(blank=True, null=True)
     # 수술 시간
     start = models.DateTimeField()
     end = models.DateTimeField()
-    charge_item = models.ForeignKey(
+    charge_item = models.OneToOneField(
         ChargeItem, on_delete=models.PROTECT, blank=True, null=True)
 

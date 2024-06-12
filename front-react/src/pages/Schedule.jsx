@@ -17,15 +17,9 @@ function Schedule() {
         fetchgetHoliday();
     }, []);
 
-    console.log("holidayList", holidayList)
-
     const tileContent = ({ date, view }) => {
         if (view === 'month') {
-
-            // console.log("date", date)
             const dateString = date.toISOString().split('T')[0];
-            // console.log("dateString", dateString)
-
             const holiday = holidayList.find((holiday) => {
                 return holiday.date === dateString
             });
@@ -39,7 +33,6 @@ function Schedule() {
         }
     };
 
-    console.log("selectedDate", selectedDate)
     return (
         <div>
             <Container>

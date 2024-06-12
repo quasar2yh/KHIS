@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Form, Button, Container, Row, Col, ListGroup } from 'react-bootstrap';
-import { searchPatient, getMedicalRecord, postProcedureRecord } from '../../apis/apis';
+import { searchPatient, getMedicalRecord } from '../../apis/apis';
+import { postProcedureRecord } from '../../apis/procedure_apis';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -22,9 +23,9 @@ const Procedure = () => {
         procedure_code: '',
         procedure_name: '',
         description: '',
-        procedure_result: '',
+        procedure_result: null,
         start: '',
-        end: '',
+        end: null,
     });
 
     const searchHandler = (e) => {
@@ -72,7 +73,6 @@ const Procedure = () => {
             end: procedure.end,
         };
         postProcedureRecord(body)
-        console.log(body);
         alert("수술 기록 작성 완료")
         navigate('/');
     };
@@ -124,7 +124,7 @@ const Procedure = () => {
                 
                 <Modal show={showRecords} onHide={() => setShowRecords(false)}>
                     <Modal.Header closeButton>
-                        <Modal.Title>수술 목록</Modal.Title>
+                        <Modal.Title>진단 기록</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         {medicalRecords.length > 0 ? (
@@ -226,7 +226,6 @@ const Procedure = () => {
                                     name="procedure_result"
                                     value={procedure.procedure_result}
                                     onChange={handleChange}
-                                    required
                                 />
                             </Form.Group>
                         </Col>
@@ -252,7 +251,6 @@ const Procedure = () => {
                                     name="end"
                                     value={procedure.end}
                                     onChange={handleChange}
-                                    required
                                 />
                             </Form.Group>
                         </Col>

@@ -1,7 +1,9 @@
 import React from 'react';
 import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 
-function PractitionerMenu({ refresh, handleLogout }) {
+function PractitionerMenu({ handleLogout }) {
+    const accountInfo = useSelector(state => state.userReducer.accountInfo);
 
     return (
         <>
@@ -14,11 +16,14 @@ function PractitionerMenu({ refresh, handleLogout }) {
                         <NavDropdown.Item href="/medical-record-list">조회</NavDropdown.Item>
                     </NavDropdown>
                     <Nav.Link href="/procedure">수술</Nav.Link>
-                    <Nav.Link href="/">일정</Nav.Link>
+                    <NavDropdown title="청구">
+                        <NavDropdown.Item href="/claim">작성</NavDropdown.Item>
+                        <NavDropdown.Item href="/claim-list">조회</NavDropdown.Item>
+                    </NavDropdown>
                     <Nav.Link href="/annual">연차</Nav.Link>
                 </Nav>
                 <Nav className="ml-auto">
-                    {refresh ? (
+                    {accountInfo ? (
                         <NavDropdown title="Profile" id="profile-nav-dropdown">
                             <NavDropdown.Item href="/profile">내 정보</NavDropdown.Item>
                             <NavDropdown.Item onClick={handleLogout}>로그아웃</NavDropdown.Item>

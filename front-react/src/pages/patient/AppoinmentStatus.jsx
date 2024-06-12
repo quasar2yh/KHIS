@@ -1,35 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Card, ListGroup } from 'react-bootstrap';
+import { Container, Row, Col, Card, ListGroup, Button } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-import { getAppointmentStatus } from '../../apis/apis';
+import { getAppointmentStatus, deleteAppointment } from '../../apis/appointment_apis';
 
 function AppointmentStatus() {
-    // userReducer 리듀서의 accountInfo
     const accountInfo = useSelector(state => state.userReducer.accountInfo);
-
-    // 예약 현황
     const [appointmentStatus, setAppointmentStatus] = useState([]);
 
-    // accountInfo의 환자 Id로 예약 현황 조회하는 API request
     useEffect(() => {
         if (accountInfo && accountInfo.patient) {
             getAppointmentStatus(accountInfo.patient).then(res => {
-                // 비동기로 예약 현황 set
                 setAppointmentStatus(res);
             });
         }
     }, [accountInfo]);
 
+    const handleDelete = (appointmentId) => {
+        deleteAppointment(appointmentId).then(() => {
+            setAppointmentStatus(prevStatus => prevStatus.filter(appointment => appointment.id !== appointmentId));
+        });
+    };
+
     return (
         <>
-            {appointmentStatus && appointmentStatus.map(appointment => {
-                return (
-                    <Container className="mt-5">
+            {appointmentStatus.length > 0 ? (
+                appointmentStatus.map(appointment => (
+                    <Container key={appointment.id} className="mt-5">
                         <Row className="justify-content-center">
                             <Col md={8}>
                                 <Card>
                                     <Card.Header as="h4" className="bg-primary text-white text-center">
-                                        Appointment Status
+                                        예약 내용
                                     </Card.Header>
                                     <Card.Body>
                                         <ListGroup variant="flush">
@@ -57,12 +58,17 @@ function AppointmentStatus() {
                                                     <Col md={8}>{appointment.reason}</Col>
                                                 </Row>
                                             </ListGroup.Item>
-
                                             <ListGroup.Item>
                                                 <Row>
                                                     <Col md={4} className="text-right font-weight-bold">Created:</Col>
                                                     <Col md={8}>{appointment.created}</Col>
                                                 </Row>
+                                            </ListGroup.Item>
+                                            <ListGroup.Item className="d-flex justify-content-between align-items-center">
+                                                <span></span> {/* 빈 공간 확보 */}
+                                                <Button variant="danger" onClick={() => handleDelete(appointment.id)}>
+                                                    삭제
+                                                </Button>
                                             </ListGroup.Item>
                                         </ListGroup>
                                     </Card.Body>
@@ -70,21 +76,20 @@ function AppointmentStatus() {
                             </Col>
                         </Row>
                     </Container>
-                );
-            })}
-            {appointmentStatus.length === 0 && (
+                ))
+            ) : (
                 <Container className="mt-5">
                     <Row className="justify-content-center">
                         <Col md={8}>
                             <Card>
                                 <Card.Header as="h4" className="bg-primary text-white text-center">
-                                    Appointment Status
+                                    예약 내용
                                 </Card.Header>
                                 <Card.Body>
                                     <ListGroup variant="flush">
                                         <ListGroup.Item>
                                             <Row>
-                                                <Col md={8} className="text-right font-weight-bold">예약 현황이 없습니다.</Col>
+                                                <Col md={12} className="text-center font-weight-bold">예약 현황이 없습니다.</Col>
                                             </Row>
                                         </ListGroup.Item>
                                     </ListGroup>

@@ -8,14 +8,14 @@ import AddressForm from '../AddressForm';
 function PractitionerProfileUpdate({ onClose }) {
     const practitionerInfo = useSelector(state => state.userReducer.practitionerInfo);
     const navigator = useNavigate()
-    console.log("practitionerInfo", practitionerInfo)
 
     const [formData, setFormData] = useState({
         familyName: practitionerInfo.name.family,
         name: practitionerInfo.name.name,
         address: practitionerInfo.address,
         gender: practitionerInfo.gender,
-        telecom: practitionerInfo.telecom.value
+        telecom: practitionerInfo.telecom.value,
+        department: practitionerInfo.department
     });
 
     const handleChange = (e) => {
@@ -35,6 +35,7 @@ function PractitionerProfileUpdate({ onClose }) {
             },
             address: formData.address,
             gender: formData.gender,
+            department:formData.department,
         };
 
         if (formData.telecom !== practitionerInfo.telecom.value) {
@@ -112,6 +113,18 @@ function PractitionerProfileUpdate({ onClose }) {
                                         placeholder="Enter telecom"
                                     />
                                 </Form.Group>
+                                
+                                <Form.Group>
+                                    <Form.Label>Department</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="department"
+                                        value={formData.department}
+                                        onChange={handleChange}
+                                        placeholder="Enter department"
+                                    />
+                                </Form.Group>
+
 
                                 <Button variant="primary" type="submit" className="mt-3">
                                     Update
