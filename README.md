@@ -101,16 +101,18 @@ EMR (진료 기록관련)
 의료진 데이터 CRU
 
 
-## 프로젝트 아키텍쳐
+## ⚙프로젝트 아키텍쳐
 
 ![기술 다이어그램](https://github.com/quasar2yh/KHIS/assets/159987685/8136f574-17e0-4c13-9077-1c1570fbc48d)
 
 
-### ERD (Entity-Relationship Diagram)
+## ERD (Entity-Relationship Diagram)
 ![EMR](https://github.com/quasar2yh/KHIS/assets/159987685/ee4c5547-29ef-4249-a4b0-06ff403ad469)
 
 
-### API 명세서
+## API 명세서
+[API 명세서](https://holy-rose-f0a.notion.site/API-_-RESTful-API-4cd40b87dc1d4d6aad7c3b81e37a78ca)
 
 
-### 요구 명세서
+## 요구 명세서
+[요구 명세서](https://docs.google.com/spreadsheets/d/1ygR2d3qv8T-GOCpKKjD7No1jeWYWcizmtUxoSVP73N4/edit?gid=1333301150#gid=1333301150)
