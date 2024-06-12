@@ -1,15 +1,23 @@
 # 🏥AIBoot-Project-MEDI BRIDGE
 
 병원 정보 시스템 (Hospital Information System, HIS) 
+[![Video Label](https://github.com/quasar2yh/KHIS/assets/58003233/51c0dc9b-077e-49b2-b1b6-7b61dfa6911e
+)](https://www.youtube.com/watch?v=_F9465J8xnk)
+
+<br><br>
 
 ## 🖥프로젝트 소개
 
 **메디 브릿지**는 EMR (Electronic Medical Record, **전자 의무 기록**), OCS(Order Communication System, **오더 커뮤니케이션 시스템**), 병원 편의 기능을 하나로 통합한 표준화된 병원 정보 시스템입니다. 의료 빅데이터 활용을 위한 기반을 마련하고**AI**를 활용하여, 파편화된 기존 의료 시스템의 문제를 해결할 수 있는 더 효율적이고 정밀한 의료 서비스를 제공합니다. 
 
+<br><br>
+
 
 ## 🕰개발 기간
 
 * 24.05.13일 - 24.06.13일(32 일)
+
+<br><br>
 
 
 ## 🧑‍🤝‍🧑팀원구성
@@ -18,6 +26,8 @@
  - 부팀장 : 현효민 - DB 설계 및 구현, 회원관리(CRUD), 의료진 진료 기록(CRUD), React 프론트엔드 전반 개발 및 관리 
  - 팀원: 이훈희 - 환자 진료 예약 (CRUD) 
  - 팀원: 안채연 - API 설계, 의료진 및 병원 스케줄 관리(CRUD), 메일 비동기 처리, 진료과 상담 AI챗봇, React 개발
+
+<br><br>
 
 
 ## ⚒ 개발 환경
@@ -53,6 +63,7 @@
 ![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)
 
 
+<br><br>
 
 
 ## 📌 주요 기능
@@ -105,22 +116,37 @@
 
 [의료진 데이터 CRU](https://github.com/quasar2yh/KHIS/blob/dev/practitioner_registration/views.py)
 
+<br><br>
 
 ## ⚙프로젝트 아키텍쳐
 
-![기술 다이어그램](https://github.com/quasar2yh/KHIS/assets/159987685/8136f574-17e0-4c13-9077-1c1570fbc48d)
+![기술 다이어그램](https://github.com/quasar2yh/KHIS/assets/58003233/e4bc8e5f-7806-4751-931e-54067357862a)
 
+<br><br>
 
 ## ERD (Entity-Relationship Diagram)
-![EMR](https://github.com/quasar2yh/KHIS/assets/159987685/ee4c5547-29ef-4249-a4b0-06ff403ad469)
+[![EMR](https://github.com/quasar2yh/KHIS/assets/159987685/ee4c5547-29ef-4249-a4b0-06ff403ad469)](https://www.erdcloud.com/d/WMitesP6FrntKxh4Z)
 
+<br><br>
 
 ## API 명세서
-[API 명세서](https://holy-rose-f0a.notion.site/API-_-RESTful-API-4cd40b87dc1d4d6aad7c3b81e37a78ca)
+
+<a href="https://holy-rose-f0a.notion.site/API-_-RESTful-API-4cd40b87dc1d4d6aad7c3b81e37a78ca">
+    <img src="https://github.com/quasar2yh/KHIS/assets/58003233/2273653e-ca81-47ad-9d63-b7471b9f5724" alt="API 명세서" width="180" height="40">
+</a>
+
+<br><br>
 
 
 ## 요구 명세서
-[요구 명세서](https://docs.google.com/spreadsheets/d/1ygR2d3qv8T-GOCpKKjD7No1jeWYWcizmtUxoSVP73N4/edit?gid=1333301150#gid=1333301150)
 
-## 시연 영상
-[시연 영상 유튜브](https://www.youtube.com/watch?v=_F9465J8xnk)
+<a href="https://docs.google.com/spreadsheets/d/1ygR2d3qv8T-GOCpKKjD7No1jeWYWcizmtUxoSVP73N4/edit?gid=1333301150#gid=1333301150">
+    <img src="https://github.com/quasar2yh/KHIS/assets/58003233/a3801ebe-e2e4-42a8-a41c-01894045f794" alt="요구 명세서" width="180" height="40">
+</a>
+
+
+<br><br>
+
+
+
+
