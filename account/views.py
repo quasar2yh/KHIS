@@ -8,7 +8,13 @@ from .models import Account
 from rest_framework_simplejwt.views import TokenRefreshView, TokenObtainPairView
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 
-
+#전체유저 조회 하기 
+class AccountAllUserAPIView(APIView):
+    def get(self,request):
+        account = Account.objects.all();
+        serializer = AccountSerializer(account,many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 class AccountSiginAPIView(APIView):
     permission_classes = [AllowAny]
 
@@ -96,12 +102,13 @@ class CookieTokenObtainPairView(TokenObtainPairView):
 
 class CookieTokenRefreshView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data={"refresh": request.COOKIES.get("refresh")})
+        serializer = self.get_serializer(
+            data={"refresh": request.COOKIES.get("refresh")})
         try:
             serializer.is_valid(raise_exception=True)
         except TokenError as e:
             raise InvalidToken(e.args[0])
-        
+
         response = Response(serializer.validated_data)
 
         response.set_cookie(

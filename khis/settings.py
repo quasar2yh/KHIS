@@ -49,6 +49,7 @@ CUSTOM_APPS = [
     'practitioner_registration',
     'procedure',
     'procedure_fee',
+    'chat',
 ]
 SYSTEM_APPS = ['django.contrib.admin',
                'django.contrib.auth',

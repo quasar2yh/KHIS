@@ -15,6 +15,7 @@ import Annual from "./practitioner/Annual";
 import Schedule from "./Schedule";
 import Procedure from "./practitioner/Procedure";
 import GetConsultations from "./practitioner/GetConsultations";
+import Chat from "../components/Chat";
 import PostClaim from "./practitioner/PostClaim";
 import GetClaim from "./practitioner/GetClaim";
 import WaitingList from './WaitingList';
@@ -41,6 +42,7 @@ const Router = () => {
                         <Route path="/medical-record-list" element={<GetConsultations />} />
                         <Route path="/procedure" element={<Procedure />} />
                         <Route path="/annual" element={<Annual />} />
+                        <Route path="/chat" element={<Chat />} />                       
                         <Route path="/claim" element={<PostClaim />} />
                         <Route path="/claim-list" element={<GetClaim />} />
                         <Route path="/waiting-list" element={<WaitingList />} /> 

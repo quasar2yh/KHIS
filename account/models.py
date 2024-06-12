@@ -156,3 +156,6 @@ class GeneralPractitioner():
     # 환자와 담당의사 중계 테이블
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE)
     practitioner = models.ForeignKey('Practitioner', on_delete=models.CASCADE)
+    
+    
+

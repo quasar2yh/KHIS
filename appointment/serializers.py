@@ -135,9 +135,6 @@ class AppointmentListSerializer(serializers.Serializer):
     time = serializers.TimeField(required=False)
     practitioner_all = serializers.CharField(required=False)  # 전체의사 조회할때 쓰는 필드
 
-
-from account.serializers import HumanNameSerializer
-
 class PractitionerAppointmentSerializer(serializers.ModelSerializer):
     name = HumanNameSerializer()
     class Meta:
@@ -156,3 +153,10 @@ class AnnualSerializer(serializers.ModelSerializer):
     class Meta:
         model = Annual
         fields = ['start_date', 'end_date']
+
+class TranslationRequestSerializer(serializers.Serializer):
+    text = serializers.CharField()
+    target_language = serializers.CharField()
+
+class TranslationResponseSerializer(serializers.Serializer):
+    translated_text = serializers.CharField()

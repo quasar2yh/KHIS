@@ -172,6 +172,22 @@ export const getWaitingList = async () => {
     return response.data;
 };
 
-
-
+//전체 유저 조회 
+export const getAllUser = async ()=>{
+    const response = await instance.get('khis/account/alluser/')
+    return response.data;
+}
+//메세지 조회
+export const getChatMessages = async ()=>{
+    const response = await instance.get('/khis/chat/messages/')
+    return response.data;
+}
+//메세지 보내기
+export const sendMessage = async (receiver, message) => {
+    const response = await instance.post('/khis/chat/messages/', {
+      receiver,
+      message,
+    });
+    return response.data;
+  };
 export default instance;
