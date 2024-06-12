@@ -15,6 +15,7 @@ import Annual from "./practitioner/Annual";
 import Schedule from "./Schedule";
 import Procedure from "./practitioner/Procedure";
 import GetConsultations from "./practitioner/GetConsultations";
+import Chat from "../components/Chat";
 
 
 const Router = () => {
@@ -37,6 +38,9 @@ const Router = () => {
                         <Route path="/medical-record-list" element={<GetConsultations />} />
                         <Route path="/procedure" element={<Procedure />} />
                         <Route path="/annual" element={<Annual />} />
+                        <Route path="/chat" element={<Chat />} />
+                        
+                        
                     </Routes>
                 </Layout>
             </TokenRefresher>

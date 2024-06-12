@@ -20,7 +20,6 @@ dotenv.load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -47,6 +46,7 @@ CUSTOM_APPS = [
     'practitioner_registration',
     'procedure',
     'procedure_fee',
+    'chat',
 ]
 SYSTEM_APPS = ['django.contrib.admin',
                'django.contrib.auth',
@@ -200,5 +200,3 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': timedelta(hours=1),  # 매 시간마다 실행
     },
 }
-
-

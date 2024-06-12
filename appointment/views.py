@@ -7,7 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
-from .serializers import AppointmentSerializer, AppointmentListSerializer, AppointmentScheduleSerializer, PractitionerAppointmentSerializer, AppointmentDelSerializer, HospitalScheduleSerializer, AnnualSerializer
+from .serializers import (AppointmentSerializer, AppointmentListSerializer, AppointmentScheduleSerializer,
+                          PractitionerAppointmentSerializer, AppointmentDelSerializer, HospitalScheduleSerializer, AnnualSerializer, TranslationRequestSerializer, TranslationResponseSerializer)
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from account.models import Patient
@@ -19,6 +20,8 @@ from schedule.models import Annual, HospitalSchedule, DepartmentEvent
 from datetime import datetime
 from django.db.models import Q
 import boto3
+import requests
+import os
 
 
 class AppointMentAPIView(APIView):  # 예약기능 CRUD
@@ -909,3 +912,37 @@ class AiConsultationView(APIView):
         except Exception as e:
             error_message = "에러가 발생했습니다:  " + str(e)
             return Response({"error": error_message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class DeeplApiView(APIView):
+
+    def post(self, request):
+        serializer = TranslationRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            text = serializer.validated_data['text']
+            target_language = serializer.validated_data['target_language']
+            translated_text = self.translate_text(text, target_language)
+            response_serializer = TranslationResponseSerializer(
+                data={'translated_text': translated_text})
+            if response_serializer.is_valid():
+                return Response(response_serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def translate_text(self, text, target_language):
+        api_key = os.environ.get('DEEPL_API_KEY')  # 여기에 DeepL API 키를 입력하세요
+        print(api_key)
+        url = "https://api-free.deepl.com/v2/translate"
+        data = {
+            'auth_key': api_key,
+            'text': text,
+            'target_lang': target_language
+        }
+        response = requests.post(url, data=data)
+        try:
+            response_json = response.json()
+        except ValueError:
+            return "Error: Unable to decode JSON response"
+        if 'translations' in response_json and response_json['translations']:
+            return response_json['translations'][0]['text']
+        else:
+            return "Error: Unable to translate"
