@@ -60,7 +60,7 @@
 
 EMR (진료 기록관련)
 
--환자 데이터 CRUD 
+-[환자 데이터 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/account/views.py)
 
 -진단기록 CRUD
 
