@@ -121,3 +121,6 @@
 
 ## 요구 명세서
 [요구 명세서](https://docs.google.com/spreadsheets/d/1ygR2d3qv8T-GOCpKKjD7No1jeWYWcizmtUxoSVP73N4/edit?gid=1333301150#gid=1333301150)
+
+## 시연 영상
+[시연 영상 유튜브](https://www.youtube.com/watch?v=_F9465J8xnk)
