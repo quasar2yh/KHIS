@@ -66,15 +66,18 @@
 
 -[수술기록 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/ocs/views.py)
 
+
 **수납 시스템**
 
 -[청구 항목 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/acceptance/views.py)
 
-수술,수술 요금
+
+**수술,수술 요금**
 
 -[수술 요금 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/procedure_fee/views.py)
 
 -[수술 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/procedure_fee/views.py)
+
 
 **연차/휴일 시스템**
 
@@ -86,6 +89,7 @@
 
 -[부서별 일정 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/schedule/views.py)
 
+
 **예약시스템**
 
 -[예약 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/appointment/views.py)
@@ -93,6 +97,7 @@
 -[예약 가능조](https://github.com/quasar2yh/KHIS/blob/dev/appointment/views.py) 
 
 -[챗봇시스템 (증상을 입력하면 진료과 추천)](https://github.com/quasar2yh/KHIS/blob/dev/appointment/open_ai.py)
+
 
 **대기열 시스템**
 
