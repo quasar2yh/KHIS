@@ -54,8 +54,19 @@ const Footer = () => {
               </div>
             </div>
           </div>
+          <div className="col-md-3" style={{marginTop :"10px"}}>
+            <div className="card">
+              <div className="card-body">
+                <h5 className="card-title text-uppercase">Chat</h5>
+                <ul className="list-unstyled">
+                  <li><a href="/chat">바로가기</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
     </footer>
   );
 };

@@ -28,9 +28,10 @@ function Header() {
         logoutAction();
         navigate('/login');
     };
-
-    console.log("accountInfo: ", accountInfo);
+    
     console.log("Cookies:", Cookies.get());
+    console.log("accountInfo: ", accountInfo);
+    
     return (<>
         <Navbar expand="lg" className="bg-body-tertiary">
             <Container>
