@@ -101,9 +101,9 @@
 -[부서별 일정 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/schedule/views.py#L324)
 
 
-**예약시스템**
+**예약 및 시스템**
 
--[예약 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/appointment/views.py#L27)
+-[예약, 예약가능한의사 조회, Deepl 연결 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/appointment/views.py#L27)
 
 -[진료과 추천 AI](https://github.com/quasar2yh/KHIS/blob/dev/appointment/open_ai.py)
 
