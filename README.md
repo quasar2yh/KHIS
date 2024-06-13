@@ -147,11 +147,11 @@
 
 <br><br>
 ## 5분 이슈보드
-<a href="https://docs.google.com/spreadsheets/d/1ygR2d3qv8T-GOCpKKjD7No1jeWYWcizmtUxoSVP73N4/edit?gid=1333301150#gid=1333301150">
-    <img src="https://www.notion.so/5-0d9a013a1224470f98a2b441f1821120" alt="5분 이슈보드 노션ver" width="180" height="40">
+<a href="https://www.notion.so/5-0d9a013a1224470f98a2b441f1821120">
+    <img src="https://github.com/quasar2yh/KHIS/assets/58003233/a3801ebe-e2e4-42a8-a41c-01894045f794" alt="5분 이슈보드 노션ver" width="180" height="40">
 </a>
-<a href="https://docs.google.com/spreadsheets/d/1ygR2d3qv8T-GOCpKKjD7No1jeWYWcizmtUxoSVP73N4/edit?gid=1333301150#gid=1333301150">
-    <img src="https://github.com/users/quasar2yh/projects/3" alt="5분 이슈보드 깃허브ver" width="180" height="40">
+<a href="https://github.com/users/quasar2yh/projects/3">
+    <img src="[https://github.com/users/quasar2yh/projects/3](https://github.com/quasar2yh/KHIS/assets/58003233/2273653e-ca81-47ad-9d63-b7471b9f5724)" alt="5분 이슈보드 깃허브ver" width="180" height="40">
 </a>
 
 
