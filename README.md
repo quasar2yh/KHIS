@@ -145,8 +145,9 @@
     <img src="https://github.com/quasar2yh/KHIS/assets/58003233/a3801ebe-e2e4-42a8-a41c-01894045f794" alt="요구 명세서" width="180" height="40">
 </a>
 
-
 <br><br>
+## 5분 이슈보드
+[5분이슈보드](https://www.notion.so/5-0d9a013a1224470f98a2b441f1821120)
 
 
 
