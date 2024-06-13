@@ -114,6 +114,8 @@
 
 [의료진 데이터 CRU](https://github.com/quasar2yh/KHIS/blob/dev/practitioner_registration/views.py)
 
+**채팅 시스템**
+
 <br><br>
 
 ## ⚙프로젝트 아키텍쳐
