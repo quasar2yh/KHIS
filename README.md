@@ -73,9 +73,9 @@
 
 -[환자 데이터 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/registration/views.py)
 
--[진단기록 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/ocs/views.py)
+-[진단기록 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/ocs/views.py#L12)
 
--[수술기록 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/ocs/views.py)
+-[수술기록 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/ocs/views.py#L44)
 
 
 **수납 시스템**
@@ -87,18 +87,18 @@
 
 -[수술 요금 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/procedure_fee/views.py)
 
--[수술 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/procedure_fee/views.py)
-
+-[수술 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/procedure/views.py#L13)
+ 
 
 **연차/휴일 시스템**
 
 -[연차신청 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/schedule/views.py)
 
--[병원 자체 휴일 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/schedule/views.py)
+-[병원 자체 휴일 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/schedule/views.py#L156)
 
--[공휴일 조회](https://github.com/quasar2yh/KHIS/blob/dev/schedule/views.py) 
+-[공휴일 조회](https://github.com/quasar2yh/KHIS/blob/dev/schedule/views.py#L200) 
 
--[부서별 일정 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/schedule/views.py)
+-[부서별 일정 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/schedule/views.py#L324)
 
 
 **예약시스템**
