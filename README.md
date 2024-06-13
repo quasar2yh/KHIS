@@ -147,7 +147,8 @@
 
 <br><br>
 ## 5분 이슈보드
-[5분이슈보드](https://www.notion.so/5-0d9a013a1224470f98a2b441f1821120)
+[5분이슈보드 노션ver.](https://www.notion.so/5-0d9a013a1224470f98a2b441f1821120)
+[5분이슈보드 &트러블슈팅 깃허브ver.](https://github.com/users/quasar2yh/projects/3)
 
 
 
