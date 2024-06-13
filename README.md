@@ -105,9 +105,7 @@
 
 -[예약 CRUD](https://github.com/quasar2yh/KHIS/blob/dev/appointment/views.py)
 
--[예약 가능조](https://github.com/quasar2yh/KHIS/blob/dev/appointment/views.py) 
-
--[챗봇시스템 (증상을 입력하면 진료과 추천)](https://github.com/quasar2yh/KHIS/blob/dev/appointment/open_ai.py)
+-[진료과 추천 AI](https://github.com/quasar2yh/KHIS/blob/dev/appointment/open_ai.py)
 
 
 **대기열 시스템**
