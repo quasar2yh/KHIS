@@ -150,13 +150,13 @@ export const sendChatMessage = async (data) => {
 
 // 병원 휴일 조회 
 export const getHoliday = async () => {
-    const response = await instance.get(`/khis/schedule/hospital/Public/`)
+    const response = await instance.get(`/khis/schedule/hospital/public/`)
     return response.data;
 }
 
 // 부서별 의사 조회
 export const getPractitionerFromDepartment = async (departmentId) => {
-    const response = await instance.get(`/khis/schedule/department/${departmentId}/Practitioner/`)
+    const response = await instance.get(`/khis/schedule/department/${departmentId}/practitioner/`)
     return response.data;
 }
 
