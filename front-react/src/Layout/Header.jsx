@@ -29,8 +29,6 @@ function Header() {
         navigate('/login');
     };
 
-    console.log("accountInfo: ", accountInfo);
-    console.log("Cookies:", Cookies.get());
     return (<>
         <Navbar expand="lg" className="bg-body-tertiary">
             <Container>

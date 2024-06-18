@@ -7,7 +7,7 @@ function PractitionerMenu({ handleLogout }) {
 
     return (
         <>
-            <Navbar.Brand href="/">KHIS</Navbar.Brand>
+            <Navbar.Brand href="/">MediBrige</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">

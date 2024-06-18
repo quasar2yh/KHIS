@@ -123,7 +123,7 @@ function ConsultationList({ consultations }) {
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan="9" className="text-center">Loading...</td>
+                                            <td colSpan="9" className="text-center">수술 기록이 없습니다.</td>
                                         </tr>
                                     )}
                                 </tbody>

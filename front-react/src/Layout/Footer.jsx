@@ -1,18 +1,9 @@
 import React from "react";
 
 const Footer = () => {
-  // 첫 페이지일 때만 Footer를 렌더
-  const isHomePage = window.location.pathname === '/';
-
-  
-  if (!isHomePage) return null;
-
   return (
     <footer className="page-footer font-small blue pt-4">
       <div className="container text-center">
-        <h5 className="text-uppercase">안녕하세요, KHIS 병원입니다</h5>
-        <img src="/image/병원 배너 사진.jpeg" alt="병원 배너 사진" className="footer-banner" />
-        
         <div className="row mt-4">
           <div className="col-md-3">
             <div className="card">
